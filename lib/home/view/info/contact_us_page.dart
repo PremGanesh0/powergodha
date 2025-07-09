@@ -126,7 +126,7 @@ class ContactUsPage extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          'We\'re here to help. Reach out to us through any of the channels below, and our team will assist you as soon as possible.',
+          "We're here to help. Reach out to us through any of the channels below, and our team will assist you as soon as possible.",
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -361,11 +361,6 @@ class ContactUsPage extends StatelessWidget {
 
 /// A data class representing a contact item with an icon, title, content, and action.
 class _ContactItem {
-  final IconData icon;
-  final String title;
-  final String content;
-  final VoidCallback onTap;
-  final IconData trailingIcon;
 
   _ContactItem({
     required this.icon,
@@ -374,4 +369,9 @@ class _ContactItem {
     required this.onTap,
     required this.trailingIcon,
   });
+  final IconData icon;
+  final String title;
+  final String content;
+  final VoidCallback onTap;
+  final IconData trailingIcon;
 }

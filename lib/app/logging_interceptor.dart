@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:powergodha/app/logger_config.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 
 /// A Dio interceptor that provides beautiful logging of HTTP requests and responses
 /// using the global AppLogger configuration.
@@ -92,7 +92,7 @@ class LoggingInterceptor extends Interceptor {
   }
 
   /// Truncate large data to prevent log overflow
-  dynamic _truncateData(dynamic data) {
+  dynamic _truncateData(data) {
     if (data == null) return null;
 
     final dataString = data.toString();

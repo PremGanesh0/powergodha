@@ -32,6 +32,7 @@ import 'dart:async';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:user_repository/user_repository.dart';
 
 part 'authentication_event.dart';
@@ -192,25 +193,72 @@ class AuthenticationBloc
   ) => emit.onEach(
     _authenticationRepository.status,
     onData: (AuthenticationStatus status) async {
+      AppLogger.info('AuthenticationBloc: Received auth status update: $status');
+
       switch (status) {
         case AuthenticationStatus.unauthenticated:
           return emit(const AuthenticationState.unauthenticated());
         case AuthenticationStatus.authenticated:
-          // User is authenticated - try to fetch user data
-          final user = await _tryGetUser();
-          return emit(
-            user != null
-                // Successfully got user data - emit authenticated state with user
-                ? AuthenticationState.authenticated(user)
-                // Failed to get user data - fallback to unauthenticated for security
-                : const AuthenticationState.unauthenticated(),
-          );
+          try {
+            // User is authenticated - try to fetch user data
+            final user = await _tryGetUser();
+
+            if (user != null) {
+              // Successfully got user data - emit authenticated state with user
+              AppLogger.info('AuthenticationBloc: User data fetched successfully, emitting authenticated state');
+              return emit(AuthenticationState.authenticated(user));
+            } else {
+              // Getting user data failed, but we still have a token
+              // This could be due to a temporary network issue after language change
+              // Check if we have a local access token before declaring unauthenticated
+              final hasAccessToken = _authenticationRepository.currentAccessToken != null;
+
+              if (hasAccessToken) {
+                AppLogger.warning(
+                  'AuthenticationBloc: Failed to fetch user data but token exists. '
+                  'Possibly a temporary network issue. Preserving authenticated state.',
+                );
+                // We have a token but couldn't fetch user data (possibly network issue)
+                // Return authenticated state with empty user to avoid kicking the user out
+                return emit(const AuthenticationState.authenticated(User.empty));
+              } else {
+                // No token and no user data - truly unauthenticated
+                AppLogger.info('AuthenticationBloc: No token and no user data, emitting unauthenticated state');
+                return emit(const AuthenticationState.unauthenticated());
+              }
+            }
+          } catch (e) {
+            // Error fetching user data
+            AppLogger.error('AuthenticationBloc: Error fetching user data', error: e);
+
+            // Check if we have a token before immediately logging out
+            final hasAccessToken = _authenticationRepository.currentAccessToken != null;
+
+            if (hasAccessToken) {
+              // We have a token but error occurred (likely network)
+              // Return authenticated state with empty user to avoid kicking the user out
+              AppLogger.warning(
+                'AuthenticationBloc: Network error fetching user data, but token exists. '
+                'Preserving authenticated state.',
+              );
+              return emit(const AuthenticationState.authenticated(User.empty));
+            } else {
+              return emit(const AuthenticationState.unauthenticated());
+            }
+          }
         case AuthenticationStatus.unknown:
           return emit(const AuthenticationState.unknown());
       }
     },
     // Forward any stream errors to the bloc's error handler
-    onError: addError,
+    onError: (error, stackTrace) {
+      AppLogger.error(
+        'AuthenticationBloc: Error in authentication status stream',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      addError(error, stackTrace);
+    },
   );
   /// Attempts to fetch user data from the user repository.
   ///

@@ -49,79 +49,79 @@ class _ReportsPageState extends State<ReportsPage> {
   ];
 
   final List<ReportItem> _reportItems = [
-    ReportItem(
+    const ReportItem(
       title: 'Profit & Loss',
       subtitle: 'Overall financial performance',
       icon: Icons.trending_up,
       color: Colors.green,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Income Report',
       subtitle: 'Revenue from sales and services',
       icon: Icons.attach_money,
       color: Colors.blue,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Expenses Report',
       subtitle: 'All farm related expenses',
       icon: Icons.money_off,
       color: Colors.red,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Feed Report',
       subtitle: 'Animal feed consumption and costs',
       icon: Icons.grass,
       color: Colors.orange,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Milk Sale Report',
       subtitle: 'Daily milk production and sales',
       icon: Icons.opacity,
       color: Colors.indigo,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Fixed Investment',
       subtitle: 'Infrastructure and equipment costs',
       icon: Icons.home_work,
       color: Colors.purple,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Breeding Report',
       subtitle: 'Animal breeding records and outcomes',
       icon: Icons.pets,
       color: Colors.pink,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Health Report',
       subtitle: 'Animal health monitoring and treatments',
       icon: Icons.health_and_safety,
       color: Colors.teal,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Deworming Report',
       subtitle: 'Deworming schedule and treatments',
       icon: Icons.medical_services,
       color: Colors.cyan,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Bio Security Spray',
       subtitle: 'Bio security measures and spraying',
       icon: Icons.sanitizer,
       color: Colors.amber,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Milk Output Report',
       subtitle: 'Detailed milk production analysis',
       icon: Icons.local_drink,
       color: Colors.lightBlue,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'Breeding History',
       subtitle: 'Complete breeding lineage records',
       icon: Icons.history,
       color: Colors.deepOrange,
     ),
-    ReportItem(
+    const ReportItem(
       title: 'View All Reports',
       subtitle: 'Comprehensive report dashboard',
       icon: Icons.dashboard,
@@ -359,7 +359,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
   /// Shows custom date picker for custom time period
   Future<void> _showCustomDatePicker() async {
-    final DateTimeRange? picked = await showDateRangePicker(
+    final picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),

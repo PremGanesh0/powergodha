@@ -12,21 +12,6 @@ library;
 /// the build system is set up correctly.
 /// {@endtemplate}
 class AppStrings {
-  /// Gets localized strings for the given language code.
-  static Map<String, String> getStrings(String languageCode) {
-    switch (languageCode) {
-      case 'hi':
-        return _hindiStrings;
-      case 'te':
-        return _teluguStrings;
-      case 'mr':
-        return _marathiStrings;
-      case 'en':
-      default:
-        return _englishStrings;
-    }
-  }
-
   /// English strings (default)
   static const Map<String, String> _englishStrings = {
     'appTitle': 'PowerGodha',
@@ -106,4 +91,19 @@ class AppStrings {
     'telugu': 'తెలుగు',
     'marathi': 'मराठी',
   };
+
+  /// Gets localized strings for the given language code.
+  static Map<String, String> getStrings(String languageCode) {
+    switch (languageCode) {
+      case 'hi':
+        return _hindiStrings;
+      case 'te':
+        return _teluguStrings;
+      case 'mr':
+        return _marathiStrings;
+      case 'en':
+      default:
+        return _englishStrings;
+    }
+  }
 }

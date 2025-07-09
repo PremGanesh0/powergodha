@@ -34,14 +34,15 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-import 'package:powergodha/app/app_view.dart' show AppView;
 import 'package:powergodha/app/app_routes.dart';
+import 'package:powergodha/app/app_view.dart' show AppView;
 import 'package:powergodha/authentication/bloc/authentication_bloc.dart';
+import 'package:powergodha/home/bloc/bloc.dart';
 import 'package:powergodha/home/widgets/app_drawer.dart';
 import 'package:powergodha/home/widgets/featured_carousel.dart';
+import 'package:powergodha/home/widgets/profit_loss.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
-import 'package:powergodha/shared/theme.dart';
+import 'package:powergodha/shared/shared.dart';
 
 /// {@template home_page}
 /// The main home screen for authenticated users.
@@ -75,137 +76,12 @@ import 'package:powergodha/shared/theme.dart';
 class HomePage extends StatelessWidget {
   /// {@macro home_page}
   const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
-
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        drawer: const AppDrawer(),
-        appBar: AppBar(
-          title: Text(localizations?.appTitle ?? 'PowerGodha'),
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              tooltip: 'Search',
-              onPressed: () {
-                // TODO: Navigate to search
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.notifications_outlined),
-              tooltip: 'Notifications',
-              onPressed: () {
-                // TODO: Navigate to notifications
-              },
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(AppTypography.space8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // FormName section
-                const _FormName(),
-                const SizedBox(height: AppTypography.space16),
-
-                // Quick actions
-                _QuickActions(
-                  actions: [
-                    QuickAction(
-                      icon: 'assets/icons/record_milk.png',
-                      label: 'Dashboard',
-                      onPressed: () {
-                        // Navigate to dashboard
-                        Navigator.of(context).pushNamed(AppRoutes.dashboard);
-                      },
-                    ),
-
-                    QuickAction(
-                      icon: 'assets/icons/record_milk.png',
-                      label: 'Analytics',
-                      onPressed: () {
-                        // Navigate to analytics
-                      },
-                    ),
-                    QuickAction(
-                      icon: 'assets/icons/record_milk.png',
-                      label: 'Profile',
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(AppRoutes.profile);
-                      },
-                    ),
-                    QuickAction(
-                      icon: 'assets/icons/record_milk.png',
-                      label: 'Farm\nInvestment',
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(AppRoutes.farmInvestmentDetails);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppTypography.space16),
-
-                // Featured Carousel Slider
-                const FeaturedCarousel(),
-                const SizedBox(height: AppTypography.space16),
-
-                // Record information card
-                const _RecordInfoCard(),
-
-                FittedBox(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: _QuickActions(
-                      actions: [
-                        QuickAction(
-                          icon: 'assets/icons/offers.png',
-                          label: 'Offers',
-                          onPressed: () {
-                            // Navigate to offers
-                          },
-                        ),
-                        QuickAction(
-                          icon: 'assets/icons/profitable_dairy_farming.png',
-                          label: 'Profitable\nDairy Farming',
-                          onPressed: () {
-                            // Navigate to analytics
-                          },
-                        ),
-                        QuickAction(
-                          icon: 'assets/icons/backyard_poultry.png',
-                          label: 'Backyar\nPoultry',
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(AppRoutes.profile);
-                          },
-                        ),
-                        QuickAction(
-                          icon: 'assets/icons/goat_farming.png',
-                          label: 'Goat \n Farming',
-                          onPressed: () {
-                            // Navigate to help
-                          },
-                        ),
-                        QuickAction(
-                          icon: 'assets/icons/record_milk.png',
-                          label: 'Record Milk',
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(AppRoutes.vaccinationDetails);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    return BlocProvider(
+      create: (context) => HomeBloc()..add(const HomeStarted()),
+      child: const _HomePage(),
     );
   }
 
@@ -274,6 +150,263 @@ class _FormName extends StatelessWidget {
   }
 }
 
+class _HomePage extends StatelessWidget {
+  const _HomePage();
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        drawer: const AppDrawer(),
+        appBar: AppBar(
+          title: Text(localizations?.appTitle ?? 'PowerGodha'),
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              tooltip: 'Search',
+              onPressed: () {
+                // TODO: Navigate to search
+              },
+            ),
+            BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                return _NotificationButton(
+                  notificationCount: state.notificationCount,
+                  onPressed: () {
+                    // TODO: Navigate to notifications
+                  },
+                );
+              },
+            ),
+            // IconButton(
+            //   icon: const Icon(Icons.refresh),
+            //   tooltip: 'Refresh',
+            //   onPressed: () {
+            //     context.read<HomeBloc>().add(const RefreshHomeData());
+            //   },
+            // ),
+          ],
+        ),
+        body: BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            if (state.status == HomeStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (state.status == HomeStatus.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error loading data',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.errorMessage ?? 'An unknown error occurred',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<HomeBloc>().add(const RefreshHomeData());
+                      },
+                      child: const Text('Try Again'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<HomeBloc>().add(const RefreshHomeData());
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTypography.space8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // FormName section
+                      const _FormName(),
+                      const SizedBox(height: AppTypography.space16),
+
+                      // Quick actions
+                      _QuickActions(
+                        actions: [
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'Reports',
+                            onPressed: () {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.reports);
+                            },
+                          ),
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'ORB',
+                            onPressed: () {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.dailyRecords);
+                            },
+                          ),
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'Premium',
+                            onPressed: () {
+                              // Navigator.of(
+                              //   context,
+                              // ).pushNamed(AppRoutes.profile);
+                            },
+                          ),
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'Dashboard',
+                            onPressed: () {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.dashboard);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppTypography.space16),
+
+                      // Featured Carousel Slider
+                      const FeaturedCarousel(),
+                      const SizedBox(height: AppTypography.space16),
+
+                      // Record information card
+                      RecordInfoCard(profitLossReport: state.profitLossReport),
+
+                      FittedBox(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: _QuickActions(
+                            actions: [
+                              QuickAction(
+                                icon: 'assets/icons/offers.png',
+                                label: 'Offers',
+                                onPressed: () {
+                                  // Navigate to offers
+                                },
+                              ),
+                              QuickAction(
+                                icon:
+                                    'assets/icons/profitable_dairy_farming.png',
+                                label: 'Profitable\nDairy Farming',
+                                onPressed: () {
+                                  // Navigate to analytics
+                                },
+                              ),
+                              QuickAction(
+                                icon: 'assets/icons/backyard_poultry.png',
+                                label: 'Backyar\nPoultry',
+                                onPressed: () {
+                                  Navigator.of(
+                                    context,
+                                  ).pushNamed(AppRoutes.profile);
+                                },
+                              ),
+                              QuickAction(
+                                icon: 'assets/icons/goat_farming.png',
+                                label: 'Goat \n Farming',
+                                onPressed: () {
+                                  // Navigate to help
+                                },
+                              ),
+                              QuickAction(
+                                icon: 'assets/icons/record_milk.png',
+                                label: 'Record Milk',
+                                onPressed: () {
+                                  // Navigator.of(
+                                  //   context,
+                                  // ).pushNamed(AppRoutes.record);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+/// {@template notification_button}
+/// A custom notification button widget that displays a badge with the notification count.
+/// {@endtemplate}
+class _NotificationButton extends StatelessWidget {
+  /// {@macro notification_button}
+  const _NotificationButton({required this.notificationCount,
+    required this.onPressed,
+  });
+
+  /// The number of unread notifications
+  final int notificationCount;
+
+  /// Callback when the notification button is pressed
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Stack(
+        children: [
+          const Icon(Icons.notifications_outlined),
+          if (notificationCount > 0)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                child: Text(
+                  notificationCount > 99 ? '99+' : notificationCount.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+        ],
+      ),
+      tooltip: 'Notifications',
+      onPressed: onPressed,
+    );
+  }
+}
+
 class _QuickActions extends StatelessWidget {
   const _QuickActions({required this.actions});
   final List<QuickAction> actions;
@@ -303,75 +436,27 @@ class _QuickActions extends StatelessWidget {
     required String label,
     required VoidCallback onPressed,
   }) {
-    return Column(
-      children: [
-        DecoratedBox(
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12), // adjust as needed
-            child: Image.asset(
-              icon,
-              width: 50.w,
-              height: 50.h,
-              fit: BoxFit.cover, // optional, for best image scaling
+    return InkWell(
+      onTap: onPressed,
+      child: Column(
+        children: [
+          DecoratedBox(
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12), // adjust as needed
+              child: Image.asset(
+                icon,
+                width: 50.w,
+                height: 50.h,
+                fit: BoxFit.cover, // optional, for best image scaling
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: Theme.of(context).textTheme.labelMedium, textAlign: TextAlign.center),
-      ],
-    );
-  }
-}
-
-/// User information card
-class _RecordInfoCard extends StatelessWidget {
-  const _RecordInfoCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAlias, // Ensures image respects border radius
-      child: Stack(
-        children: [
-          // Background image
-          Positioned.fill(child: Image.asset('assets/profit_back.png', fit: BoxFit.cover)),
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(AppTypography.space16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: AppTypography.space32),
-                const SizedBox(height: AppTypography.space32),
-                const SizedBox(height: AppTypography.space32),
-                Text(
-                  'Latest profit/loss of your farm \n ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  '₹2,23,232/-',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: AppTypography.space16),
-                const SizedBox(height: AppTypography.space8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Write Record',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
-                    ),
-                    const Icon(Icons.edit_outlined, color: Colors.white, size: 20),
-                  ],
-                ),
-              ],
-            ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium,
+            textAlign: TextAlign.center,
           ),
         ],
       ),

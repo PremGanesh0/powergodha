@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 /// Reusable header section widget for dashboard pages
 class DashboardHeader extends StatelessWidget {
   /// Creates a dashboard header
-  const DashboardHeader({
-    required this.title,
-    super.key,
-  });
+  const DashboardHeader({required this.title, super.key});
 
   /// The title to display in the header
   final String title;
@@ -188,10 +185,7 @@ class ActionCard extends StatelessWidget {
 /// Reusable custom app bar widget
 class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Creates a dashboard app bar
-  const DashboardAppBar({
-    required this.title,
-    super.key,
-  });
+  const DashboardAppBar({required this.title, super.key});
 
   /// The title to display in the app bar
   final String title;
@@ -214,10 +208,7 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
 /// Custom grid view widget for dashboard items
 class DashboardGrid extends StatelessWidget {
   /// Creates a dashboard grid
-  const DashboardGrid({
-    required this.children,
-    super.key,
-  });
+  const DashboardGrid({required this.children, super.key});
 
   /// The child widgets to display in the grid
   final List<Widget> children;

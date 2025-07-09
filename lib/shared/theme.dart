@@ -15,7 +15,7 @@ class AppTheme {
     onPrimary: Color(0xFF000000),
     secondary: Color(0xFF4CAF50),
     secondaryContainer: Color(0xFFC8E6C9),
-    tertiary: Color(0xFF4CAF50), 
+    tertiary: Color(0xFF4CAF50),
     tertiaryContainer: Color(0xFFC8E6C9),
     onTertiary: Color(0xFF000000),
   );

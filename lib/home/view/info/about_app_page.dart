@@ -451,13 +451,13 @@ class _AboutAppPageState extends State<AboutAppPage> {
 
 /// Feature data model for the Features section
 class _Feature {
-  final String title;
-  final String description;
-  final IconData icon;
 
   _Feature({
     required this.title,
     required this.description,
     required this.icon,
   });
+  final String title;
+  final String description;
+  final IconData icon;
 }

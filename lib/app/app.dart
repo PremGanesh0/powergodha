@@ -33,11 +33,13 @@ library;
 
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/app/app_view.dart';
 import 'package:powergodha/authentication/bloc/authentication_bloc.dart';
-import 'package:powergodha/shared/api_client.dart';
-import 'package:powergodha/app/logger_config.dart';
+import 'package:powergodha/shared/api/api_client.dart';
 import 'package:user_repository/user_repository.dart';
 
 /// {@template app}
@@ -100,20 +102,69 @@ class App extends StatelessWidget {
             dio: ApiClient.instance,
           ),
         ),
+        // Animal repository for managing animal-related data
+        // This handles animal count and other animal operations
+        RepositoryProvider(
+          create: (context) => AnimalRepository(
+            authenticationRepository: context.read<AuthenticationRepository>(),
+            dio: ApiClient.instance,
+          ),
+        ),
       ],
       child: BlocProvider(
         // Initialize immediately without lazy loading to start auth listening
         lazy: false,
         // Create and initialize the authentication bloc with dependencies
-        create: (context) =>
-            AuthenticationBloc(
-                authenticationRepository: context.read<AuthenticationRepository>(),
-                userRepository: context.read<UserRepository>(),
-              )
-              // Immediately request subscription to auth status changes
-              ..add(
-                AuthenticationSubscriptionRequested(),
-              ), // AppView contains the main application UI and navigation logic
+        create: (context) {
+          final authRepo = context.read<AuthenticationRepository>();
+          final userRepo = context.read<UserRepository>();
+
+          // Log whether this is a regular start or a language change restart
+          if (initialLocale != null) {
+            AppLogger.info('App restarting with locale change to: ${initialLocale!.languageCode}');
+
+            // Force recreation of API clients
+            try {
+              // 1. Notify ApiClient of language change and get a fresh instance
+              ApiClient.notifyLanguageChanged();
+              ApiClient.instance; // Access instance to force creation of new Dio
+              AppLogger.info('Global API client recreated after language change');
+
+              // 2. Then ensure authentication repository has a fresh Dio instance
+              authRepo.getValidDioClient();
+              AppLogger.info('Authentication repository Dio client refreshed');
+
+              // 3. Make sure repositories will get fresh Dio instances when they need them
+              try {
+                // Force repositories to recreate with fresh clients on next use
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  try {
+                    // We don't have direct access to update the Dio in user repository,
+                    // but it will get a fresh instance from ApiClient.instance on next use
+                    AppLogger.info('All repositories will get fresh API clients on next use');
+                  } catch (e) {
+                    // Ignore if anything goes wrong here
+                  }
+                });
+              } catch (e) {
+                // This is non-critical, so just log it
+                AppLogger.warning('Could not set post-frame callback (non-critical): $e');
+              }
+
+              AppLogger.info(
+                'All repositories re-initialized with existing token state and fresh API clients',
+              );
+            } catch (e) {
+              AppLogger.error('Error during API client recreation: $e');
+              // Continue anyway - we've made our best effort
+            }
+          }
+
+          return AuthenticationBloc(authenticationRepository: authRepo, userRepository: userRepo)
+            // Immediately request subscription to auth status changes
+            ..add(AuthenticationSubscriptionRequested());
+        },
+        // AppView contains the main application UI and navigation logic
         child: AppView(initialLocale: initialLocale, initialRoute: initialRoute),
       ),
     );

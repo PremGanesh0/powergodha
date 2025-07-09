@@ -16,7 +16,6 @@ class OtpVerificationBloc extends Bloc<OtpVerificationEvent, OtpVerificationStat
     required AuthenticationRepository authenticationRepository,
     required String phoneNumber,
     required int userId,
-    required String otp,
   })  : _authenticationRepository = authenticationRepository,
         _phoneNumber = phoneNumber,
         _userId = userId,

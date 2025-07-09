@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:powergodha/app/logger_config.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 
 /// Vaccination Details page for tracking animal vaccinations
 class VaccinationDetailsPage extends StatefulWidget {

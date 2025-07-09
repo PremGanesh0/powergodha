@@ -49,22 +49,22 @@ class ActionCardData {
 /// Constants for dashboard styling
 abstract class DashboardConstants {
   /// Default card border radius
-  static const double cardBorderRadius = 12.0;
+  static const double cardBorderRadius = 12;
 
   /// Default card elevation
-  static const double cardElevation = 4.0;
+  static const double cardElevation = 4;
 
   /// Default icon size for action cards
-  static const double actionIconSize = 48.0;
+  static const double actionIconSize = 48;
 
   /// Default grid spacing
-  static const double gridSpacing = 16.0;
+  static const double gridSpacing = 16;
 
   /// Default card aspect ratio
   static const double cardAspectRatio = 1.1;
 
   /// Default header bottom radius
-  static const double headerBottomRadius = 20.0;
+  static const double headerBottomRadius = 20;
 
   /// Animal type colors
   static const Color cowColor = Color(0xFFE91E63); // Pink

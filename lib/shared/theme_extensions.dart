@@ -18,18 +18,6 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.gradient,
   });
 
-  /// Success color for positive feedback
-  final Color success;
-
-  /// Warning color for caution states
-  final Color warning;
-
-  /// Info color for informational messages
-  final Color info;
-
-  /// Primary gradient for backgrounds and accents
-  final LinearGradient gradient;
-
   /// Light theme instance
   static const AppColors light = AppColors(
     success: Color(0xFF10B981),
@@ -59,6 +47,18 @@ class AppColors extends ThemeExtension<AppColors> {
       ],
     ),
   );
+
+  /// Success color for positive feedback
+  final Color success;
+
+  /// Warning color for caution states
+  final Color warning;
+
+  /// Info color for informational messages
+  final Color info;
+
+  /// Primary gradient for backgrounds and accents
+  final LinearGradient gradient;
 
   @override
   ThemeExtension<AppColors> copyWith({
@@ -90,12 +90,6 @@ class AppColors extends ThemeExtension<AppColors> {
       gradient: LinearGradient.lerp(gradient, other.gradient, t)!,
     );
   }
-}
-
-/// Extension methods for easy access to app colors
-extension AppColorsExtension on ThemeData {
-  /// Get app-specific colors
-  AppColors get appColors => extension<AppColors>() ?? AppColors.light;
 }
 
 /// Common app styles that can be reused throughout the app
@@ -164,4 +158,10 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     color: Color(0xFFDC2626),
   );
+}
+
+/// Extension methods for easy access to app colors
+extension AppColorsExtension on ThemeData {
+  /// Get app-specific colors
+  AppColors get appColors => extension<AppColors>() ?? AppColors.light;
 }

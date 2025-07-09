@@ -218,7 +218,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
                   ],
                 ),
-                Spacer(),
+                const Spacer(),
                   ElevatedButton(
                     onPressed: () => _showProductDetails(product),
                     style: ElevatedButton.styleFrom(

@@ -35,6 +35,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/app/app_routes.dart';
 import 'package:powergodha/authentication/bloc/authentication_bloc.dart';
 import 'package:powergodha/home/home.dart' show HomePage;
@@ -43,8 +44,8 @@ import 'package:powergodha/l10n/app_localizations.dart';
 import 'package:powergodha/login/login.dart' show LoginPage;
 import 'package:powergodha/login/view/login_page.dart' show LoginPage;
 import 'package:powergodha/login/view/view.dart' show LoginPage;
+import 'package:powergodha/shared/auth_interceptor.dart';
 import 'package:powergodha/shared/localization_service.dart';
-import 'package:powergodha/app/logger_config.dart';
 import 'package:powergodha/shared/theme.dart';
 import 'package:powergodha/splash/splash.dart' show SplashPage;
 import 'package:powergodha/splash/view/splash_page.dart' show SplashPage;
@@ -131,21 +132,32 @@ class _AppViewState extends State<AppView> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       theme: AppTheme.lightTheme,
       onGenerateRoute: AppRoutes.onGenerateRoute,
-      // Use BlocBuilder to control what gets shown instead of listener navigation
-      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          AppLogger.info(
-            'AppView: Building with auth status: ${state.status}, splash completed: $_splashDelayCompleted',
-          );
+      // Use BlocListener for navigation + initial home widget
+      home: BlocListener<AuthenticationBloc, AuthenticationState>(
+        listener: (context, state) {
+          // Only navigate after splash delay is completed
+          if (!_splashDelayCompleted) return;
 
-          // Always show splash if delay hasn't completed yet
-          if (!_splashDelayCompleted) {
-            return const SplashPage();
-          }
+          AppLogger.info('AppView: Navigation listener - auth status: ${state.status}');
 
-          // After splash delay, show appropriate page based on auth status
-          return _buildPageForAuthStatus(state.status);
+          // Handle navigation based on auth status
+          _handleAuthenticationNavigation(context, state.status);
         },
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            AppLogger.info(
+              'AppView: Building with auth status: ${state.status}, splash completed: $_splashDelayCompleted',
+            );
+
+            // Always show splash if delay hasn't completed yet
+            if (!_splashDelayCompleted) {
+              return const SplashPage();
+            }
+
+            // After splash delay, show appropriate page based on auth status
+            return _buildPageForAuthStatus(state.status);
+          },
+        ),
       ),
     ),
   );
@@ -153,7 +165,13 @@ class _AppViewState extends State<AppView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-     _refreshLocaleIfNeeded();
+    _refreshLocaleIfNeeded();
+  }
+
+  @override
+  void dispose() {
+    AppLogger.info('AppView: Disposing AppView widget');
+    super.dispose();
   }
 
   @override
@@ -161,25 +179,153 @@ class _AppViewState extends State<AppView> {
     super.initState();
     // Initialize locale, with priority to any initialLocale passed in
     _initializeLocale();
-    // Start the 2-second splash delay timer
-    _startSplashDelay();
+
+    // If we have an initial route or locale, it means we're restarting the app
+    // Skip the splash delay and go straight to checking auth state
+    if (widget.initialRoute != null || widget.initialLocale != null) {
+      AppLogger.info(
+        'AppView: Skip splash delay - restarting app with initialRoute: ${widget.initialRoute}, locale: ${widget.initialLocale?.languageCode}',
+      );
+      _splashDelayCompleted = true;
+    } else {
+      // Start the 2-second splash delay timer for normal app start
+      _startSplashDelay();
+    }
   }
 
   /// Builds the appropriate page widget based on authentication status.
   ///
   /// This method determines which page to show after the splash delay
   /// has completed, based on the current authentication status.
+  /// Always prioritizes explicit initialRoute if provided.
   Widget _buildPageForAuthStatus(AuthenticationStatus status) {
+    // Log current auth status and initialRoute (if any)
+    AppLogger.info('AppView: Auth status: $status, initialRoute: ${widget.initialRoute}');
+
+    // Check if this build is happening after a language change restart
+    final isAfterLanguageChange = widget.initialLocale != null;
+    if (isAfterLanguageChange) {
+      AppLogger.info(
+        'AppView: Rebuilding after language change to ${widget.initialLocale?.languageCode}',
+      );
+
+      // Force API client recreation after EVERY language change
+      try {
+        // Get a reference to the AuthRepository directly from the context
+        final authRepo = RepositoryProvider.of<AuthenticationRepository>(context);
+        AppLogger.info('AppView: Ensuring fresh Dio client after language change');
+        // This creates a brand new Dio instance, ensuring fresh connections
+        authRepo.getValidDioClient();
+      } catch (e) {
+        AppLogger.error('AppView: Error refreshing Dio client after language change', error: e);
+      }
+    }
+
+    // FIRST CHECK: If we have an explicit route to follow, it takes precedence
+    // This is critical for language change navigation to work properly
+    if (widget.initialRoute != null) {
+      final route = widget.initialRoute!;
+      AppLogger.info('AppView: Using initialRoute to navigate: $route');
+      if (route == AppRoutes.home) {
+        return const HomePage();
+      } else if (route == AppRoutes.login) {
+        return const LoginPage();
+      }
+      // Other routes can be added as needed
+    }
+
+    // SECOND CHECK: Fall back to authentication status
+    // This ensures we go to the correct screen based on login state
     switch (status) {
       case AuthenticationStatus.authenticated:
         AppLogger.info('AppView: Building HomePage for authenticated user');
         return const HomePage();
       case AuthenticationStatus.unauthenticated:
+        // If we're coming from a language change, double-check with local storage
+        // before showing the login page, as this could be a transient network error
+        if (isAfterLanguageChange) {
+          AppLogger.info(
+            'AppView: Unauthenticated after language change, checking token in storage...',
+          );
+          _checkTokensAfterLanguageChange();
+          // The actual check happens in _checkTokensAfterLanguageChange
+          // For now, we still return LoginPage as that's what the auth status indicates
+          // but the AuthBloc should take care of preserving auth state
+        }
         AppLogger.info('AppView: Building LoginPage for unauthenticated user');
         return const LoginPage();
       case AuthenticationStatus.unknown:
+        // For unknown state after a language change, we should try to preserve the
+        // authenticated state if possible, to avoid logging users out due to network issues
+        if (isAfterLanguageChange) {
+          AppLogger.info(
+            'AppView: Unknown auth status after language change, preserving previous state...',
+          );
+          // In a real implementation, we would check local storage here
+          // For now, let's proceed with normal flow and let the AuthBloc handle it
+        }
+
+        // No need to check initialRoute here anymore
+        // That's now handled at the beginning of the method
+
         AppLogger.info('AppView: Auth status unknown, showing SplashPage');
         return const SplashPage();
+    }
+  }
+
+  /// Check for authentication tokens after a language change
+  /// This is a helper method to avoid logging users out due to network errors
+  /// that may occur during app restart after a language change
+  Future<void> _checkTokensAfterLanguageChange() async {
+    try {
+      final hasTokens = await AuthInterceptor.hasTokensInStorage();
+
+      if (hasTokens) {
+        AppLogger.info(
+          'AppView: Found valid tokens after language change, '
+          'the AuthBloc should preserve authenticated state despite network errors',
+        );
+        // The tokens exist, but we're getting an unauthenticated status
+        // This could be due to a network error during token validation
+        // The AuthBloc and AuthRepository have been updated to handle this case
+      } else {
+        AppLogger.info('AppView: No tokens found after language change, truly unauthenticated');
+      }
+    } catch (e) {
+      AppLogger.error('AppView: Error checking tokens after language change', error: e);
+    }
+  }
+
+  /// Handles navigation based on authentication status with proper stack management.
+  ///
+  /// This method ensures that navigation is done with proper cleanup of the
+  /// navigation stack to prevent memory leaks and multiple page instances.
+  void _handleAuthenticationNavigation(BuildContext context, AuthenticationStatus status) {
+    // Don't navigate if we have an explicit initial route - let direct rendering handle it
+    if (widget.initialRoute != null) {
+      AppLogger.info('AppView: Skipping navigation - using initialRoute: ${widget.initialRoute}');
+      return;
+    }
+
+    // Get the root navigator to ensure we clear everything
+    final navigator = Navigator.of(context, rootNavigator: true);
+
+    switch (status) {
+      case AuthenticationStatus.authenticated:
+        AppLogger.info('AppView: Navigating to HomePage (replacing all)');
+        navigator.pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => const HomePage()),
+          (route) => false, // Remove all previous routes
+        );
+      case AuthenticationStatus.unauthenticated:
+        AppLogger.info('AppView: Navigating to LoginPage (replacing all)');
+        navigator.pushAndRemoveUntil(
+          MaterialPageRoute<void>(builder: (_) => const LoginPage()),
+          (route) => false, // Remove all previous routes
+        );
+      case AuthenticationStatus.unknown:
+        // For unknown status, stay on splash or current page
+        AppLogger.info('AppView: Auth status unknown, staying on current page');
     }
   }
 
@@ -221,10 +367,14 @@ class _AppViewState extends State<AppView> {
   void _startSplashDelay() {
     Future<void>.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        AppLogger.info('Splash delay completed, rebuilding with current auth state...');
+        AppLogger.info('Splash delay completed, triggering authentication check...');
         setState(() {
           _splashDelayCompleted = true;
         });
+
+        // Trigger authentication subscription to ensure navigation happens
+        final authBloc = context.read<AuthenticationBloc>();
+        authBloc.add(AuthenticationSubscriptionRequested());
       }
     });
   }

@@ -16,7 +16,7 @@ class Otp extends FormzInput<String, OtpValidationError> {
 
   @override
   OtpValidationError? validator(String? value) {
-    if (value?.isEmpty == true) return OtpValidationError.empty;
+    if (value?.isEmpty ?? true) return OtpValidationError.empty;
     if (value != null && value.length < 6) return OtpValidationError.tooShort;
     if (value != null && value.length > 6) return OtpValidationError.tooLong;
     return _otpRegExp.hasMatch(value ?? '') ? null : OtpValidationError.invalid;

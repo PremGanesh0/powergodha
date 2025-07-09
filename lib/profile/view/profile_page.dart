@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:powergodha/app/app_routes.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
-import 'package:powergodha/app/logger_config.dart';
 import 'package:powergodha/shared/theme.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,6 +19,13 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
+
+  // User repository from context
+  late final UserRepository _userRepository;
+
+  // Loading state
+  bool _isLoading = true;
+  String? _errorMessage;
 
   // Personal details controllers
   final _nameController = TextEditingController();
@@ -34,173 +43,282 @@ class _ProfilePageState extends State<ProfilePage> {
   final _countryController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Use addPostFrameCallback to access context after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeRepositories();
+      _loadUserData();
+    });
+  }
+
+  void _initializeRepositories() {
+    // Get the existing UserRepository from the widget context
+    _userRepository = context.read<UserRepository>();
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Get user data from repository
+      final user = await _userRepository.getUser();
+
+      // Also get the full user response for address fields
+      final userResponse = await _userRepository.getUserResponse();
+
+      _populateControllers(user, userResponse);
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+      AppLogger.error('Failed to load user data: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _populateControllers(User user, UserResponse userResponse) {
+    // Populate personal information
+    _nameController.text = userResponse.name;
+    _phoneController.text = userResponse.phoneNumber;
+    _emailController.text = userResponse.email;
+    _formNameController.text = userResponse.farmName;
+
+    // Populate address information
+    _doorNumberController.text = userResponse.address;
+    _pincodeController.text = userResponse.pincode;
+    _villageController.text = userResponse.village;
+    _talukaController.text = userResponse.taluka;
+    _districtController.text = userResponse.district;
+    _stateController.text = userResponse.state;
+    _countryController.text = userResponse.country;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(localizations.accountInformation)),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Personal Information Section
-                _buildSectionHeader(context, 'Your Details'),
-                const SizedBox(height: 16),
+      appBar: AppBar(
+        title: Text(localizations.accountInformation),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadUserData,
+            tooltip: 'Refresh',
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? _buildErrorView()
+              : _buildProfileForm(),
+    );
+  }
 
-                _buildTextField(
-                  controller: _nameController,
-                  label: 'Full Name',
-                  prefixIcon: Icons.person_outline,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter your name' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _phoneController,
-                  label: 'Phone Number',
-                  prefixIcon: Icons.phone_outlined,
-                  keyboardType: TextInputType.phone,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter your phone number' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _emailController,
-                  label: 'Email',
-                  prefixIcon: Icons.email_outlined,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    } else if (!_isValidEmail(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _formNameController,
-                  label: 'Form Name',
-                  prefixIcon: Icons.description_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter form name' : null,
-                ),
-
-                const SizedBox(height: 32),
-
-                // Address Information Section
-                _buildSectionHeader(context, 'Your Address'),
-                const SizedBox(height: 16),
-
-                _buildTextField(
-                  controller: _doorNumberController,
-                  label: 'Door Number',
-                  prefixIcon: Icons.home_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter door number' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _pincodeController,
-                  label: 'Pincode',
-                  prefixIcon: Icons.pin_outlined,
-                  keyboardType: TextInputType.number,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter pincode' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _villageController,
-                  label: 'Village Name',
-                  prefixIcon: Icons.location_city_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter village name' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _talukaController,
-                  label: 'Taluka Name',
-                  prefixIcon: Icons.landscape_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter taluka name' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _districtController,
-                  label: 'District Name',
-                  prefixIcon: Icons.location_on_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter district name' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _stateController,
-                  label: 'State Name',
-                  prefixIcon: Icons.map_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter state name' : null,
-                ),
-
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _countryController,
-                  label: 'Country Name',
-                  prefixIcon: Icons.public_outlined,
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Please enter country name' : null,
-                ),
-
-                const SizedBox(height: 32),
-
-                // Navigation to Farm Information
-                Center(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(AppRoutes.farmInformation);
-                    },
-                    icon: const Icon(Icons.agriculture_outlined),
-                    label: const Text('Farm Information'),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(200, 50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _saveProfile,
-                    style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-                      backgroundColor: WidgetStateProperty.all(
-                        Theme.of(context).colorScheme.primary,
-                      ),
-                      foregroundColor: WidgetStateProperty.all(Colors.white),
-                      minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 56)),
-                      shape: WidgetStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTypography.radiusMedium),
-                        ),
-                      ),
-                    ),
-                    child: const Text('Update Profile'),
-                  ),
-                ),
-              ],
+  Widget _buildErrorView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red,
             ),
+            const SizedBox(height: 16),
+            Text(
+              'Failed to load profile data',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _errorMessage ?? 'Unknown error occurred',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadUserData,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileForm() {
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Personal Information Section
+              _buildSectionHeader(context, 'Your Details'),
+              const SizedBox(height: 16),
+
+              _buildTextField(
+                controller: _nameController,
+                label: 'Full Name',
+                prefixIcon: Icons.person_outline,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter your name' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _phoneController,
+                label: 'Phone Number',
+                prefixIcon: Icons.phone_outlined,
+                keyboardType: TextInputType.phone,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter your phone number' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _emailController,
+                label: 'Email',
+                prefixIcon: Icons.email_outlined,
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  } else if (!_isValidEmail(value)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _formNameController,
+                label: 'Farm Name',
+                prefixIcon: Icons.agriculture_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter farm name' : null,
+              ),
+
+              const SizedBox(height: 32),
+
+              // Address Information Section
+              _buildSectionHeader(context, 'Your Address'),
+              const SizedBox(height: 16),
+
+              _buildTextField(
+                controller: _doorNumberController,
+                label: 'Door Number',
+                prefixIcon: Icons.home_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter door number' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _pincodeController,
+                label: 'Pincode',
+                prefixIcon: Icons.pin_outlined,
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter pincode' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _villageController,
+                label: 'Village Name',
+                prefixIcon: Icons.location_city_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter village name' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _talukaController,
+                label: 'Taluka Name',
+                prefixIcon: Icons.landscape_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter taluka name' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _districtController,
+                label: 'District Name',
+                prefixIcon: Icons.location_on_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter district name' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _stateController,
+                label: 'State Name',
+                prefixIcon: Icons.map_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter state name' : null,
+              ),
+
+              const SizedBox(height: 16),
+              _buildTextField(
+                controller: _countryController,
+                label: 'Country Name',
+                prefixIcon: Icons.public_outlined,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter country name' : null,
+              ),
+
+              const SizedBox(height: 32),
+
+              // Navigation to Farm Information
+              Center(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(AppRoutes.farmInformation);
+                  },
+                  icon: const Icon(Icons.agriculture_outlined),
+                  label: const Text('Farm Information'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(200, 50),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _saveProfile,
+                  style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
+                    backgroundColor: WidgetStateProperty.all(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                    foregroundColor: WidgetStateProperty.all(Colors.white),
+                    minimumSize: const WidgetStatePropertyAll(Size(double.infinity, 56)),
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppTypography.radiusMedium),
+                      ),
+                    ),
+                  ),
+                  child: const Text('Update Profile'),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -223,6 +341,8 @@ class _ProfilePageState extends State<ProfilePage> {
     _districtController.dispose();
     _stateController.dispose();
     _countryController.dispose();
+
+    // Note: We don't dispose the user repository as it's managed by the App widget
 
     super.dispose();
   }
@@ -269,42 +389,68 @@ class _ProfilePageState extends State<ProfilePage> {
     return emailRegex.hasMatch(email);
   }
 
-  void _saveProfile() {
+  Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
-      // Save profile data - this would typically be integrated with your backend
-      // For now, just showing a success message
+      // Show loading state
+      setState(() {
+        _isLoading = true;
+      });
 
-      // Create a formatted string with all profile data
-      final profileData =
-          '''
-Personal Details:
-- Name: ${_nameController.text}
-- Phone: ${_phoneController.text}
-- Email: ${_emailController.text}
-- Form Name: ${_formNameController.text}
+      try {
+        // Prepare profile data for API
+        final profileData = {
+          'name': _nameController.text,
+          'phone_number': _phoneController.text,
+          'email': _emailController.text,
+          'farm_name': _formNameController.text,
+          'address': _doorNumberController.text,
+          'pincode': _pincodeController.text,
+          'village': _villageController.text,
+          'taluka': _talukaController.text,
+          'district': _districtController.text,
+          'state': _stateController.text,
+          'country': _countryController.text,
+        };
 
-Address:
-- Door Number: ${_doorNumberController.text}
-- Pincode: ${_pincodeController.text}
-- Village: ${_villageController.text}
-- Taluka: ${_talukaController.text}
-- District: ${_districtController.text}
-- State: ${_stateController.text}
-- Country: ${_countryController.text}
-''';
+        // Call the API to update user profile
+        final updatedUserResponse = await _userRepository.updateUserProfile(profileData);
 
-      // Display a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profile updated successfully'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
+        // Display success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Profile updated successfully'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
 
-      // For debugging - print the data to console
-      // In a real app, you would send this data to your backend
-      AppLogger.info(profileData);
+        // Log success for debugging
+        AppLogger.info('Profile updated successfully for user: ${updatedUserResponse.name}');
+
+      } catch (e) {
+        // Display error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to update profile: $e'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
+
+        // Log error for debugging
+        AppLogger.error('Failed to update profile: $e');
+      } finally {
+        // Hide loading state
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 }

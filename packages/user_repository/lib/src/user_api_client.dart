@@ -27,13 +27,33 @@ abstract class UserApiClient {
   /// * [token] - The authorization header with Bearer token
   ///
   /// **Returns:**
-  /// A raw Map response containing the user's profile information.
+  /// A raw response containing the user's profile information.
   ///
   /// **Throws:**
   /// * [DioException] if the request fails or token is invalid
   @GET('/get_user_by_id/{userId}')
-  Future<Map<String, dynamic>> getCurrentUser(
+  Future<HttpResponse<dynamic>> getCurrentUser(
     @Path('userId') int userId,
     @Header('Authorization') String token,
+  );
+
+  /// Updates the current user's profile information.
+  ///
+  /// Requires a valid authentication token in the format "Bearer <token>".
+  ///
+  /// **Endpoint:** PUT /user/profile
+  /// **Parameters:**
+  /// * [token] - The authorization header with Bearer token
+  /// * [data] - The user profile data to update
+  ///
+  /// **Returns:**
+  /// A raw response containing the updated user's profile information.
+  ///
+  /// **Throws:**
+  /// * [DioException] if the request fails or token is invalid
+  @PUT('/user/profile')
+  Future<HttpResponse<dynamic>> updateUserProfile(
+    @Header('Authorization') String token,
+    @Body() Map<String, dynamic> data,
   );
 }

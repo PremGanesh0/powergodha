@@ -39,7 +39,7 @@ class OtpVerificationPage extends StatelessWidget {
             authenticationRepository: context.read<AuthenticationRepository>(),
             phoneNumber: phoneNumber,
             userId: userId,
-            otp: otp,
+            // otp: otp,
           ),
           child: const OtpVerificationForm(),
         ),

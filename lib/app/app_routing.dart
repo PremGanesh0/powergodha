@@ -19,7 +19,7 @@
 /// ```
 library;
 
-import 'package:powergodha/app/app_routing.dart' show AppRoutes;
 import 'package:powergodha/app/app_routes.dart' show AppRoutes;
+import 'package:powergodha/app/app_routing.dart' show AppRoutes;
 
 export 'app_routes.dart';

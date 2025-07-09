@@ -7,6 +7,8 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:powergodha/app/app.dart';
+import 'package:powergodha/app/app_logger_config.dart';
+import 'package:powergodha/shared/api/api_client.dart';
 
 /// {@template app_restarter}
 /// A utility widget that restarts the app with a new locale.
@@ -41,12 +43,17 @@ class AppRestarter extends StatelessWidget {
   final Locale locale;
 
   /// Optional initial route to navigate to after restart
-  /// If not provided, the app will follow its normal navigation flow
   final String? initialRoute;
 
   @override
   Widget build(BuildContext context) {
-    // Restart the app with the root App widget, which will use the new locale
+    // Log restart information
+    AppLogger.info('AppRestarter: Restarting app with locale: ${locale.languageCode}${initialRoute != null ? ', route: $initialRoute' : ''}');
+
+    // Make sure ApiClient knows about the language change
+    ApiClient.notifyLanguageChanged();
+
+    // Create new App instance with the new locale
     return App(
       initialLocale: locale,
       initialRoute: initialRoute,

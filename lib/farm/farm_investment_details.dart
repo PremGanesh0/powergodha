@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:powergodha/app/logger_config.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 
 /// Farm Investment Details page for tracking farm equipment and infrastructure investments
 class FarmInvestmentDetailsPage extends StatefulWidget {

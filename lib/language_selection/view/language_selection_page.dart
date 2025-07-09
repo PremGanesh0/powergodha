@@ -13,10 +13,12 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:powergodha/app/app_restarter.dart';
+import 'package:powergodha/app/app.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/app/app_routes.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
 import 'package:powergodha/shared/app_strings.dart';
+import 'package:powergodha/shared/auth_interceptor.dart';
 import 'package:powergodha/shared/localization_service.dart';
 
 /// {@template language_selection_page}
@@ -330,19 +332,37 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage>
         );
       }
 
-      // Wait briefly to show the message
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-
       if (mounted) {
         // Force rebuild the app with the new locale
         final newLocale = Locale(_selectedLanguage!);
 
-        // Use our AppRestarter to force rebuild the app with the new locale
-        // and navigate directly to the login screen, skipping the splash delay
-        runApp(AppRestarter(
-          locale: newLocale,
-          initialRoute: AppRoutes.login,
-        ));
+        // Log that we're restarting due to a language change
+        AppLogger.info('Language changed to: ${_selectedLanguage!}, restarting app...');
+
+        // Check if we have tokens to determine where to navigate after restart
+        final hasTokens = await AuthInterceptor.hasTokensInStorage();
+
+        // ALWAYS go to Home if user has tokens, otherwise Login
+        final initialRoute = hasTokens ? AppRoutes.home : AppRoutes.login;
+
+        AppLogger.info(
+          'Language selection: hasTokens=$hasTokens, navigating to $initialRoute after restart',
+        );
+
+        // Clean restart approach using proper app restart
+        AppLogger.info(
+          'Restarting app with new locale: ${newLocale.languageCode} and route: $initialRoute',
+        );
+
+        // Instead of creating a new widget tree, restart at the root level
+        // This ensures complete cleanup of the previous widget tree
+        final navigator = Navigator.of(context, rootNavigator: true);
+        navigator.pushAndRemoveUntil(
+          MaterialPageRoute<void>(
+            builder: (context) => App(initialLocale: newLocale, initialRoute: initialRoute),
+          ),
+          (route) => false, // Remove ALL routes including the root
+        );
       }
     } catch (e) {
       // Handle error

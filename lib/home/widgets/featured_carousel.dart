@@ -1,10 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:powergodha/app/app_routes.dart';
+import 'package:powergodha/home/bloc/bloc.dart';
 import 'package:powergodha/shared/theme.dart';
 
-/// A carousel slider widget displaying featured content
+/// A carousel slider widget displaying featured content from the API
 class FeaturedCarousel extends StatefulWidget {
   /// Creates a featured carousel widget
   const FeaturedCarousel({super.key});
@@ -16,90 +18,106 @@ class FeaturedCarousel extends StatefulWidget {
 class _FeaturedCarouselState extends State<FeaturedCarousel> {
   int _currentIndex = 0;
 
-  // Sample carousel items - replace with actual data from your backend
-  final List<Map<String, String>> _items = [
-    {
-      'image': 'assets/app_logo.png',
-      'title': 'Welcome to PowerGodha',
-      'subtitle': 'Modern livestock management system',
-      'route': AppRoutes.home,
-    },
-    {
-      'image': 'assets/app_logo.png',
-      'title': 'Daily Records',
-      'subtitle': 'Track your livestock performance',
-      'route': AppRoutes.home,
-    },
-    {
-      'image': 'assets/app_logo.png',
-      'title': 'Analytics Dashboard',
-      'subtitle': 'View your farm analytics',
-      'route': AppRoutes.home,
-    },
-    {
-      'image': 'assets/app_logo.png',
-      'title': 'Milk Production',
-      'subtitle': 'Track milk yields and quality',
-      'route': AppRoutes.home,
-    },
-    {
-      'image': 'assets/app_logo.png',
-      'title': 'Vaccination Schedule',
-      'subtitle': 'Keep your livestock healthy',
-      'route': AppRoutes.home,
-    },
-    {
-      'image': 'assets/app_logo.png',
-      'title': 'Market Updates',
-      'subtitle': 'Latest livestock market trends',
-      'route': AppRoutes.home,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            SizedBox(
-              height: 200.0.h,
-              width: double.infinity,
-              child: CarouselSlider(
-                items: _items.map((item) => _buildCarouselItem(context, item)).toList(),
-                options: CarouselOptions(
-                  scrollDirection: Axis.vertical,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.99,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                ),
-              ),
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        // Use API data if available, otherwise fallback to static data
+        final items = state.sliderArticles.isNotEmpty 
+            ? state.sliderArticles 
+            : _getFallbackItems();
+
+        if (items.isEmpty) {
+          return const SizedBox(
+            height: 200,
+            child: Center(
+              child: CircularProgressIndicator(),
             ),
-            const SizedBox(height: AppTypography.space16),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _buildPageIndicator(),
-              ),
+          );
+        }
+
+        return Column(
+          children: [
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                SizedBox(
+                  height: 200.0.h,
+                  width: double.infinity,
+                  child: CarouselSlider(
+                    items: items.map((item) => _buildCarouselItem(context, item)).toList(),
+                    options: CarouselOptions(
+                      scrollDirection: Axis.vertical,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      viewportFraction: 0.99,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppTypography.space16),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: _buildPageIndicator(items.length),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
+  // Get fallback items when API data is not available
+  List<Map<String, dynamic>> _getFallbackItems() {
+    return [
+      {
+        'name': 'Welcome to PowerGodha',
+        'subtitle': 'Modern livestock management system',
+        'image': 'assets/app_logo.png',
+        'web_url': 'app_navigation',
+      },
+      {
+        'name': 'Daily Records',
+        'subtitle': 'Track your livestock performance',
+        'image': 'assets/app_logo.png',
+        'web_url': 'app_navigation',
+      },
+      {
+        'name': 'Analytics Dashboard',
+        'subtitle': 'View your farm analytics',
+        'image': 'assets/app_logo.png',
+        'web_url': 'app_navigation',
+      },
+    ];
+  }
+
   // Build a single carousel item with overlay text
-  Widget _buildCarouselItem(BuildContext context, Map<String, String> item) {
+  Widget _buildCarouselItem(BuildContext context, Map<String, dynamic> item) {
+    // Handle both API data structure and fallback structure
+    final title = (item['name'] ?? item['title'] ?? 'PowerGodha').toString();
+    final subtitle = (item['subtitle'] ?? 'Livestock Management').toString();
+    final imageUrl = (item['image'] ?? item['thumbnail'] ?? 'assets/app_logo.png').toString();
+    final webUrl = (item['web_url'] ?? 'app_navigation').toString();
+
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(item['route']!);
+        // Handle different web_url actions
+        if (webUrl.contains('app') || webUrl == 'app_navigation') {
+          Navigator.of(context).pushNamed(AppRoutes.home);
+        } else {
+          // For external links, could open browser or show more info
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Action: $webUrl')),
+          );
+        }
       },
       child: Container(
         width: double.infinity,
@@ -119,12 +137,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
             // Background image
             ClipRRect(
               borderRadius: BorderRadius.circular(AppTypography.radiusMedium),
-              child: Image.asset(
-                item['image']!,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
+              child: _buildImage(imageUrl),
             ),
             // Overlay gradient for better text readability
             Container(
@@ -146,7 +159,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item['title']!,
+                    title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -156,10 +169,10 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    item['subtitle']!,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.white.withOpacity(0.9)),
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.white.withOpacity(0.9),
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -172,10 +185,51 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
     );
   }
 
+  // Build image widget that handles both network and asset images
+  Widget _buildImage(String imageUrl) {
+    if (imageUrl.startsWith('http')) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Image.asset(
+            'assets/app_logo.png',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          );
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return ColoredBox(
+            color: Colors.grey.shade200,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      return Image.asset(
+        imageUrl,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+  }
+
   // Build page indicator dots at the bottom
-  List<Widget> _buildPageIndicator() {
+  List<Widget> _buildPageIndicator(int itemCount) {
     return List<Widget>.generate(
-      _items.length,
+      itemCount,
       (index) => Container(
         width: 8,
         height: 8,

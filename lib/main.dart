@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:powergodha/app/app.dart';
-import 'package:powergodha/app/logger_config.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 
 /// The main entry point of the PowerGodha application.
 ///

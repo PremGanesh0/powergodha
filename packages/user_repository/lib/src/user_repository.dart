@@ -220,6 +220,87 @@ class UserRepository {
     return await getUser();
   }
 
+  /// Gets the raw user response from the API.
+  ///
+  /// This method returns the complete user response including all address fields.
+  /// It's useful when you need access to all user data including address information.
+  ///
+  /// **Returns:** [UserResponse] with complete user data
+  /// **Throws:** [UserRepositoryException] if the API call fails
+  Future<UserResponse> getUserResponse() async {
+    return await _fetchUserFromApi();
+  }
+
+  /// Updates the current user's profile information.
+  ///
+  /// This method sends the updated user data to the server and updates
+  /// the local cache upon successful completion.
+  ///
+  /// **Parameters:**
+  /// * [profileData] - Map containing updated profile data
+  ///
+  /// **Returns:** [UserResponse] object with updated data from server
+  /// **Throws:** [UserRepositoryException] if update fails
+  ///
+  /// **Usage:**
+  /// ```dart
+  /// final profileData = {
+  ///   'name': 'Updated Name',
+  ///   'email': 'updated@email.com',
+  ///   'phone_number': '1234567890',
+  ///   'farm_name': 'Updated Farm',
+  ///   'address': 'Updated Address',
+  ///   'pincode': '123456',
+  ///   'village': 'Updated Village',
+  ///   'taluka': 'Updated Taluka',
+  ///   'district': 'Updated District',
+  ///   'state': 'Updated State',
+  ///   'country': 'Updated Country',
+  /// };
+  ///
+  /// final result = await userRepository.updateUserProfile(profileData);
+  /// ```
+  Future<UserResponse> updateUserProfile(Map<String, dynamic> profileData) async {
+    try {
+      final accessToken = _authenticationRepository.currentAccessToken;
+      
+      if (accessToken == null) {
+        throw const UserRepositoryException('No access token available');
+      }
+
+      // Call the API to update user profile
+      final httpResponse = await _apiClient.updateUserProfile('Bearer $accessToken', profileData);
+      final rawResponse = httpResponse.data as Map<String, dynamic>;
+      
+      // Extract data from response (might be wrapped in a 'data' field)
+      final userData = rawResponse['data'] as Map<String, dynamic>? ?? rawResponse;
+      final userResponse = UserResponse.fromJson(userData);
+      
+      // Update the cached user data
+      final updatedUser = User.fromUserResponse(
+        id: userResponse.id,
+        username: userResponse.username,
+        email: userResponse.email,
+        firstName: userResponse.firstName,
+        lastName: userResponse.lastName,
+        gender: userResponse.gender,
+        image: userResponse.image,
+        farmName: userResponse.farmName,
+      );
+      
+      _cachedUser = updatedUser;
+      
+      return userResponse;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw const UserRepositoryException('Authentication failed - token expired');
+      }
+      throw UserRepositoryException('Failed to update user profile: ${e.message ?? "Unknown error"}');
+    } catch (e) {
+      throw UserRepositoryException('Failed to update user profile: ${e.toString()}');
+    }
+  }
+
   /// Updates the current user's profile information.
   ///
   /// This method would be used to update user profile data on the server.
@@ -279,7 +360,8 @@ class UserRepository {
 
     try {
       // Use the API client with user ID and token
-      final rawResponse = await _apiClient.getCurrentUser(currentUser.id, 'Bearer $accessToken');
+      final httpResponse = await _apiClient.getCurrentUser(currentUser.id, 'Bearer $accessToken');
+      final rawResponse = httpResponse.data as Map<String, dynamic>;
 
       // Extract data from response (might be wrapped in a 'data' field)
       final userData = rawResponse['data'] as Map<String, dynamic>? ?? rawResponse;
@@ -329,7 +411,6 @@ class UserRepository {
       throw UserRepositoryException('Failed to fetch user data: ${e.toString()}');
     }
   }
-
 
 }
 

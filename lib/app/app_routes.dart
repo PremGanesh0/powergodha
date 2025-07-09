@@ -24,22 +24,20 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:powergodha/dashboard/buffalo_details_page.dart';
-import 'package:powergodha/dashboard/cow_details_page.dart';
-import 'package:powergodha/dashboard/dashboard.dart';
 import 'package:powergodha/farm/farm.dart';
 import 'package:powergodha/forgot_password/view/forgot_password_page.dart';
-import 'package:powergodha/home/view/help/how_to_use_app.dart';
+import 'package:powergodha/home/view/help/how_to_use_app_api.dart';
 import 'package:powergodha/home/view/home_page.dart';
-import 'package:powergodha/home/view/info/about_app_page.dart';
-import 'package:powergodha/home/view/info/about_us_page.dart';
-import 'package:powergodha/home/view/info/contact_us_page.dart';
+import 'package:powergodha/home/view/info/about_app_page_api.dart';
+import 'package:powergodha/home/view/info/about_us_page_api.dart';
+import 'package:powergodha/home/view/info/contact_us_page_api.dart';
 import 'package:powergodha/language_selection/language_selection.dart';
 import 'package:powergodha/login/view/login_page.dart';
 import 'package:powergodha/otp_verification/view/otp_verification_page.dart';
 import 'package:powergodha/profile/profile.dart';
 import 'package:powergodha/records_reports/daily_records.dart';
 import 'package:powergodha/records_reports/reports.dart';
+import 'package:powergodha/dashboard/pages/dashboard.dart';
 import 'package:powergodha/signup/view/signup_page.dart';
 import 'package:powergodha/splash/view/splash_page.dart';
 
@@ -137,7 +135,11 @@ abstract final class AppRoutes {
         final phoneNumber = args?['phoneNumber'] as String? ?? '';
         final userId = args?['userId'] as int? ?? 0;
         final otp = args?['otp'] as String? ?? '';
-        return OtpVerificationPage.route(phoneNumber: phoneNumber, userId: userId, otp: otp);
+        return OtpVerificationPage.route(
+          phoneNumber: phoneNumber,
+          userId: userId,
+          otp: otp,
+        );
       case forgotPassword:
         return ForgotPasswordPage.route();
       case home:
@@ -170,10 +172,7 @@ abstract final class AppRoutes {
         return DailyRecordsPage.route();
       case dashboard:
         return DashboardPage.route();
-      case cowDetails:
-        return CowDetailsPage.route();
-      case buffaloDetails:
-        return BuffaloDetailsPage.route();
+
       default:
         // Fallback to splash page for unknown routes
         return MaterialPageRoute<dynamic>(

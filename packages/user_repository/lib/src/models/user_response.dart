@@ -6,6 +6,9 @@
 library;
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:user_repository/src/models/models.dart' show User;
+import 'package:user_repository/src/models/user.dart' show User;
+import 'package:user_repository/user_repository.dart' show User;
 
 part 'user_response.g.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/app/app_routes.dart';
-import 'package:powergodha/app/logger_config.dart';
 import 'package:powergodha/shared/theme.dart';
 
 /// Farm Information page for collecting farm details and investment information
