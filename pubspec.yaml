@@ -1,0 +1,72 @@
+name: powergodha
+description: "A new Flutter project."
+publish_to: "none"
+version: 1.0.0+1
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  authentication_repository:
+    path: packages/authentication_repository
+  bloc: ^9.0.0
+  carousel_slider: ^5.1.1
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  equatable: ^2.0.0
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.0
+  flutter_localizations:
+    sdk: flutter
+  flutter_native_splash: ^2.4.6
+  flutter_screenutil: ^5.9.3
+  formz: ^0.8.0
+  google_fonts: ^6.1.0
+  intl: ^0.20.2
+  logger: ^2.6.0
+  package_info_plus: ^8.3.0
+  path_provider: ^2.1.4
+  shared_preferences: ^2.3.2
+  user_repository:
+    path: packages/user_repository
+
+dev_dependencies:
+  bloc_lint: ^0.2.0-dev.0
+  bloc_test: ^10.0.0
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.0
+  very_good_analysis: ^5.1.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  # Add assets section to include images
+  assets:
+    - assets/
+    - assets/icons/
+
+flutter_native_splash:
+  # For a smaller icon size, create a smaller image asset (e.g., app_logo.png)
+  # and reference it here instead of using the original app_logo.png
+  color: "#FFFFFF"
+  image: assets/app_logo.png # Use your smaller logo image
+  image_dark: assets/app_logo.png # Use your smaller logo image
+
+  android_12:
+    # The image parameter sets the splash screen icon image
+    image: assets/app_logo.png # Use your smaller logo image
+    # App icon with an icon background: 960×960 pixels, within circle 640 pixels diameter
+    # App icon without an icon background: 1152×1152 pixels, within circle 768 pixels diameter
+    # For a smaller appearance, create a smaller image with more padding around it
+    image_dark: assets/app_logo.png # Use your smaller logo image
+    icon_background_color: "#FFFFFF"
+    icon_background_color_dark: "#FFFFFF"
+
+  ios: true
+  web: false
+  android_gravity: center
+  ios_content_mode: center
+  fullscreen: true

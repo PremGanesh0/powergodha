@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Generate Localizations",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"gen-l10n"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Flutter: Pub Get",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"get"
+			],
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}
