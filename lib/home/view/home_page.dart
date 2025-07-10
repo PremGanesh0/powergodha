@@ -31,6 +31,7 @@
 library;
 
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:floating_draggable_widget/floating_draggable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -157,201 +158,303 @@ class _HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
 
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        drawer: const AppDrawer(),
-        appBar: AppBar(
-          title: Text(localizations?.appTitle ?? 'PowerGodha'),
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              tooltip: 'Search',
-              onPressed: () {
-                // TODO: Navigate to search
-              },
-            ),
-            BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                return _NotificationButton(
-                  notificationCount: state.notificationCount,
-                  onPressed: () {
-                    // TODO: Navigate to notifications
-                  },
-                );
-              },
-            ),
-            // IconButton(
-            //   icon: const Icon(Icons.refresh),
-            //   tooltip: 'Refresh',
-            //   onPressed: () {
-            //     context.read<HomeBloc>().add(const RefreshHomeData());
-            //   },
-            // ),
-          ],
+    return FloatingDraggableWidget(
+      floatingWidget: GestureDetector(
+        onTap: () {
+          // Show a bottom sheet with quick actions when tapped
+          _showQuickActionsBottomSheet(context);
+        },
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Icon(Icons.add, color: Colors.white, size: 24),
         ),
-        body: BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state) {
-            if (state.status == HomeStatus.loading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      ),
+      floatingWidgetWidth: 60,
+      floatingWidgetHeight: 60,
+      dx: MediaQuery.of(context).size.width - 80, // Initial position from left
+      dy: MediaQuery.of(context).size.height / 2, // Initial position from top
+      mainScreenWidget: SafeArea(
+        top: false,
+        child: Scaffold(
+          drawer: const AppDrawer(),
+          appBar: AppBar(
+            title: Text(localizations?.appTitle ?? 'PowerGodha'),
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                tooltip: 'Search',
+                onPressed: () {
+                  // TODO: Navigate to search
+                },
+              ),
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  return _NotificationButton(
+                    notificationCount: state.notificationCount,
+                    onPressed: () {
+                      // TODO: Navigate to notifications
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+          body: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              if (state.status == HomeStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (state.status == HomeStatus.error) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Error loading data',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      state.errorMessage ?? 'An unknown error occurred',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        context.read<HomeBloc>().add(const RefreshHomeData());
-                      },
-                      child: const Text('Try Again'),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<HomeBloc>().add(const RefreshHomeData());
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTypography.space8),
+              if (state.status == HomeStatus.error) {
+                return Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // FormName section
-                      const _FormName(),
-                      const SizedBox(height: AppTypography.space16),
-
-                      // Quick actions
-                      _QuickActions(
-                        actions: [
-                          QuickAction(
-                            icon: 'assets/icons/record_milk.png',
-                            label: 'Reports',
-                            onPressed: () {
-                              Navigator.of(
-                                context,
-                              ).pushNamed(AppRoutes.reports);
-                            },
-                          ),
-                          QuickAction(
-                            icon: 'assets/icons/record_milk.png',
-                            label: 'ORB',
-                            onPressed: () {
-                              Navigator.of(
-                                context,
-                              ).pushNamed(AppRoutes.dailyRecords);
-                            },
-                          ),
-                          QuickAction(
-                            icon: 'assets/icons/record_milk.png',
-                            label: 'Premium',
-                            onPressed: () {
-                              // Navigator.of(
-                              //   context,
-                              // ).pushNamed(AppRoutes.profile);
-                            },
-                          ),
-                          QuickAction(
-                            icon: 'assets/icons/record_milk.png',
-                            label: 'Dashboard',
-                            onPressed: () {
-                              Navigator.of(
-                                context,
-                              ).pushNamed(AppRoutes.dashboard);
-                            },
-                          ),
-                        ],
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.error,
                       ),
-                      const SizedBox(height: AppTypography.space16),
-
-                      // Featured Carousel Slider
-                      const FeaturedCarousel(),
-                      const SizedBox(height: AppTypography.space16),
-
-                      // Record information card
-                      RecordInfoCard(profitLossReport: state.profitLossReport),
-
-                      FittedBox(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: _QuickActions(
-                            actions: [
-                              QuickAction(
-                                icon: 'assets/icons/offers.png',
-                                label: 'Offers',
-                                onPressed: () {
-                                  // Navigate to offers
-                                },
-                              ),
-                              QuickAction(
-                                icon:
-                                    'assets/icons/profitable_dairy_farming.png',
-                                label: 'Profitable\nDairy Farming',
-                                onPressed: () {
-                                  // Navigate to analytics
-                                },
-                              ),
-                              QuickAction(
-                                icon: 'assets/icons/backyard_poultry.png',
-                                label: 'Backyar\nPoultry',
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).pushNamed(AppRoutes.profile);
-                                },
-                              ),
-                              QuickAction(
-                                icon: 'assets/icons/goat_farming.png',
-                                label: 'Goat \n Farming',
-                                onPressed: () {
-                                  // Navigate to help
-                                },
-                              ),
-                              QuickAction(
-                                icon: 'assets/icons/record_milk.png',
-                                label: 'Record Milk',
-                                onPressed: () {
-                                  // Navigator.of(
-                                  //   context,
-                                  // ).pushNamed(AppRoutes.record);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(height: 16),
+                      Text('Error loading data', style: Theme.of(context).textTheme.headlineSmall),
+                      const SizedBox(height: 8),
+                      Text(
+                        state.errorMessage ?? 'An unknown error occurred',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<HomeBloc>().add(const RefreshHomeData());
+                        },
+                        child: const Text('Try Again'),
                       ),
                     ],
                   ),
+                );
+              }
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<HomeBloc>().add(const RefreshHomeData());
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppTypography.space8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // FormName section
+                        const _FormName(),
+                        const SizedBox(height: AppTypography.space16),
+
+                        // Quick actions
+                        _QuickActions(
+                          actions: [
+                            QuickAction(
+                              icon: 'assets/icons/record_milk.png',
+                              label: 'Reports',
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(AppRoutes.reports);
+                              },
+                            ),
+                            QuickAction(
+                              icon: 'assets/icons/record_milk.png',
+                              label: 'ORB',
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(AppRoutes.dailyRecords);
+                              },
+                            ),
+                            QuickAction(
+                              icon: 'assets/icons/record_milk.png',
+                              label: 'Premium',
+                              onPressed: () {
+                                // Navigator.of(
+                                //   context,
+                                // ).pushNamed(AppRoutes.profile);
+                              },
+                            ),
+                            QuickAction(
+                              icon: 'assets/icons/record_milk.png',
+                              label: 'Dashboard',
+                              onPressed: () {
+                                Navigator.of(context).pushNamed(AppRoutes.dashboard);
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppTypography.space16),
+
+                        // Featured Carousel Slider
+                        const FeaturedCarousel(),
+                        const SizedBox(height: AppTypography.space16),
+
+                        // Record information card
+                        RecordInfoCard(profitLossReport: state.profitLossReport),
+
+                        FittedBox(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: _QuickActions(
+                              actions: [
+                                QuickAction(
+                                  icon: 'assets/icons/offers.png',
+                                  label: 'Offers',
+                                  onPressed: () {
+                                    // Navigate to offers
+                                  },
+                                ),
+                                QuickAction(
+                                  icon: 'assets/icons/profitable_dairy_farming.png',
+                                  label: 'Profitable\nDairy Farming',
+                                  onPressed: () {
+                                    // Navigate to analytics
+                                  },
+                                ),
+                                QuickAction(
+                                  icon: 'assets/icons/backyard_poultry.png',
+                                  label: 'Backyar\nPoultry',
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(AppRoutes.profile);
+                                  },
+                                ),
+                                QuickAction(
+                                  icon: 'assets/icons/goat_farming.png',
+                                  label: 'Goat \n Farming',
+                                  onPressed: () {
+                                    // Navigate to help
+                                  },
+                                ),
+                                QuickAction(
+                                  icon: 'assets/icons/record_milk.png',
+                                  label: 'Record Milk',
+                                  onPressed: () {
+                                    // Navigator.of(
+                                    //   context,
+                                    // ).pushNamed(AppRoutes.record);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
+    );
+  }
+
+  /// Builds a chip-style quick action button
+  Widget _buildQuickActionChip(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return ActionChip(
+      avatar: Icon(icon, size: 18),
+      label: Text(label),
+      onPressed: onPressed,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer,
+      ),
+    );
+  }
+
+  /// Shows a bottom sheet with quick action buttons when the floating widget is tapped
+  void _showQuickActionsBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text('Quick Actions', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.report,
+                    label: 'Reports',
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed(AppRoutes.reports);
+                    },
+                  ),
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.dashboard,
+                    label: 'Dashboard',
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed(AppRoutes.dashboard);
+                    },
+                  ),
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.analytics,
+                    label: 'Daily Records',
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed(AppRoutes.dailyRecords);
+                    },
+                  ),
+                  _buildQuickActionChip(
+                    context,
+                    icon: Icons.person,
+                    label: 'Profile',
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed(AppRoutes.profile);
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
     );
   }
 }

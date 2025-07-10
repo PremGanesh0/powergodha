@@ -33,6 +33,7 @@ dependencies:
   # Retrofit-style API client dependencies
   retrofit: ^4.4.1
   json_annotation: ^4.9.0
+  floating_draggable_widget: ^2.3.0
 
 dev_dependencies:
   bloc_lint: ^0.2.0-dev.0
