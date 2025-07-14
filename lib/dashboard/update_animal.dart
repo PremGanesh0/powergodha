@@ -298,4 +298,6 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
       await _loadAnimalNumbers(AnimalType.buffalo);
     }
   }
+
+
 }

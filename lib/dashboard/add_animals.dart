@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:powergodha/animal/animal_type_utils.dart';
+import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/shared/enums.dart';
 
 class AddAnimal extends StatefulWidget {
   const AddAnimal({super.key});
 
+  @override
+  State<AddAnimal> createState() => _AddAnimalState();
+
   static Route<void> route() {
     return MaterialPageRoute<void>(builder: (context) => const AddAnimal());
   }
-
-  @override
-  State<AddAnimal> createState() => _AddAnimalState();
 }
 
 class _AddAnimalState extends State<AddAnimal> {
-  String? selectedAnimal;
+  AnimalType _selectedAnimal = AnimalType.cow;
   String? selectedBreed;
   String? selectedSex;
   String? buffaloOrCalf;
@@ -26,7 +30,6 @@ class _AddAnimalState extends State<AddAnimal> {
   final _weightController = TextEditingController();
   final _dobController = TextEditingController();
 
-  final List<String> animals = ['Cow', 'Buffalo', 'Goat', 'Hen'];
   final List<String> breeds = [
     'Bhadawari',
     'Jaffarbadi',
@@ -86,8 +89,41 @@ class _AddAnimalState extends State<AddAnimal> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 10),
+
+                  // // Animal dropdown
+                  // Container(
+                  //   width: double.infinity,
+                  //   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.grey[200],
+                  //     borderRadius: BorderRadius.circular(8.r),
+                  //   ),
+                  //   child: DropdownButtonHideUnderline(
+                  //     child: DropdownButton<AnimalType>(
+                  //       value: __selectedAnimal,
+                  //       isExpanded: true,
+                  //       style: TextStyle(fontSize: 16.sp, color: Colors.black87),
+                  //       onChanged: (AnimalType? newValue) {
+                  //         if (newValue != null) {
+                  //           setState(() {
+                  //             __selectedAnimal = newValue;
+                  //           });
+                  //         }
+                  //       },
+                  //       items: _availableAnimals.map<DropdownMenuItem<AnimalType>>((
+                  //         AnimalType value,
+                  //       ) {
+                  //         return DropdownMenuItem<AnimalType>(
+                  //           value: value,
+                  //           child: Text(value.displayName),
+                  //         );
+                  //       }).toList(),
+                  //     ),
+                  //   ),
+                  // ),
+
                   DropdownButtonFormField<String>(
-                    value: selectedAnimal,
+                    value: _selectedAnimal.toString(),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.grey[200],
@@ -95,20 +131,21 @@ class _AddAnimalState extends State<AddAnimal> {
                         borderSide: BorderSide.none,
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                     ),
                     hint: const Text('Select Animal'),
-                    items: animals.map((animal) {
-                      return DropdownMenuItem(
-                        value: animal,
-                        child: Text(animal),
+                    items: AnimalType.values.map((animal) {
+                      return DropdownMenuItem<String>(
+                        value: animal.toString(),
+                        child: Text(animal.displayName),
                       );
                     }).toList(),
                     onChanged: (val) {
                       setState(() {
-                        selectedAnimal = val;
+                        _selectedAnimal = AnimalType.values.firstWhere(
+                          (element) => element.toString() == val,
+                          orElse: () => AnimalType.cow,
+                        );
                       });
 
                       // 👇 Show "Coming Soon" popup for Goat or Hen
@@ -123,16 +160,10 @@ class _AddAnimalState extends State<AddAnimal> {
                             duration: const Duration(milliseconds: 800),
                             // Short duration
                             behavior: SnackBarBehavior.floating,
-                            margin: const EdgeInsets.only(
-                              bottom: 20,
-                              left: 100,
-                              right: 100,
-                            ),
+                            margin: const EdgeInsets.only(bottom: 20, left: 100, right: 100),
                             // Bottom center
                             backgroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           );
 
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -142,15 +173,12 @@ class _AddAnimalState extends State<AddAnimal> {
                   ),
 
                   // 👇 Conditionally render form for Cow or Buffalo
-                  if (selectedAnimal == 'Cow' ||
-                      selectedAnimal == 'Buffalo') ...[
+                  if (_selectedAnimal == AnimalType.cow ||
+                      _selectedAnimal == AnimalType.buffalo) ...[
                     const SizedBox(height: 10),
                     const Text(
                       'Basic Details',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     Text(
                       'Provide birth and population details of animals at your farm by answering questions below',
@@ -175,7 +203,7 @@ class _AddAnimalState extends State<AddAnimal> {
                     ),
                     const SizedBox(height: 20),
 
-                    if (selectedAnimal == 'Buffalo')
+                    if (_selectedAnimal == AnimalType.buffalo)
                       _RadioOptions(
                         question: 'Is it a Buffalo or calf?',
                         type1: 'Buffalo',
@@ -187,7 +215,7 @@ class _AddAnimalState extends State<AddAnimal> {
                           });
                         },
                       ),
-                    if (selectedAnimal == 'Cow')
+                    if (_selectedAnimal == AnimalType.cow)
                       _RadioOptions(
                         question: 'Is it a Cow or calf?',
                         type1: 'Cow',
@@ -246,6 +274,11 @@ class _AddAnimalState extends State<AddAnimal> {
                     _TextFieldOption(
                       question: 'Purchase price of the Animal',
                       controller: _purchasePriceController,
+                      // input should be numeric
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     _TextFieldOption(
@@ -263,15 +296,10 @@ class _AddAnimalState extends State<AddAnimal> {
                           borderSide: BorderSide.none,
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                       ),
                       items: breeds.map((breed) {
-                        return DropdownMenuItem(
-                          value: breed,
-                          child: Text(breed),
-                        );
+                        return DropdownMenuItem(value: breed, child: Text(breed));
                       }).toList(),
                       onChanged: (val) {
                         selectedBreed = val;
@@ -281,10 +309,8 @@ class _AddAnimalState extends State<AddAnimal> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                        ),
+                        onPressed: _submitAnimalData,
+                        style: ElevatedButton.styleFrom(foregroundColor: Colors.white),
                         child: const Text('Submit'),
                       ),
                     ),
@@ -299,6 +325,15 @@ class _AddAnimalState extends State<AddAnimal> {
     );
   }
 
+  @override
+  void dispose() {
+    _animalNumberController.dispose();
+    _purchasePriceController.dispose();
+    _weightController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
+
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -311,54 +346,71 @@ class _AddAnimalState extends State<AddAnimal> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dobController.text =
-            '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}';
+        _dobController.text = '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}';
       });
     }
   }
-}
 
-class _TextFieldOption extends StatelessWidget {
-  const _TextFieldOption({
-    required this.question,
-    this.controller,
-    this.icon,
-    this.onIconTap,
-  });
+  Future<void> _submitAnimalData() async {
+    if (selectedBreed == null ||
+        selectedSex == null ||
+        buffaloOrCalf == null ||
+        selectedPregnant == null ||
+        selectedLactating == null ||
+        selectedOwnDairy == null ||
+        _animalNumberController.text.isEmpty ||
+        _purchasePriceController.text.isEmpty ||
+        _weightController.text.isEmpty ||
+        _dobController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      return;
+    }
 
-  final String question;
-  final Icon? icon;
-  final VoidCallback? onIconTap;
-  final TextEditingController? controller;
+    // // Here you would typically send the data to your backend
+    // // For now, just print it to the console
+    // print('Animal Data Submitted:');
+    // print('Animal: $_selectedAnimal');
+    // print('Breed: $selectedBreed');
+    // print('Sex: $selectedSex');
+    // print('Buffalo/Calf: $buffaloOrCalf');
+    // print('Pregnant: $selectedPregnant');
+    // print('Lactating: $selectedLactating');
+    // print('Own Dairy: $selectedOwnDairy');
+    // print('Animal Number: ${_animalNumberController.text}');
+    // print('Purchase Price: ${_purchasePriceController.text}');
+    // print('Weight: ${_weightController.text}');
+    // print('Date of Birth: ${_dobController.text}');
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(question, style: const TextStyle(fontSize: 16)),
-        SizedBox(
-          height: 35,
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(fontSize: 16),
-            decoration: InputDecoration(
-              isDense: true,
-              suffixIcon: icon != null
-                  ? IconButton(onPressed: onIconTap, icon: icon!)
-                  : null,
-              suffixIconColor: Colors.green,
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(width: 0.5),
-              ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(width: 0.5),
-              ),
-            ),
-          ),
-        ),
+    late final animalRepository = RepositoryProvider.of<AnimalRepository>(context);
+    final response = await animalRepository.submitAnimalQuestionAnswers({
+      'animal_id': '1',
+      'animal_number': _animalNumberController.text,
+      'answers': [
+        {'answer': _animalNumberController.text, 'question_id': 6},
+        {'answer': selectedSex, 'question_id': 7},
+        {'answer': _selectedAnimal, 'question_id': 44},
+        {'answer': buffaloOrCalf, 'question_id': 8},
+        {'answer': selectedLactating, 'question_id': 9},
+        {'answer': _dobController.text, 'question_id': 10},
+        {'answer': buffaloOrCalf, 'question_id': 11},
+        {'answer': _purchasePriceController.text, 'question_id': 12},
+        {'answer': _weightController.text, 'question_id': 13},
+        {'answer': selectedBreed, 'question_id': 49},
       ],
-    );
+    });
+
+    if (response.success) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Animal data submitted successfully')));
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: ${response.message}')));
+    }
   }
 }
 
@@ -402,6 +454,48 @@ class _RadioOptions extends StatelessWidget {
             ),
             Text(type2, style: const TextStyle(fontSize: 16)),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+class _TextFieldOption extends StatelessWidget {
+  const _TextFieldOption({
+    required this.question,
+    this.controller,
+    this.icon,
+    this.onIconTap,
+    this.decoration,
+  });
+
+  final String question;
+  final Icon? icon;
+  final VoidCallback? onIconTap;
+  final TextEditingController? controller;
+  final InputDecoration? decoration;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(question, style: const TextStyle(fontSize: 16)),
+        SizedBox(
+          height: 35,
+          child: TextField(
+            controller: controller,
+            style: const TextStyle(fontSize: 16),
+            decoration:
+                decoration ??
+                InputDecoration(
+                  isDense: true,
+                  suffixIcon: icon != null ? IconButton(onPressed: onIconTap, icon: icon!) : null,
+                  suffixIconColor: Colors.green,
+                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(width: 0.5)),
+                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(width: 0.5)),
+                ),
+          ),
         ),
       ],
     );

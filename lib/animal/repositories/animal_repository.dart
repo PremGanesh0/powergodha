@@ -4,6 +4,7 @@ import 'package:powergodha/animal/models/animal_count_response.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/models/animal_info_response.dart';
 import 'package:powergodha/app/app_logger_config.dart';
+import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/retrofit_client.dart';
 
 /// Repository for managing animal-related data operations.
@@ -16,11 +17,9 @@ class AnimalRepository {
   /// **Parameters:**
   /// * [authenticationRepository] - Repository for authentication operations
   /// * [dio] - HTTP client for making API requests
-  AnimalRepository({
-    required AuthenticationRepository authenticationRepository,
-    required Dio dio,
-  })  : _authenticationRepository = authenticationRepository,
-        _apiClient = RetrofitClient(dio: dio);
+  AnimalRepository({required AuthenticationRepository authenticationRepository, required Dio dio})
+    : _authenticationRepository = authenticationRepository,
+      _apiClient = RetrofitClient(dio: dio);
 
   final AuthenticationRepository _authenticationRepository;
   final RetrofitClient _apiClient;
@@ -41,7 +40,10 @@ class AnimalRepository {
   ///
   /// **Throws:**
   /// * [AnimalRepositoryException] if the request fails or user is not authenticated
-  Future<AnimalDetailsResponse> getAnimalDetailsByType({required int animalId,required String animalType}) async {
+  Future<AnimalDetailsResponse> getAnimalDetailsByType({
+    required int animalId,
+    required String animalType,
+  }) async {
     try {
       final accessToken = _authenticationRepository.currentAccessToken;
 
@@ -50,10 +52,7 @@ class AnimalRepository {
       }
 
       // Call the API to get animal details
-      final requestData = {
-        'animal_id': animalId.toString(),
-        'type': animalType.toLowerCase(),
-      };
+      final requestData = {'animal_id': animalId.toString(), 'type': animalType.toLowerCase()};
 
       final apiResponse = await _apiClient.getAnimalDetailsByType(requestData);
 
@@ -117,7 +116,9 @@ class AnimalRepository {
           }
 
           // Check if this is the full response structure
-          if (dataMap.containsKey('data') && dataMap.containsKey('message') && dataMap.containsKey('status')) {
+          if (dataMap.containsKey('data') &&
+              dataMap.containsKey('message') &&
+              dataMap.containsKey('status')) {
             // This is the full response structure
             final animalDetailsResponse = AnimalDetailsResponse.fromJson(dataMap);
             return animalDetailsResponse;
@@ -148,7 +149,9 @@ class AnimalRepository {
           );
         }
       } else {
-        AppLogger.error('Unexpected response format: ${apiResponse.data.runtimeType}, data: ${apiResponse.data}');
+        AppLogger.error(
+          'Unexpected response format: ${apiResponse.data.runtimeType}, data: ${apiResponse.data}',
+        );
         return AnimalDetailsResponse(
           data: AnimalDetailsData(
             animalName: animalType,
@@ -166,7 +169,9 @@ class AnimalRepository {
       if (e.response?.statusCode == 401) {
         throw const AnimalRepositoryException('Authentication failed - token expired');
       }
-      throw AnimalRepositoryException('Failed to fetch animal details: ${e.message ?? "Unknown error"}');
+      throw AnimalRepositoryException(
+        'Failed to fetch animal details: ${e.message ?? "Unknown error"}',
+      );
     } catch (e) {
       throw AnimalRepositoryException('Failed to fetch animal details: $e');
     }
@@ -317,13 +322,39 @@ class AnimalRepository {
       throw AnimalRepositoryException('Failed to fetch animal count: $e');
     }
   }
+
+  /// Submits animal question answers to the API.
+  ///
+  /// **Parameters:**
+  /// * [questionAnswerData] - The payload containing animal_id, animal_number, and answers array
+  ///
+  /// **Returns:**
+  /// An [ApiResponse] containing the server response.
+  Future<ApiResponse> submitAnimalQuestionAnswers(Map<String, dynamic> questionAnswerData) async {
+    try {
+      final accessToken = _authenticationRepository.currentAccessToken;
+      if (accessToken == null) {
+        throw const AnimalRepositoryException('No access token available');
+      }
+      return await _apiClient.submitAnimalQuestionAnswers(questionAnswerData);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw const AnimalRepositoryException('Authentication failed - token expired');
+      }
+      throw AnimalRepositoryException(
+        'Failed to submit animal question answers: ${e.message ?? "Unknown error"}',
+      );
+    } catch (e) {
+      throw AnimalRepositoryException('Failed to submit animal question answers: $e');
+    }
+  }
 }
 
 /// Exception thrown when animal repository operations fail.
 class AnimalRepositoryException implements Exception {
-
   /// Creates a new animal repository exception with the specified message.
   const AnimalRepositoryException(this.message);
+
   /// The error message describing what went wrong.
   final String message;
 

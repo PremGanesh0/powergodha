@@ -6,22 +6,6 @@ part of 'animal_info_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AnimalInfoResponse _$AnimalInfoResponseFromJson(Map<String, dynamic> json) =>
-    AnimalInfoResponse(
-      data: (json['data'] as List<dynamic>)
-          .map((e) => AnimalInfoData.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      message: json['message'] as String,
-      status: (json['status'] as num).toInt(),
-    );
-
-Map<String, dynamic> _$AnimalInfoResponseToJson(AnimalInfoResponse instance) =>
-    <String, dynamic>{
-      'data': instance.data.map((e) => e.toJson()).toList(),
-      'message': instance.message,
-      'status': instance.status,
-    };
-
 AnimalInfoData _$AnimalInfoDataFromJson(Map<String, dynamic> json) =>
     AnimalInfoData(
       cow: (json['Cow'] as num?)?.toInt(),
@@ -46,4 +30,20 @@ Map<String, dynamic> _$AnimalInfoDataToJson(AnimalInfoData instance) =>
       if (instance.heifer case final value?) 'heifer': value,
       if (instance.bull case final value?) 'bull': value,
       if (instance.calf case final value?) 'calf': value,
+    };
+
+AnimalInfoResponse _$AnimalInfoResponseFromJson(Map<String, dynamic> json) =>
+    AnimalInfoResponse(
+      data: (json['data'] as List<dynamic>)
+          .map((e) => AnimalInfoData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      message: json['message'] as String,
+      status: (json['status'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$AnimalInfoResponseToJson(AnimalInfoResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data.map((e) => e.toJson()).toList(),
+      'message': instance.message,
+      'status': instance.status,
     };

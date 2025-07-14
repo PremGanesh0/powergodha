@@ -82,33 +82,37 @@ class ApiEndpoints {
   static const String notificationCount = '/notification_count/{language_id}';
   static const String aboutAppData = '/about_app_data/{language_id}/{type}';
 
+  // Animal question answer endpoint
+  static const String animalQuestionAnswer = '/animal_question_answer';
   //Bottom Navigation Buttons endpoints
   static const String profitableDiaryFarming = '/profitable_farming_article/1/2';
 
   // Utility methods for dynamic endpoints
-  
-  /// Builds a farm-specific endpoint with the farm ID.
-  static String getFarmEndpoint(String farmId) => getFarm.replaceAll('{id}', farmId);
-  
+
+  /// Builds an about app data endpoint with the language ID and type.
+  static String getAboutAppDataEndpoint(String languageId, String type) =>
+      aboutAppData.replaceAll('{language_id}', languageId).replaceAll('{type}', type);
+
   /// Builds an animal-specific endpoint with the animal ID.
   static String getAnimalEndpoint(String animalId) => getAnimal.replaceAll('{id}', animalId);
-  
+
   /// Builds an animal info endpoint with the animal ID.
   static String getAnimalInfoEndpoint(String animalId) => animalInfo.replaceAll('{animalId}', animalId);
-  
+
+  /// Builds a farm-specific endpoint with the farm ID.
+  static String getFarmEndpoint(String farmId) => getFarm.replaceAll('{id}', farmId);
+
+  /// Builds a notification count endpoint with the language ID.
+  static String getNotificationCountEndpoint(String languageId) =>
+      notificationCount.replaceAll('{language_id}', languageId);
+
   /// Builds a record-specific endpoint with the record ID.
   static String getRecordEndpoint(String recordId) => getRecord.replaceAll('{id}', recordId);
-  
+
   /// Builds a report-specific endpoint with the report ID.
   static String getReportEndpoint(String reportId) => getReport.replaceAll('{id}', reportId);
-  
+
   /// Builds a slider articles endpoint with the language ID.
-  static String getSliderArticlesEndpoint(String languageId) => sliderArticles.replaceAll('{language_id}', languageId);
-  
-  /// Builds a notification count endpoint with the language ID.
-  static String getNotificationCountEndpoint(String languageId) => notificationCount.replaceAll('{language_id}', languageId);
-  
-  /// Builds an about app data endpoint with the language ID and type.
-  static String getAboutAppDataEndpoint(String languageId, String type) => 
-      aboutAppData.replaceAll('{language_id}', languageId).replaceAll('{type}', type);
+  static String getSliderArticlesEndpoint(String languageId) =>
+      sliderArticles.replaceAll('{language_id}', languageId);
 }

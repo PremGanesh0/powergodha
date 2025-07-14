@@ -32,8 +32,6 @@ abstract class RetrofitClient {
     return _RetrofitClient(dio ?? ApiClient.instance);
   }
 
-  // Authentication endpoints
-
   /// Change user password.
   @POST(ApiEndpoints.changePassword)
   Future<ApiResponse> changePassword(@Body() Map<String, String> passwordData,
@@ -85,15 +83,12 @@ abstract class RetrofitClient {
     @Path('language_id') String languageId,
     @Path('type') String type,
   );
-  
-  @GET(ApiEndpoints.profitableDiaryFarming)
-  Future<ApiResponse> getProfitableDairyFarmingData();
-
 
   /// Get a specific animal by ID.
   @GET(ApiEndpoints.getAnimal)
   Future<ApiResponse> getAnimalById(@Path('id') String animalId,
   );
+
 
   /// Get detailed animal data based on animal type.
   @POST(ApiEndpoints.animalDetailsByType)
@@ -104,13 +99,13 @@ abstract class RetrofitClient {
   Future<ApiResponse> getAnimalInfo(@Path('animalId') int animalId,
   );
 
-  // Farm management endpoints
-
-
-
   /// Get dashboard data.
   @GET(ApiEndpoints.dashboard)
   Future<ApiResponse> getDashboard();
+
+  // Farm management endpoints
+
+
 
   /// Get dashboard analytics.
   @GET(ApiEndpoints.dashboardAnalytics)
@@ -129,11 +124,11 @@ abstract class RetrofitClient {
     @Path('id') String farmId,
   );
 
-  // Animal management endpoints
-
   /// get latest profit and loss report
   @GET(ApiEndpoints.lossReport)
   Future<ApiResponse> getLatestProfitLossReport();
+
+  // Animal management endpoints
 
   /// Get notification count by language ID.
   @GET(ApiEndpoints.notificationCount)
@@ -143,6 +138,9 @@ abstract class RetrofitClient {
   /// Get user profile information.
   @GET(ApiEndpoints.profile)
   Future<ApiResponse> getProfile();
+
+  @GET(ApiEndpoints.profitableDiaryFarming)
+  Future<ApiResponse> getProfitableDairyFarmingData();
 
   /// Get a specific record by ID.
   @GET(ApiEndpoints.getRecord)
@@ -162,11 +160,11 @@ abstract class RetrofitClient {
   Future<ApiResponse> login(@Body() Map<String, dynamic> credentials,
   );
 
-  // Records and reports endpoints
-
   /// Log out the current user.
   @POST(ApiEndpoints.logout)
   Future<ApiResponse> logout();
+
+  // Records and reports endpoints
 
   /// Refresh the authentication token.
   @POST(ApiEndpoints.refreshToken)
@@ -182,12 +180,18 @@ abstract class RetrofitClient {
   @POST(ApiEndpoints.resetPassword)
   Future<ApiResponse> resetPassword(@Body() Map<String, dynamic> resetData);
 
-  // Dashboard endpoints
-
   /// Register a new user account.
   @POST(ApiEndpoints.signup)
   Future<ApiResponse> signup(@Body() Map<String, dynamic> userData,
   );
+
+  // Dashboard endpoints
+
+  /// Submit animal question answers.
+  @POST(ApiEndpoints.animalQuestionAnswer)
+  Future<ApiResponse> submitAnimalQuestionAnswers(@Body() Map<String, dynamic> questionAnswerData);
+
+  // Authentication endpoints
 
   /// Update an animal.
   @PUT(ApiEndpoints.updateAnimal)
@@ -218,8 +222,9 @@ abstract class RetrofitClient {
   Future<ApiResponse> updateUserLanguage(@Body() Map<String, dynamic> languageData,
   );
 
-  /// Verify OTP code.
+/// Verify OTP code.
   @POST(ApiEndpoints.verifyOtp)
   Future<ApiResponse> verifyOtp(@Body() Map<String, dynamic> otpData,
   );
+
 }
