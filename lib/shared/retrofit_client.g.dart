@@ -19,15 +19,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> changePassword(Map<String, String> passwordData) async {
+  Future<ApiResponse> changePassword(Map<String, String> passwordData) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(passwordData);
+    _data.addAll(passwordData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/user/change-password',
             '/user/change-password',
             queryParameters: queryParameters,
             data: _data,
@@ -47,15 +50,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> createAnimal(Map<String, dynamic> animalData) async {
+  Future<ApiResponse> createAnimal(Map<String, dynamic> animalData) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(animalData);
+    _data.addAll(animalData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/animals',
             '/animals',
             queryParameters: queryParameters,
             data: _data,
@@ -75,15 +81,19 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> createFarm(Map<String, dynamic> farmData) async {
+  Future<ApiResponse> createFarm(Map<String, dynamic> farmData) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(farmData);
     final _data = <String, dynamic>{};
     _data.addAll(farmData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/farms',
             '/farms',
             queryParameters: queryParameters,
             data: _data,
@@ -103,15 +113,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> createRecord(Map<String, dynamic> recordData) async {
+  Future<ApiResponse> createRecord(Map<String, dynamic> recordData) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(recordData);
+    _data.addAll(recordData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/records',
             '/records',
             queryParameters: queryParameters,
             data: _data,
@@ -131,14 +144,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> deleteAccount() async {
+  Future<ApiResponse> deleteAccount() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/user/delete-account',
             '/user/delete-account',
             queryParameters: queryParameters,
             data: _data,
@@ -158,14 +175,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> deleteAnimal(String animalId) async {
+  Future<ApiResponse> deleteAnimal(String animalId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/animals/${animalId}',
             '/animals/${animalId}',
             queryParameters: queryParameters,
             data: _data,
@@ -185,14 +206,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> deleteFarm(String farmId) async {
+  Future<ApiResponse> deleteFarm(String farmId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/farms/${farmId}',
             '/farms/${farmId}',
             queryParameters: queryParameters,
             data: _data,
@@ -212,14 +237,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> deleteRecord(String recordId) async {
+  Future<ApiResponse> deleteRecord(String recordId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
       Options(method: 'DELETE', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/records/${recordId}',
             '/records/${recordId}',
             queryParameters: queryParameters,
             data: _data,
@@ -239,15 +268,20 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> forgotPassword(Map<String, String> emailData) async {
+  Future<ApiResponse> forgotPassword(Map<String, String> emailData) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(emailData);
+    final _data = <String, dynamic>{};
+    _data.addAll(emailData);
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/auth/forgot-password',
             '/auth/forgot-password',
             queryParameters: queryParameters,
             data: _data,
@@ -267,14 +301,18 @@ class _RetrofitClient implements RetrofitClient {
 
   @override
   Future<ApiResponse> getAboutAppData(String languageId, String type) async {
+  Future<ApiResponse> getAboutAppData(String languageId, String type) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
+            '/about_app_data/${languageId}/${type}',
             '/about_app_data/${languageId}/${type}',
             queryParameters: queryParameters,
             data: _data,
@@ -298,7 +336,9 @@ class _RetrofitClient implements RetrofitClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -382,7 +422,9 @@ class _RetrofitClient implements RetrofitClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -443,7 +485,9 @@ class _RetrofitClient implements RetrofitClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -471,6 +515,7 @@ class _RetrofitClient implements RetrofitClient {
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -551,7 +596,9 @@ class _RetrofitClient implements RetrofitClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -578,7 +625,9 @@ class _RetrofitClient implements RetrofitClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -632,7 +681,9 @@ class _RetrofitClient implements RetrofitClient {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -717,6 +768,7 @@ class _RetrofitClient implements RetrofitClient {
     _data.addAll(refreshData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/auth/refresh',
@@ -744,6 +796,7 @@ class _RetrofitClient implements RetrofitClient {
     final _data = <String, dynamic>{};
     _data.addAll(phoneData);
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -773,6 +826,7 @@ class _RetrofitClient implements RetrofitClient {
     _data.addAll(resetData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/auth/reset-password',
@@ -800,6 +854,7 @@ class _RetrofitClient implements RetrofitClient {
     final _data = <String, dynamic>{};
     _data.addAll(userData);
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -858,10 +913,12 @@ class _RetrofitClient implements RetrofitClient {
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(farmData);
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -890,6 +947,7 @@ class _RetrofitClient implements RetrofitClient {
     final _data = <String, dynamic>{};
     _data.addAll(profileData);
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -922,6 +980,7 @@ class _RetrofitClient implements RetrofitClient {
     _data.addAll(recordData);
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
+      Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             '/records/${recordId}',
@@ -951,6 +1010,7 @@ class _RetrofitClient implements RetrofitClient {
     final _data = <String, dynamic>{};
     _data.addAll(languageData);
     final _options = _setStreamType<ApiResponse>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,

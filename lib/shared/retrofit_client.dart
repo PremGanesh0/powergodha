@@ -85,6 +85,10 @@ abstract class RetrofitClient {
     @Path('language_id') String languageId,
     @Path('type') String type,
   );
+  
+  @GET(ApiEndpoints.profitableDiaryFarming)
+  Future<ApiResponse> getProfitableDairyFarmingData();
+
 
   /// Get a specific animal by ID.
   @GET(ApiEndpoints.getAnimal)

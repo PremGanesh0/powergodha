@@ -39,6 +39,7 @@ import 'package:powergodha/app/app_routes.dart';
 import 'package:powergodha/app/app_view.dart' show AppView;
 import 'package:powergodha/authentication/bloc/authentication_bloc.dart';
 import 'package:powergodha/home/bloc/bloc.dart';
+import 'package:powergodha/home/view/bottomNavigation/profitable_dairy_farm_view.dart';
 import 'package:powergodha/home/widgets/app_drawer.dart';
 import 'package:powergodha/home/widgets/featured_carousel.dart';
 import 'package:powergodha/home/widgets/profit_loss.dart';
@@ -213,94 +214,103 @@ class _HomePage extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state.status == HomeStatus.error) {
-                return Center(
+            if (state.status == HomeStatus.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error loading data',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.errorMessage ?? 'An unknown error occurred',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<HomeBloc>().add(const RefreshHomeData());
+                      },
+                      child: const Text('Try Again'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<HomeBloc>().add(const RefreshHomeData());
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppTypography.space8),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: Theme.of(context).colorScheme.error,
+                      // FormName section
+                      const _FormName(),
+                      const SizedBox(height: AppTypography.space16),
+
+                      // Quick actions
+                      _QuickActions(
+                        actions: [
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'Reports',
+                            onPressed: () {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.reports);
+                            },
+                          ),
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'ORB',
+                            onPressed: () {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.dailyRecords);
+                            },
+                          ),
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'Premium',
+                            onPressed: () {
+                              // Navigator.of(
+                              //   context,
+                              // ).pushNamed(AppRoutes.profile);
+                            },
+                          ),
+                          QuickAction(
+                            icon: 'assets/icons/record_milk.png',
+                            label: 'Dashboard',
+                            onPressed: () {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.dashboard);
+                            },
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      Text('Error loading data', style: Theme.of(context).textTheme.headlineSmall),
-                      const SizedBox(height: 8),
-                      Text(
-                        state.errorMessage ?? 'An unknown error occurred',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<HomeBloc>().add(const RefreshHomeData());
-                        },
-                        child: const Text('Try Again'),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                      const SizedBox(height: AppTypography.space16),
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<HomeBloc>().add(const RefreshHomeData());
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppTypography.space8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // FormName section
-                        const _FormName(),
-                        const SizedBox(height: AppTypography.space16),
+                      // Featured Carousel Slider
+                      const FeaturedCarousel(),
+                      const SizedBox(height: AppTypography.space16),
 
-                        // Quick actions
-                        _QuickActions(
-                          actions: [
-                            QuickAction(
-                              icon: 'assets/icons/record_milk.png',
-                              label: 'Reports',
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(AppRoutes.reports);
-                              },
-                            ),
-                            QuickAction(
-                              icon: 'assets/icons/record_milk.png',
-                              label: 'ORB',
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(AppRoutes.dailyRecords);
-                              },
-                            ),
-                            QuickAction(
-                              icon: 'assets/icons/record_milk.png',
-                              label: 'Premium',
-                              onPressed: () {
-                                // Navigator.of(
-                                //   context,
-                                // ).pushNamed(AppRoutes.profile);
-                              },
-                            ),
-                            QuickAction(
-                              icon: 'assets/icons/record_milk.png',
-                              label: 'Dashboard',
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(AppRoutes.dashboard);
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTypography.space16),
-
-                        // Featured Carousel Slider
-                        const FeaturedCarousel(),
-                        const SizedBox(height: AppTypography.space16),
-
-                        // Record information card
-                        RecordInfoCard(profitLossReport: state.profitLossReport),
+                      // Record information card
+                      RecordInfoCard(profitLossReport: state.profitLossReport),
 
                         FittedBox(
                           child: Padding(
