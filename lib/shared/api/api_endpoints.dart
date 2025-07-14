@@ -82,6 +82,9 @@ class ApiEndpoints {
   static const String notificationCount = '/notification_count/{language_id}';
   static const String aboutAppData = '/about_app_data/{language_id}/{type}';
 
+  //Bottom Navigation Buttons endpoints
+  static const String profitableDiaryFarming = '/profitable_farming_article/1/2';
+
   // Utility methods for dynamic endpoints
   
   /// Builds a farm-specific endpoint with the farm ID.
