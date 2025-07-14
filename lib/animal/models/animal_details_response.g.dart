@@ -6,24 +6,6 @@ part of 'animal_details_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AnimalDetailsResponse _$AnimalDetailsResponseFromJson(
-  Map<String, dynamic> json,
-) => AnimalDetailsResponse(
-  data: json['data'] == null
-      ? null
-      : AnimalDetailsData.fromJson(json['data'] as Map<String, dynamic>),
-  message: json['message'] as String?,
-  status: (json['status'] as num?)?.toInt(),
-);
-
-Map<String, dynamic> _$AnimalDetailsResponseToJson(
-  AnimalDetailsResponse instance,
-) => <String, dynamic>{
-  if (instance.data?.toJson() case final value?) 'data': value,
-  if (instance.message case final value?) 'message': value,
-  if (instance.status case final value?) 'status': value,
-};
-
 AnimalDetailsData _$AnimalDetailsDataFromJson(Map<String, dynamic> json) =>
     AnimalDetailsData(
       animalName: json['animal_name'] as String?,
@@ -49,13 +31,35 @@ Map<String, dynamic> _$AnimalDetailsDataToJson(
     'animal_data': value,
 };
 
+AnimalDetailsResponse _$AnimalDetailsResponseFromJson(
+  Map<String, dynamic> json,
+) => AnimalDetailsResponse(
+  data: json['data'] == null
+      ? null
+      : AnimalDetailsData.fromJson(json['data'] as Map<String, dynamic>),
+  message: json['message'] as String?,
+  status: (json['status'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$AnimalDetailsResponseToJson(
+  AnimalDetailsResponse instance,
+) => <String, dynamic>{
+  if (instance.data?.toJson() case final value?) 'data': value,
+  if (instance.message case final value?) 'message': value,
+  if (instance.status case final value?) 'status': value,
+};
+
 IndividualAnimalData _$IndividualAnimalDataFromJson(
   Map<String, dynamic> json,
 ) => IndividualAnimalData(
   id: (json['id'] as num?)?.toInt(),
-  animalNumber: IndividualAnimalData._parseAnimalNumber(json['animal_number']),
+  animalNumber: json['animal_number'] as String?,
   dateOfBirth: json['date_of_birth'] as String?,
-  weight: (json['weight'] as num?)?.toDouble(),
+  weight: json['weight'] == null
+      ? null
+      : (json['weight'] is num
+          ? (json['weight'] as num).toDouble()
+          : double.tryParse(json['weight'].toString())),
   breed: json['breed'] as String?,
   gender: json['gender'] as String?,
   status: json['status'] as String?,

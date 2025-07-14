@@ -161,8 +161,8 @@ class _HomePage extends StatelessWidget {
     return FloatingDraggableWidget(
       floatingWidget: GestureDetector(
         onTap: () {
-          // Show a bottom sheet with quick actions when tapped
-          _showQuickActionsBottomSheet(context);
+          // Navigate to breeding details page
+          Navigator.of(context).pushNamed(AppRoutes.breedingDetails);
         },
         child: Container(
           width: 60,
@@ -178,7 +178,7 @@ class _HomePage extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(Icons.add, color: Colors.white, size: 24),
+          child: const Icon(Icons.add, color: Colors.white, size: 24),
         ),
       ),
       floatingWidgetWidth: 60,
@@ -200,14 +200,9 @@ class _HomePage extends StatelessWidget {
                   // TODO: Navigate to search
                 },
               ),
-              BlocBuilder<HomeBloc, HomeState>(
-                builder: (context, state) {
-                  return _NotificationButton(
-                    notificationCount: state.notificationCount,
-                    onPressed: () {
-                      // TODO: Navigate to notifications
-                    },
-                  );
+              AppNotificationButton(
+                onPressed: () {
+                  // TODO: Navigate to notifications
                 },
               ),
             ],
@@ -364,152 +359,11 @@ class _HomePage extends StatelessWidget {
       ),
     );
   }
-
-  /// Builds a chip-style quick action button
-  Widget _buildQuickActionChip(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return ActionChip(
-      avatar: Icon(icon, size: 18),
-      label: Text(label),
-      onPressed: onPressed,
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer,
-      ),
-    );
-  }
-
-  /// Shows a bottom sheet with quick action buttons when the floating widget is tapped
-  void _showQuickActionsBottomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text('Quick Actions', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                children: [
-                  _buildQuickActionChip(
-                    context,
-                    icon: Icons.report,
-                    label: 'Reports',
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).pushNamed(AppRoutes.reports);
-                    },
-                  ),
-                  _buildQuickActionChip(
-                    context,
-                    icon: Icons.dashboard,
-                    label: 'Dashboard',
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).pushNamed(AppRoutes.dashboard);
-                    },
-                  ),
-                  _buildQuickActionChip(
-                    context,
-                    icon: Icons.analytics,
-                    label: 'Daily Records',
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).pushNamed(AppRoutes.dailyRecords);
-                    },
-                  ),
-                  _buildQuickActionChip(
-                    context,
-                    icon: Icons.person,
-                    label: 'Profile',
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).pushNamed(AppRoutes.profile);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
 
 /// {@template notification_button}
 /// A custom notification button widget that displays a badge with the notification count.
 /// {@endtemplate}
-class _NotificationButton extends StatelessWidget {
-  /// {@macro notification_button}
-  const _NotificationButton({required this.notificationCount,
-    required this.onPressed,
-  });
-
-  /// The number of unread notifications
-  final int notificationCount;
-
-  /// Callback when the notification button is pressed
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Stack(
-        children: [
-          const Icon(Icons.notifications_outlined),
-          if (notificationCount > 0)
-            Positioned(
-              right: 0,
-              top: 0,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                child: Text(
-                  notificationCount > 99 ? '99+' : notificationCount.toString(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-        ],
-      ),
-      tooltip: 'Notifications',
-      onPressed: onPressed,
-    );
-  }
-}
-
 class _QuickActions extends StatelessWidget {
   const _QuickActions({required this.actions});
   final List<QuickAction> actions;

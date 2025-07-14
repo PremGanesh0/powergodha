@@ -1,7 +1,6 @@
 // ignore_for_file: inference_failure_on_untyped_parameter
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:powergodha/shared/utils/json_parsers.dart';
 
 part 'animal_count_response.g.dart';
 
@@ -24,19 +23,9 @@ class AnimalCountData {
   /// Creates an [AnimalCountData] from JSON data.
   factory AnimalCountData.fromJson(Map<String, dynamic> json) {
     try {
-      final animalId = _parseAnimalId(json['animal_id']);
-      final cow = _parseAnimalCount(json['Cow']);
-      final buffalo = _parseAnimalCount(json['Buffalo']);
-      final goat = _parseAnimalCount(json['Goat']);
-      final hen = _parseAnimalCount(json['Hen']);
+      return _$AnimalCountDataFromJson(json);
 
-      return AnimalCountData(
-        animalId: animalId,
-        cow: cow,
-        buffalo: buffalo,
-        goat: goat,
-        hen: hen,
-      );
+
     } catch (e) {
       print('Error parsing AnimalCountData: $e');
       return const AnimalCountData(animalId: 0);
@@ -78,15 +67,9 @@ class AnimalCountData {
   /// Converts this data to JSON.
   Map<String, dynamic> toJson() => _$AnimalCountDataToJson(this);
 
-  /// Parse animal count from various formats (could be string, int or null)
-  static int? _parseAnimalCount(value) {
-    return JsonParsers.parseNumber(value);
-  }
 
-  /// Parse animal ID from various formats
-  static int _parseAnimalId(value) {
-    return JsonParsers.parseNumber(value) ?? 0;
-  }
+
+
 }
 
 /// {@template animal_count_response}
@@ -113,8 +96,8 @@ class AnimalCountResponse {
       return AnimalCountResponse(
         data: [],
         message: json['message']?.toString() ?? '',
-        status: _parseStatus(json['status']),
-      );
+        status: json['status'] is int ? (json['status'] as int) : 500,
+       );
     }
   }
 
@@ -130,8 +113,5 @@ class AnimalCountResponse {
   /// Converts this response to JSON.
   Map<String, dynamic> toJson() => _$AnimalCountResponseToJson(this);
 
-  /// Parse status from various formats
-  static int _parseStatus(value) {
-    return JsonParsers.parseNumber(value) ?? 0;
-  }
+
 }

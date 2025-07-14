@@ -100,3 +100,55 @@ class AboutAppDataService {
     }
   }
 }
+
+
+/// {@template about_app_data}
+/// Model for about app data response.
+///
+/// This model represents the structure of the about app data API response,
+/// which includes various types of content like 'about_us', 'contact_us', etc.
+/// {@endtemplate}
+class AboutAppData {
+  /// Creates an [AboutAppData] instance.
+  const AboutAppData({required this.type, required this.languageId, required this.content});
+
+  /// Factory constructor for JSON deserialization.
+  factory AboutAppData.fromJson(Map<String, dynamic> json) {
+    return AboutAppData(
+      type: json['type'] as String? ?? '',
+      languageId: json['language_id'] as int? ?? 0,
+      content: json['content'] as String? ?? '',
+    );
+  }
+
+  /// The type of content (e.g., 'about_us', 'contact_us').
+  final String type;
+
+  /// The language ID for the content.
+  final int languageId;
+
+  /// The HTML content.
+  final String content;
+
+  @override
+  int get hashCode => type.hashCode ^ languageId.hashCode ^ content.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AboutAppData &&
+        other.type == type &&
+        other.languageId == languageId &&
+        other.content == content;
+  }
+
+  /// Converts the instance to JSON.
+  Map<String, dynamic> toJson() {
+    return {'type': type, 'language_id': languageId, 'content': content};
+  }
+
+  @override
+  String toString() {
+    return 'AboutAppData(type: $type, languageId: $languageId, content: ${content.substring(0, content.length > 50 ? 50 : content.length)}...)';
+  }
+}

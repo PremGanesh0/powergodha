@@ -24,6 +24,8 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:powergodha/breeding/breeding.dart';
+import 'package:powergodha/dashboard/pages/dashboard.dart';
 import 'package:powergodha/farm/farm.dart';
 import 'package:powergodha/forgot_password/view/forgot_password_page.dart';
 import 'package:powergodha/home/view/help/how_to_use_app_api.dart';
@@ -37,7 +39,6 @@ import 'package:powergodha/otp_verification/view/otp_verification_page.dart';
 import 'package:powergodha/profile/profile.dart';
 import 'package:powergodha/records_reports/daily_records.dart';
 import 'package:powergodha/records_reports/reports.dart';
-import 'package:powergodha/dashboard/pages/dashboard.dart';
 import 'package:powergodha/signup/view/signup_page.dart';
 import 'package:powergodha/splash/view/splash_page.dart';
 
@@ -90,6 +91,12 @@ abstract final class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String cowDetails = '/cow-details';
   static const String buffaloDetails = '/buffalo-details';
+  static const String breedingDetails = '/breeding-details';
+  static const String recordHeat = '/record-heat';
+  static const String recordDelivery = '/record-delivery';
+  static const String recordAi = '/record-ai';
+  static const String recordDrying = '/record-drying';
+  static const String recordPregnancy = '/record-pregnancy';
 
   /// Generates routes based on [RouteSettings].
   ///
@@ -172,7 +179,38 @@ abstract final class AppRoutes {
         return DailyRecordsPage.route();
       case dashboard:
         return DashboardPage.route();
-
+      case breedingDetails:
+        return BreedingDetailsPage.route();
+      case recordHeat:
+        // Extract arguments for record heat page
+        final args = settings.arguments as Map<String, dynamic>?;
+        final animalType = args?['animalType'] as String? ?? 'Cow';
+        final animalNumber = args?['animalNumber'] as String? ?? '0';
+        return RecordHeatPage.route(animalType: animalType, animalNumber: animalNumber);
+      case recordDelivery:
+        // Extract arguments for record delivery page
+        final args = settings.arguments as Map<String, dynamic>?;
+        final animalType = args?['animalType'] as String? ?? 'Cow';
+        final animalNumber = args?['animalNumber'] as String? ?? '0';
+        return RecordDeliveryPage.route(animalType: animalType, animalNumber: animalNumber);
+      case recordAi:
+        // Extract arguments for record AI page
+        final args = settings.arguments as Map<String, dynamic>?;
+        final animalType = args?['animalType'] as String? ?? 'Cow';
+        final animalNumber = args?['animalNumber'] as String? ?? '0';
+        return RecordAiPage.route(animalType: animalType, animalNumber: animalNumber);
+      case recordDrying:
+        // Extract arguments for record drying page
+        final args = settings.arguments as Map<String, dynamic>?;
+        final animalType = args?['animalType'] as String? ?? 'Cow';
+        final animalNumber = args?['animalNumber'] as String? ?? '0';
+        return RecordDryingPage.route(animalType: animalType, animalNumber: animalNumber);
+      case recordPregnancy:
+        // Extract arguments for record pregnancy page
+        final args = settings.arguments as Map<String, dynamic>?;
+        final animalType = args?['animalType'] as String? ?? 'Cow';
+        final animalNumber = args?['animalNumber'] as String? ?? '0';
+        return RecordPregnancyPage.route(animalType: animalType, animalNumber: animalNumber);
       default:
         // Fallback to splash page for unknown routes
         return MaterialPageRoute<dynamic>(

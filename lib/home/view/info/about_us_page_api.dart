@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/services/about_app_data_service.dart';
 import 'package:powergodha/shared/theme.dart';
 

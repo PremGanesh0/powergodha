@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:powergodha/app/app_logger_config.dart';
-import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/app/app_logger_config.dart';
+import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
 
 /// Page that shows detailed list of animals of a specific type
 class AnimalListPage extends StatefulWidget {
   /// Creates an animal list page
   const AnimalListPage({
-    required this.animalId, required this.animalName, required this.animalType, required this.animalColor, super.key,
+    required this.animalId,
+    required this.animalName,
+    required this.animalType,
+    required this.animalColor,
+    super.key,
   });
 
   /// The ID of the animal type (1=Cow, 2=Buffalo, 3=Goat, 4=Hen)
@@ -68,13 +72,13 @@ class _AnimalListPageState extends State<AnimalListPage> {
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.refresh),
-        //     onPressed: _loadAnimalDetails,
-        //     tooltip: 'Refresh',
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadAnimalDetails,
+            tooltip: 'Refresh',
+          ),
+        ],
       ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
@@ -123,10 +127,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
                     children: [
                       Text(
                         'Animal #${animal.animalNumber ?? "Unknown"}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '${animal.breed ?? "Breed not specified"} • ${animal.gender ?? "Gender not specified"}',
@@ -177,9 +178,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
   Widget _buildAnimalDetails(IndividualAnimalData animal) {
     return Row(
       children: [
-        Expanded(
-          child: _buildDetailItem('DOB', animal.dateOfBirth ?? 'Unknown'),
-        ),
+        Expanded(child: _buildDetailItem('DOB', animal.dateOfBirth ?? 'Unknown')),
         Expanded(
           child: _buildDetailItem(
             'Weight',
@@ -187,13 +186,9 @@ class _AnimalListPageState extends State<AnimalListPage> {
           ),
         ),
         if (animal.pregnancyStatus != null)
-          Expanded(
-            child: _buildDetailItem('Pregnancy', animal.pregnancyStatus!),
-          ),
+          Expanded(child: _buildDetailItem('Pregnancy', animal.pregnancyStatus!)),
         if (animal.lactationStatus != null)
-          Expanded(
-            child: _buildDetailItem('Lactation', animal.lactationStatus!),
-          ),
+          Expanded(child: _buildDetailItem('Lactation', animal.lactationStatus!)),
       ],
     );
   }
@@ -208,16 +203,12 @@ class _AnimalListPageState extends State<AnimalListPage> {
             const SizedBox(height: 16),
             Text(
               'No animals found',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(color: Colors.grey[600]),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
               'Try adjusting your search criteria',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[500]),
             ),
           ],
         ),
@@ -252,7 +243,6 @@ class _AnimalListPageState extends State<AnimalListPage> {
         DashboardHeader(title: widget.animalName),
         _buildSearchBar(),
         _buildSummaryCards(),
-
         Expanded(
           child: (_animalDetailsResponse!.data?.animalData?.isEmpty ?? true)
               ? _buildNoAnimalsView()
@@ -268,17 +258,10 @@ class _AnimalListPageState extends State<AnimalListPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 2),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-        ),
+        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -293,17 +276,11 @@ class _AnimalListPageState extends State<AnimalListPage> {
             width: 100,
             child: Text(
               '$label:',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey[600]),
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
+            child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
           ),
         ],
       ),
@@ -394,11 +371,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
               onPressed: () {
                 // TODO: Navigate to add animal page
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Add animal functionality will be implemented',
-                    ),
-                  ),
+                  const SnackBar(content: Text('Add animal functionality will be implemented')),
                 );
               },
               icon: const Icon(Icons.add),
@@ -421,11 +394,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 2)),
         ],
       ),
       child: TextField(
@@ -440,10 +409,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
           ),
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );
@@ -472,21 +438,12 @@ class _AnimalListPageState extends State<AnimalListPage> {
       ),
       child: Text(
         status,
-        style: TextStyle(
-          color: statusColor,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w500),
       ),
     );
   }
 
-  Widget _buildSummaryCard(
-    String title,
-    String count,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildSummaryCard(String title, String count, IconData icon, Color color) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -502,16 +459,9 @@ class _AnimalListPageState extends State<AnimalListPage> {
             const SizedBox(height: 4),
             Text(
               count,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
             ),
-            Text(
-              title,
-              style: TextStyle(fontSize: 12, color: color.withOpacity(0.8)),
-            ),
+            Text(title, style: TextStyle(fontSize: 12, color: color.withOpacity(0.8))),
           ],
         ),
       ),
@@ -568,16 +518,9 @@ class _AnimalListPageState extends State<AnimalListPage> {
         _filteredAnimals = (_animalDetailsResponse!.data!.animalData ?? [])
             .where(
               (animal) =>
-                  (animal.animalNumber?.toString().contains(
-                        query.toLowerCase(),
-                      ) ??
-                      false) ||
-                  (animal.breed?.toLowerCase().contains(query.toLowerCase()) ??
-                      false) ||
-                  (animal.dateOfBirth?.toLowerCase().contains(
-                        query.toLowerCase(),
-                      ) ??
-                      false),
+                  (animal.animalNumber?.toString().contains(query.toLowerCase()) ?? false) ||
+                  (animal.breed?.toLowerCase().contains(query.toLowerCase()) ?? false) ||
+                  (animal.dateOfBirth?.toLowerCase().contains(query.toLowerCase()) ?? false),
             )
             .toList();
       }
@@ -596,8 +539,8 @@ class _AnimalListPageState extends State<AnimalListPage> {
 
     try {
       final animalDetails = await _animalRepository.getAnimalDetailsByType(
-        widget.animalId,
-        widget.animalType,
+        animalId: widget.animalId,
+        animalType: widget.animalType,
       );
 
       setState(() {
@@ -605,9 +548,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
         _filteredAnimals = animalDetails.data?.animalData ?? [];
       });
 
-      AppLogger.info(
-        'Animal details loaded successfully for ${widget.animalName}',
-      );
+      AppLogger.info('Animal details loaded successfully for ${widget.animalName}');
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
@@ -630,47 +571,26 @@ class _AnimalListPageState extends State<AnimalListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildDialogDetailItem(
-                'Animal Number',
-                animal.animalNumber?.toString() ?? 'Unknown',
-              ),
-              _buildDialogDetailItem(
-                'Date of Birth',
-                animal.dateOfBirth ?? 'Unknown',
-              ),
+              _buildDialogDetailItem('Animal Number', animal.animalNumber?.toString() ?? 'Unknown'),
+              _buildDialogDetailItem('Date of Birth', animal.dateOfBirth ?? 'Unknown'),
               _buildDialogDetailItem(
                 'Weight',
                 animal.weight != null ? '${animal.weight} kg' : 'Unknown',
               ),
-              if (animal.breed != null)
-                _buildDialogDetailItem('Breed', animal.breed!),
-              if (animal.gender != null)
-                _buildDialogDetailItem('Gender', animal.gender!),
-              if (animal.status != null)
-                _buildDialogDetailItem('Status', animal.status!),
-              if (animal.pregnancyStatus != null &&
-                  animal.pregnancyStatus!.isNotEmpty)
-                _buildDialogDetailItem(
-                  'Pregnancy Status',
-                  animal.pregnancyStatus!,
-                ),
-              if (animal.lactationStatus != null &&
-                  animal.lactationStatus!.isNotEmpty)
-                _buildDialogDetailItem(
-                  'Lactation Status',
-                  animal.lactationStatus!,
-                ),
-              if (animal.healthStatus != null &&
-                  animal.healthStatus!.isNotEmpty)
+              if (animal.breed != null) _buildDialogDetailItem('Breed', animal.breed!),
+              if (animal.gender != null) _buildDialogDetailItem('Gender', animal.gender!),
+              if (animal.status != null) _buildDialogDetailItem('Status', animal.status!),
+              if (animal.pregnancyStatus != null && animal.pregnancyStatus!.isNotEmpty)
+                _buildDialogDetailItem('Pregnancy Status', animal.pregnancyStatus!),
+              if (animal.lactationStatus != null && animal.lactationStatus!.isNotEmpty)
+                _buildDialogDetailItem('Lactation Status', animal.lactationStatus!),
+              if (animal.healthStatus != null && animal.healthStatus!.isNotEmpty)
                 _buildDialogDetailItem('Health Status', animal.healthStatus!),
             ],
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
         ],
       ),
     );
@@ -680,9 +600,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
-          'Health Info - Animal #${animal.animalNumber ?? "Unknown"}',
-        ),
+        title: Text('Health Info - Animal #${animal.animalNumber ?? "Unknown"}'),
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -699,10 +617,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:powergodha/shared/utils/json_parsers.dart';
 
 part 'animal_details_response.g.dart';
 
@@ -46,13 +45,9 @@ class AnimalDetailsData {
         }
       }
 
-      return AnimalDetailsData(
-        animalName: JsonParsers.parseString(json['animal_name']),
-        pregnantAnimal: JsonParsers.parseNumber(json['pregnant_animal']),
-        nonPregnantAnimal: JsonParsers.parseNumber(json['non_pregnant_animal']),
-        lactating: JsonParsers.parseNumber(json['lactating']),
-        nonLactating: JsonParsers.parseNumber(json['nonLactating']),
-        animalData: animalData,
+      return _$AnimalDetailsDataFromJson(
+        json,
+      ).copyWith(animalData: animalData.isNotEmpty ? animalData : null,
       );
     } catch (e) {
       print('Error parsing AnimalDetailsData: $e');
@@ -86,6 +81,25 @@ class AnimalDetailsData {
   @JsonKey(name: 'animal_data')
   final List<IndividualAnimalData>? animalData;
 
+  /// Creates a copy of this object with the given fields replaced with new values.
+  AnimalDetailsData copyWith({
+    String? animalName,
+    int? pregnantAnimal,
+    int? nonPregnantAnimal,
+    int? lactating,
+    int? nonLactating,
+    List<IndividualAnimalData>? animalData,
+  }) {
+    return AnimalDetailsData(
+      animalName: animalName ?? this.animalName,
+      pregnantAnimal: pregnantAnimal ?? this.pregnantAnimal,
+      nonPregnantAnimal: nonPregnantAnimal ?? this.nonPregnantAnimal,
+      lactating: lactating ?? this.lactating,
+      nonLactating: nonLactating ?? this.nonLactating,
+      animalData: animalData ?? this.animalData,
+    );
+  }
+
   /// Converts this data to JSON.
   Map<String, dynamic> toJson() => _$AnimalDetailsDataToJson(this);
 }
@@ -104,18 +118,12 @@ class AnimalDetailsResponse {
   /// Creates an [AnimalDetailsResponse] from JSON data.
   factory AnimalDetailsResponse.fromJson(Map<String, dynamic> json) {
     try {
-      return AnimalDetailsResponse(
-        data: json['data'] == null
-            ? null
-            : AnimalDetailsData.fromJson(JsonParsers.parseMap(json['data'])),
-        message: JsonParsers.parseString(json['message']),
-        status: JsonParsers.parseNumber(json['status']),
-      );
+      return _$AnimalDetailsResponseFromJson(json);
     } catch (e) {
       print('Error parsing AnimalDetailsResponse: $e');
       return AnimalDetailsResponse(
         message: json['message']?.toString(),
-        status: JsonParsers.parseNumber(json['status']),
+        status: json['status'] is int ? (json['status'] as int) : 500,
       );
     }
   }
@@ -169,18 +177,7 @@ class IndividualAnimalData {
   /// Creates an [IndividualAnimalData] from JSON data.
   factory IndividualAnimalData.fromJson(Map<String, dynamic> json) {
     try {
-      return IndividualAnimalData(
-        id: JsonParsers.parseNumber(json['id']),
-        animalNumber: _parseAnimalNumber(json['animal_number']),
-        dateOfBirth: JsonParsers.parseString(json['date_of_birth']),
-        weight: JsonParsers.parseDouble(json['weight']),
-        breed: JsonParsers.parseString(json['breed']),
-        gender: JsonParsers.parseString(json['gender']),
-        status: JsonParsers.parseString(json['status']),
-        pregnancyStatus: JsonParsers.parseString(json['pregnant_status']),
-        lactationStatus: JsonParsers.parseString(json['lactating_status']),
-        healthStatus: JsonParsers.parseString(json['health_status']),
-      );
+      return _$IndividualAnimalDataFromJson(json);
     } catch (e) {
       print('Error parsing IndividualAnimalData: $e');
       return IndividualAnimalData();
@@ -191,11 +188,9 @@ class IndividualAnimalData {
   final int? id;
 
   /// Animal identification number.
-  @JsonKey(
-    name: 'animal_number',
-    fromJson: _parseAnimalNumber,
-  )
-  final int? animalNumber;
+  /// Changed from int to String to accommodate formats like "cow 1"
+  @JsonKey(name: 'animal_number')
+  final String? animalNumber;
 
   /// Date of birth.
   @JsonKey(name: 'date_of_birth')
@@ -227,44 +222,4 @@ class IndividualAnimalData {
 
   /// Converts this data to JSON.
   Map<String, dynamic> toJson() => _$IndividualAnimalDataToJson(this);
-
-  /// Parses animal number from various formats
-  static int? _parseAnimalNumber(value) {
-    print('_parseAnimalNumber called with: ${value?.runtimeType}: $value');
-    try {
-      if (value == null) {
-        print('Animal number is null');
-        return null;
-      }
-
-      if (value is int) {
-        print('Animal number is already int: $value');
-        return value;
-      }
-
-      if (value is num) {
-        print('Animal number is num, converting to int: ${value.toInt()}');
-        return value.toInt();
-      }
-
-      if (value is String) {
-        print('Animal number is String: $value');
-        if (value.trim().isEmpty) {
-          print('Empty string, returning null');
-          return null;
-        }
-
-        final parsed = int.tryParse(value);
-        print('Parsed animal number to: $parsed');
-        return parsed;
-      }
-
-      print('Unknown type for animal_number: ${value.runtimeType}');
-      return null;
-    } catch (e, stackTrace) {
-      print('Error in _parseAnimalNumber: $e');
-      print('Stack trace: $stackTrace');
-      return null;
-    }
-  }
 }

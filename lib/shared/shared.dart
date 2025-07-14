@@ -34,3 +34,5 @@ export 'services/user_language_service.dart';
 // Theme and styling
 export 'theme.dart';
 export 'theme_extensions.dart';
+// Widgets
+export 'widgets/app_notification_button.dart';

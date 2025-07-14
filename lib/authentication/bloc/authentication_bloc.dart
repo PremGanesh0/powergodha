@@ -117,6 +117,70 @@ class AuthenticationBloc
   /// * User data caching
   /// * Profile update operations
   final UserRepository _userRepository;
+  /// Handles the authenticated status by fetching user data and emitting the appropriate state.
+  ///
+  /// This helper method is used by _onSubscriptionRequested to handle the authenticated
+  /// status case. It attempts to fetch user data and emits the appropriate state based
+  /// on whether the fetch was successful and whether a token is present.
+  Future<void> _handleAuthenticatedStatus(Emitter<AuthenticationState> emit) async {
+    if (emit.isDone) return;
+
+    try {
+      // User is authenticated - try to fetch user data
+      final user = await _tryGetUser();
+
+      if (emit.isDone) return;
+
+      if (user != null) {
+        // Successfully got user data - emit authenticated state with user
+        AppLogger.info(
+          'AuthenticationBloc: User data fetched successfully, emitting authenticated state',
+        );
+        emit(AuthenticationState.authenticated(user));
+      } else {
+        // Getting user data failed, but we still have a token
+        // This could be due to a temporary network issue after language change
+        // Check if we have a local access token before declaring unauthenticated
+        final hasAccessToken = _authenticationRepository.currentAccessToken != null;
+
+        if (hasAccessToken) {
+          AppLogger.warning(
+            'AuthenticationBloc: Failed to fetch user data but token exists. '
+            'Possibly a temporary network issue. Preserving authenticated state.',
+          );
+          // We have a token but couldn't fetch user data (possibly network issue)
+          // Return authenticated state with empty user to avoid kicking the user out
+          emit(const AuthenticationState.authenticated(User.empty));
+        } else {
+          // No token and no user data - truly unauthenticated
+          AppLogger.info(
+            'AuthenticationBloc: No token and no user data, emitting unauthenticated state',
+          );
+          emit(const AuthenticationState.unauthenticated());
+        }
+      }
+    } catch (e) {
+      // Error fetching user data
+      AppLogger.error('AuthenticationBloc: Error fetching user data', error: e);
+
+      if (emit.isDone) return;
+
+      // Check if we have a token before immediately logging out
+      final hasAccessToken = _authenticationRepository.currentAccessToken != null;
+
+      if (hasAccessToken) {
+        // We have a token but error occurred (likely network)
+        // Return authenticated state with empty user to avoid kicking the user out
+        AppLogger.warning(
+          'AuthenticationBloc: Network error fetching user data, but token exists. '
+          'Preserving authenticated state.',
+        );
+        emit(const AuthenticationState.authenticated(User.empty));
+      } else {
+        emit(const AuthenticationState.unauthenticated());
+      }
+    }
+  }
   /// Handles the [AuthenticationForgotPasswordRequested] event.
   ///
   /// This method processes password reset requests by:
@@ -167,6 +231,7 @@ class AuthenticationBloc
     // This will cause the authentication status stream to emit unauthenticated
     _authenticationRepository.logOut();
   }
+
   /// Handles the [AuthenticationSubscriptionRequested] event.
   ///
   /// This method sets up a subscription to the authentication status stream
@@ -190,76 +255,51 @@ class AuthenticationBloc
   Future<void> _onSubscriptionRequested(
     AuthenticationSubscriptionRequested event,
     Emitter<AuthenticationState> emit,
-  ) => emit.onEach(
-    _authenticationRepository.status,
-    onData: (AuthenticationStatus status) async {
-      AppLogger.info('AuthenticationBloc: Received auth status update: $status');
+  ) async {
+    // Create a subscription to the authentication status stream
+    final subscription = _authenticationRepository.status.listen(
+      (status) async {
+        AppLogger.info('AuthenticationBloc: Received auth status update: $status');
 
-      switch (status) {
-        case AuthenticationStatus.unauthenticated:
-          return emit(const AuthenticationState.unauthenticated());
-        case AuthenticationStatus.authenticated:
+        if (!emit.isDone) {
           try {
-            // User is authenticated - try to fetch user data
-            final user = await _tryGetUser();
-
-            if (user != null) {
-              // Successfully got user data - emit authenticated state with user
-              AppLogger.info('AuthenticationBloc: User data fetched successfully, emitting authenticated state');
-              return emit(AuthenticationState.authenticated(user));
-            } else {
-              // Getting user data failed, but we still have a token
-              // This could be due to a temporary network issue after language change
-              // Check if we have a local access token before declaring unauthenticated
-              final hasAccessToken = _authenticationRepository.currentAccessToken != null;
-
-              if (hasAccessToken) {
-                AppLogger.warning(
-                  'AuthenticationBloc: Failed to fetch user data but token exists. '
-                  'Possibly a temporary network issue. Preserving authenticated state.',
-                );
-                // We have a token but couldn't fetch user data (possibly network issue)
-                // Return authenticated state with empty user to avoid kicking the user out
-                return emit(const AuthenticationState.authenticated(User.empty));
-              } else {
-                // No token and no user data - truly unauthenticated
-                AppLogger.info('AuthenticationBloc: No token and no user data, emitting unauthenticated state');
-                return emit(const AuthenticationState.unauthenticated());
-              }
+            switch (status) {
+              case AuthenticationStatus.unauthenticated:
+                emit(const AuthenticationState.unauthenticated());
+                break;
+              case AuthenticationStatus.authenticated:
+                await _handleAuthenticatedStatus(emit);
+                break;
+              case AuthenticationStatus.unknown:
+                emit(const AuthenticationState.unknown());
+                break;
             }
-          } catch (e) {
-            // Error fetching user data
-            AppLogger.error('AuthenticationBloc: Error fetching user data', error: e);
-
-            // Check if we have a token before immediately logging out
-            final hasAccessToken = _authenticationRepository.currentAccessToken != null;
-
-            if (hasAccessToken) {
-              // We have a token but error occurred (likely network)
-              // Return authenticated state with empty user to avoid kicking the user out
-              AppLogger.warning(
-                'AuthenticationBloc: Network error fetching user data, but token exists. '
-                'Preserving authenticated state.',
-              );
-              return emit(const AuthenticationState.authenticated(User.empty));
-            } else {
-              return emit(const AuthenticationState.unauthenticated());
-            }
+          } catch (e, stackTrace) {
+            AppLogger.error(
+              'AuthenticationBloc: Error handling authentication status',
+              error: e,
+              stackTrace: stackTrace,
+            );
           }
-        case AuthenticationStatus.unknown:
-          return emit(const AuthenticationState.unknown());
-      }
-    },
-    // Forward any stream errors to the bloc's error handler
-    onError: (error, stackTrace) {
-      AppLogger.error(
-        'AuthenticationBloc: Error in authentication status stream',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      addError(error, stackTrace);
-    },
-  );
+        }
+      },
+      onError: (error, stackTrace) {
+        if (!emit.isDone) {
+          AppLogger.error(
+            'AuthenticationBloc: Error in authentication status stream',
+            error: error,
+            stackTrace: stackTrace as StackTrace?,
+          );
+          addError(error as Object, stackTrace as StackTrace);
+        }
+      },
+    );
+
+    // Ensure the subscription is canceled when the event handler completes
+    await Future<void>.delayed(Duration.zero);
+    await subscription.asFuture<void>();
+    await subscription.cancel();
+  }
   /// Attempts to fetch user data from the user repository.
   ///
   /// This is a helper method that safely attempts to retrieve user data

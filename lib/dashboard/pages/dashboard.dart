@@ -9,6 +9,8 @@ import 'package:powergodha/dashboard/models/dashboard_models.dart';
 import 'package:powergodha/dashboard/pages/animal_detail_page.dart';
 import 'package:powergodha/dashboard/update_animal.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
+import 'package:powergodha/animal/animal_type_utils.dart';
+import 'package:powergodha/shared/enums.dart';
 
 /// Dashboard page for dairy farm management with animal cards
 class DashboardPage extends StatefulWidget with DashboardDialogMixin {
@@ -177,50 +179,50 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return [
       AnimalCardData(
-        title: 'Cows',
-        icon: 'assets/icons/cows.png',
+        title: AnimalType.cow.displayName,
+        icon: AnimalType.cow.iconPath,
         color: DashboardConstants.cowColor,
         count: (animalCounts['Cow'] ?? 0).toString(),
         onTap: () => _navigateToAnimalDetail(
           context,
-          animalId: 1,
-          animalName: 'Cows',
+          animalId: AnimalType.cow.apiId,
+          animalName: AnimalType.cow.displayName,
           animalColor: DashboardConstants.cowColor,
         ),
       ),
       AnimalCardData(
-        title: 'Buffalo',
-        icon: 'assets/icons/buffalos.png',
+        title: AnimalType.buffalo.displayName,
+        icon: AnimalType.buffalo.iconPath,
         color: DashboardConstants.buffaloColor,
         count: (animalCounts['Buffalo'] ?? 0).toString(),
         onTap: () => _navigateToAnimalDetail(
           context,
-          animalId: 2,
-          animalName: 'Buffalo',
+          animalId: AnimalType.buffalo.apiId,
+          animalName: AnimalType.buffalo.displayName,
           animalColor: DashboardConstants.buffaloColor,
         ),
       ),
       AnimalCardData(
-        title: 'Goats',
-        icon: 'assets/icons/cows.png',
+        title: AnimalType.goat.displayName,
+        icon: AnimalType.goat.iconPath,
         color: DashboardConstants.goatColor,
         count: (animalCounts['Goat'] ?? 0).toString(),
         onTap: () => _navigateToAnimalDetail(
           context,
-          animalId: 3,
-          animalName: 'Goats',
+          animalId: AnimalType.goat.apiId,
+          animalName: AnimalType.goat.displayName,
           animalColor: DashboardConstants.goatColor,
         ),
       ),
       AnimalCardData(
-        title: 'Hens',
-        icon: 'assets/icons/hens.png',
+        title: AnimalType.hen.displayName,
+        icon: AnimalType.hen.iconPath,
         color: DashboardConstants.henColor,
         count: (animalCounts['Hen'] ?? 0).toString(),
         onTap: () => _navigateToAnimalDetail(
           context,
-          animalId: 4,
-          animalName: 'Hens',
+          animalId: AnimalType.hen.apiId,
+          animalName: AnimalType.hen.displayName,
           animalColor: DashboardConstants.henColor,
         ),
       ),

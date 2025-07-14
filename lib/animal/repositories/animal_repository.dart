@@ -1,9 +1,9 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dio/dio.dart';
-import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/animal/models/animal_count_response.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/models/animal_info_response.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/shared/retrofit_client.dart';
 
 /// Repository for managing animal-related data operations.
@@ -41,7 +41,7 @@ class AnimalRepository {
   ///
   /// **Throws:**
   /// * [AnimalRepositoryException] if the request fails or user is not authenticated
-  Future<AnimalDetailsResponse> getAnimalDetailsByType(int animalId, String animalType) async {
+  Future<AnimalDetailsResponse> getAnimalDetailsByType({required int animalId,required String animalType}) async {
     try {
       final accessToken = _authenticationRepository.currentAccessToken;
 

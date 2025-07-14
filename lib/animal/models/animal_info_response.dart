@@ -1,54 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:powergodha/shared/utils/json_parsers.dart';
+import 'package:powergodha/shared/enums.dart';
 
 part 'animal_info_response.g.dart';
-
-/// {@template animal_info_response}
-/// Response model for animal information from API endpoints.
-///
-/// This model represents the structure returned by the `/animal_info/{id}` endpoint.
-/// It contains detailed information about a specific animal type.
-/// {@endtemplate}
-@JsonSerializable()
-class AnimalInfoResponse {
-  /// Creates an animal info response instance.
-  const AnimalInfoResponse({
-    required this.data,
-    required this.message,
-    required this.status,
-  });
-
-  /// Creates an [AnimalInfoResponse] from JSON data.
-  factory AnimalInfoResponse.fromJson(Map<String, dynamic> json) {
-    try {
-      return _$AnimalInfoResponseFromJson(json);
-    } catch (e) {
-      print('Error parsing AnimalInfoResponse: $e');
-      return AnimalInfoResponse(
-        data: [],
-        message: json['message']?.toString() ?? '',
-        status: _parseStatus(json['status']),
-      );
-    }
-  }
-
-  /// List of animal info data with different categories.
-  final List<AnimalInfoData> data;
-
-  /// Response message.
-  final String message;
-
-  /// HTTP status code.
-  final int status;
-
-  /// Converts this response to JSON.
-  Map<String, dynamic> toJson() => _$AnimalInfoResponseToJson(this);
-  
-  /// Parse status from various formats
-  static int _parseStatus(value) {
-    return JsonParsers.parseNumber(value) ?? 0;
-  }
-}
 
 /// {@template animal_info_data}
 /// Individual animal info data model.
@@ -73,17 +26,7 @@ class AnimalInfoData {
   /// Creates an [AnimalInfoData] from JSON data.
   factory AnimalInfoData.fromJson(Map<String, dynamic> json) {
     try {
-      return AnimalInfoData(
-        cow: _parseAnimalCount(json['Cow']),
-        buffalo: _parseAnimalCount(json['Buffalo']),
-        goat: _parseAnimalCount(json['Goat']),
-        hen: _parseAnimalCount(json['Hen']),
-        male: _parseAnimalCount(json['male']),
-        female: _parseAnimalCount(json['female']),
-        heifer: _parseAnimalCount(json['heifer']),
-        bull: _parseAnimalCount(json['bull']),
-        calf: _parseAnimalCount(json['calf']),
-      );
+      return _$AnimalInfoDataFromJson(json);
     } catch (e) {
       print('Error parsing AnimalInfoData: $e');
       return const AnimalInfoData();
@@ -120,17 +63,17 @@ class AnimalInfoData {
 
   /// Number of calves.
   final int? calf;
-  
-  /// Parse animal count from various formats (could be string, int or null)
-  static int? _parseAnimalCount(value) {
-    return JsonParsers.parseNumber(value);
+
+
+
+  /// Gets the AnimalType for this data entry if it represents a specific animal type.
+  AnimalType? get animalType {
+    if (cow != null) return AnimalType.cow;
+    if (buffalo != null) return AnimalType.buffalo;
+    if (goat != null) return AnimalType.goat;
+    if (hen != null) return AnimalType.hen;
+    return null;
   }
-
-  /// Converts this data to JSON.
-  Map<String, dynamic> toJson() => _$AnimalInfoDataToJson(this);
-
-  /// Gets the count value for this data entry.
-  int get count => cow ?? buffalo ?? goat ?? hen ?? male ?? female ?? heifer ?? bull ?? calf ?? 0;
 
   /// Gets the category name for this data entry.
   String get category {
@@ -145,4 +88,50 @@ class AnimalInfoData {
     if (calf != null) return 'Calf';
     return 'Unknown';
   }
+
+  /// Gets the count value for this data entry.
+  int get count => cow ?? buffalo ?? goat ?? hen ?? male ?? female ?? heifer ?? bull ?? calf ?? 0;
+
+  /// Converts this data to JSON.
+  Map<String, dynamic> toJson() => _$AnimalInfoDataToJson(this);
+}
+
+/// {@template animal_info_response}
+/// Response model for animal information from API endpoints.
+///
+/// This model represents the structure returned by the `/animal_info/{id}` endpoint.
+/// It contains detailed information about a specific animal type.
+/// {@endtemplate}
+@JsonSerializable()
+class AnimalInfoResponse {
+  /// Creates an animal info response instance.
+  const AnimalInfoResponse({required this.data, required this.message, required this.status});
+
+  /// Creates an [AnimalInfoResponse] from JSON data.
+  factory AnimalInfoResponse.fromJson(Map<String, dynamic> json) {
+    try {
+      return _$AnimalInfoResponseFromJson(json);
+    } catch (e) {
+      print('Error parsing AnimalInfoResponse: $e');
+      return AnimalInfoResponse(
+        data: [],
+        message: json['message']?.toString() ?? '',
+        status: json['status'] is int ? (json['status'] as int) : 500,
+      );
+    }
+  }
+
+  /// List of animal info data with different categories.
+  final List<AnimalInfoData> data;
+
+  /// Response message.
+  final String message;
+
+  /// HTTP status code.
+  final int status;
+
+  /// Converts this response to JSON.
+  Map<String, dynamic> toJson() => _$AnimalInfoResponseToJson(this);
+
+
 }

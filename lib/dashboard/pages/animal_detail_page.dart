@@ -4,7 +4,6 @@ import 'package:powergodha/animal/models/animal_info_response.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/dashboard/add_animals.dart';
-import 'package:powergodha/dashboard/next_in_update.dart';
 import 'package:powergodha/dashboard/pages/animal_list_page.dart';
 import 'package:powergodha/dashboard/update_animal.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';

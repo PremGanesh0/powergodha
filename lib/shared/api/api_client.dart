@@ -61,6 +61,12 @@ class ApiClient {
   /// * Default headers for JSON communication
   static final Dio _instance = _createDioInstance();
 
+  // Track language changes to force new Dio instance creation
+  static bool _languageWasChanged = false;
+
+  // Track when the instance was last created (milliseconds since epoch)
+  static int? _lastInstanceCreationTime;
+
   /// Gets the shared [Dio] instance.
   ///
   /// All repositories and API clients should use this instance
@@ -78,27 +84,50 @@ class ApiClient {
       return _createDioInstance();
     }
 
-    // Otherwise check if the existing instance is valid
+    // Instead of complex checks that might fail, use a simpler approach:
+    // If a language change was detected recently or it's been a while since
+    // the instance was created, just create a new one to be safe
+
+    // Check if the current instance is still valid
     try {
       // First check if we can access the baseUrl (catches most invalid states)
-      _instance.options.baseUrl;
-
-      // Also check if the adapter is closed (specific check for language change issues)
-      var isClosed = false;
-      try {
-        isClosed = (_instance.httpClientAdapter as dynamic).closed == true;
-      } catch (e) {
-        // If we can't check this property, assume it's still valid
-      }
-
-      if (isClosed) {
-        AppLogger.info(
-          'ApiClient: Dio adapter was closed, creating new instance',
-        );
+      final baseUrl = _instance.options.baseUrl;
+      if (baseUrl.isEmpty) {
+        AppLogger.warning('ApiClient: Base URL is empty, creating new instance');
         return _createDioInstance();
       }
 
-      return _instance;
+      // Check instance creation time if we're tracking it
+      final currentTime = DateTime.now().millisecondsSinceEpoch;
+      final lastCreationTime = _lastInstanceCreationTime ?? 0;
+      final instanceAge = currentTime - lastCreationTime;
+
+      // If instance is older than 30 minutes, recreate it to be safe
+      if (lastCreationTime > 0 && instanceAge > 30 * 60 * 1000) {
+        AppLogger.info('ApiClient: Instance is older than 30 minutes, creating new one for safety');
+        return _createDioInstance();
+      }
+
+      // Simple check for adapter validity without relying on specific properties
+      try {
+        final adapter = _instance.httpClientAdapter;
+        if (adapter == null) {
+          // This shouldn't happen, but just in case
+          throw Exception('Adapter is null');
+        }
+
+        // Basic connectivity check - can we initialize a request?
+        final requestOptions = RequestOptions(path: '');
+        requestOptions.baseUrl = _instance.options.baseUrl;
+        _instance.transformer.transformRequest(requestOptions);
+
+        // If we got here, the instance seems valid
+        return _instance;
+      } catch (e) {
+        AppLogger.warning('ApiClient: Error checking adapter health: $e');
+        return _createDioInstance();
+      }
+
     } catch (e) {
       AppLogger.warning(
         'ApiClient: Error checking Dio instance, creating new one: $e',
@@ -107,25 +136,6 @@ class ApiClient {
       // create a new one on demand
       return _createDioInstance();
     }
-  }
-
-  // Track language changes to force new Dio instance creation
-  static bool _languageWasChanged = false;
-
-  /// Check if language was recently changed
-  static bool _wasLanguageChanged() {
-    // Reset after checking once
-    if (_languageWasChanged) {
-      _languageWasChanged = false;
-      return true;
-    }
-    return false;
-  }
-
-  /// Call this when language is changed
-  static void notifyLanguageChanged() {
-    _languageWasChanged = true;
-    AppLogger.info('ApiClient: Language change notification received');
   }
 
   /// Creates a new [Dio] instance with custom configuration.
@@ -178,6 +188,12 @@ class ApiClient {
     return dio;
   }
 
+  /// Call this when language is changed
+  static void notifyLanguageChanged() {
+    _languageWasChanged = true;
+    AppLogger.info('ApiClient: Language change notification received');
+  }
+
   /// Creates and configures the [Dio] instance.
   ///
   /// This method sets up the base configuration including:
@@ -187,6 +203,8 @@ class ApiClient {
   /// * Interceptors for logging and error handling
   static Dio _createDioInstance() {
     AppLogger.info('ApiClient: Creating new Dio instance');
+    // Update the creation timestamp
+    _lastInstanceCreationTime = DateTime.now().millisecondsSinceEpoch;
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConfig.baseUrl,
@@ -223,5 +241,15 @@ class ApiClient {
     // but the getter will handle creating a new instance when needed
 
     return dio;
+  }
+
+  /// Check if language was recently changed
+  static bool _wasLanguageChanged() {
+    // Reset after checking once
+    if (_languageWasChanged) {
+      _languageWasChanged = false;
+      return true;
+    }
+    return false;
   }
 }
