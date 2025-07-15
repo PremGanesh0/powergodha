@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/dashboard/mixins/dashboard_dialog_mixin.dart';
+import 'package:powergodha/dashboard/widgets/radio_buttons.dart';
+import 'package:powergodha/dashboard/widgets/text_field.dart';
 import 'package:powergodha/shared/enums.dart';
 
-class AddAnimal extends StatefulWidget {
+class AddAnimal extends StatefulWidget with DashboardDialogMixin {
   const AddAnimal({super.key});
 
   @override
@@ -24,7 +27,6 @@ class _AddAnimalState extends State<AddAnimal> {
   String? selectedLactating;
   String? selectedOwnDairy;
   DateTime _selectedDate = DateTime.now();
-
   final _animalNumberController = TextEditingController();
   final _purchasePriceController = TextEditingController();
   final _weightController = TextEditingController();
@@ -121,7 +123,6 @@ class _AddAnimalState extends State<AddAnimal> {
                   //     ),
                   //   ),
                   // ),
-
                   DropdownButtonFormField<String>(
                     value: _selectedAnimal.toString(),
                     decoration: InputDecoration(
@@ -147,27 +148,9 @@ class _AddAnimalState extends State<AddAnimal> {
                           orElse: () => AnimalType.cow,
                         );
                       });
-
                       // 👇 Show "Coming Soon" popup for Goat or Hen
-                      if (val == 'Goat' || val == 'Hen') {
-                        Future.delayed(Duration.zero, () {
-                          final snackBar = SnackBar(
-                            content: const Text(
-                              'Coming Soon',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            duration: const Duration(milliseconds: 800),
-                            // Short duration
-                            behavior: SnackBarBehavior.floating,
-                            margin: const EdgeInsets.only(bottom: 20, left: 100, right: 100),
-                            // Bottom center
-                            backgroundColor: Colors.black87,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          );
-
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        });
+                      if (val == 'AnimalType.goat' || val == 'AnimalType.hen') {
+                        widget.showToast(context, 'Coming Soon');
                       }
                     },
                   ),
@@ -185,12 +168,9 @@ class _AddAnimalState extends State<AddAnimal> {
                       style: TextStyle(color: Colors.grey[500]),
                     ),
                     const SizedBox(height: 20),
-                    _TextFieldOption(
-                      controller: _animalNumberController,
-                      question: 'Animal Number',
-                    ),
+                    TextFieldOption(controller: _animalNumberController, question: 'Animal Number'),
                     const SizedBox(height: 20),
-                    _RadioOptions(
+                    RadioOptions(
                       question: 'Animal Sex',
                       type1: 'Male',
                       type2: 'Female',
@@ -204,7 +184,7 @@ class _AddAnimalState extends State<AddAnimal> {
                     const SizedBox(height: 20),
 
                     if (_selectedAnimal == AnimalType.buffalo)
-                      _RadioOptions(
+                      RadioOptions(
                         question: 'Is it a Buffalo or calf?',
                         type1: 'Buffalo',
                         type2: 'Calf',
@@ -216,7 +196,7 @@ class _AddAnimalState extends State<AddAnimal> {
                         },
                       ),
                     if (_selectedAnimal == AnimalType.cow)
-                      _RadioOptions(
+                      RadioOptions(
                         question: 'Is it a Cow or calf?',
                         type1: 'Cow',
                         type2: 'Calf',
@@ -228,7 +208,7 @@ class _AddAnimalState extends State<AddAnimal> {
                         },
                       ),
                     const SizedBox(height: 20),
-                    _RadioOptions(
+                    RadioOptions(
                       question: 'Is animal Pregnant?',
                       type1: 'Yes',
                       type2: 'No',
@@ -240,7 +220,7 @@ class _AddAnimalState extends State<AddAnimal> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    _RadioOptions(
+                    RadioOptions(
                       question: 'Is animal Lactating',
                       type1: 'Yes',
                       type2: 'No',
@@ -252,14 +232,14 @@ class _AddAnimalState extends State<AddAnimal> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    _TextFieldOption(
+                    TextFieldOption(
                       question: 'Date of birth of the Animal',
                       controller: _dobController,
                       icon: const Icon(Icons.calendar_month, size: 24),
                       onIconTap: _selectDate,
                     ),
                     const SizedBox(height: 20),
-                    _RadioOptions(
+                    RadioOptions(
                       question: 'Whether borne in own dairy farm',
                       type1: 'Yes',
                       type2: 'No',
@@ -271,19 +251,18 @@ class _AddAnimalState extends State<AddAnimal> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    _TextFieldOption(
+                    TextFieldOption(
                       question: 'Purchase price of the Animal',
                       controller: _purchasePriceController,
                       // input should be numeric
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                      ),
+                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
-                    _TextFieldOption(
+                    TextFieldOption(
                       controller: _weightController,
                       question: 'Weight of the Animal',
+                      // input should be numeric
+                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
                     const Text('Buffalo Breed', style: TextStyle(fontSize: 16)),
@@ -362,142 +341,50 @@ class _AddAnimalState extends State<AddAnimal> {
         _purchasePriceController.text.isEmpty ||
         _weightController.text.isEmpty ||
         _dobController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      widget.showToast(context, 'Please fill all fields');
+
       return;
     }
 
-    // // Here you would typically send the data to your backend
-    // // For now, just print it to the console
-    // print('Animal Data Submitted:');
-    // print('Animal: $_selectedAnimal');
-    // print('Breed: $selectedBreed');
-    // print('Sex: $selectedSex');
-    // print('Buffalo/Calf: $buffaloOrCalf');
-    // print('Pregnant: $selectedPregnant');
-    // print('Lactating: $selectedLactating');
-    // print('Own Dairy: $selectedOwnDairy');
-    // print('Animal Number: ${_animalNumberController.text}');
-    // print('Purchase Price: ${_purchasePriceController.text}');
-    // print('Weight: ${_weightController.text}');
-    // print('Date of Birth: ${_dobController.text}');
-
     late final animalRepository = RepositoryProvider.of<AnimalRepository>(context);
+
+    //       {
+    //   'animal_id': '1',                                     // Cow
+    //   'animal_number': 'ankhjd',
+    //   'answers': [
+    //     { 'answer': 'akkjnd',       'question_id': 6 },     // Animal Number
+    //     { 'answer': 'Male',      'question_id': 7 },     // Gender
+    //     { 'answer': 'Cow',       'question_id': 44 },    // Cow or Calf
+    //     { 'answer': 'Yes',       'question_id': 8 },     // Is Pregnant
+    //     { 'answer': 'Yes',       'question_id': 9 },     // Is Lactating
+    //     { 'answer': '2025-07-15','question_id': 10 },    // Date of Birth
+    //     { 'answer': 'Yes',       'question_id': 11 },    // Born in farm
+    //     { 'answer': '2358',      'question_id': 12 },    // Purchase Price
+    //     { 'answer': '289',       'question_id': 13 },    // Weight
+    //     { 'answer': 'Gir',       'question_id': 49 }     // Breed
+    //   ]
+    // }
     final response = await animalRepository.submitAnimalQuestionAnswers({
-      'animal_id': '1',
+      'animal_id': AnimalTypeUtils.getAnimalId(_selectedAnimal),
       'animal_number': _animalNumberController.text,
       'answers': [
         {'answer': _animalNumberController.text, 'question_id': 6},
         {'answer': selectedSex, 'question_id': 7},
-        {'answer': _selectedAnimal, 'question_id': 44},
+        {'answer': _selectedAnimal.toString(), 'question_id': 44},
         {'answer': buffaloOrCalf, 'question_id': 8},
         {'answer': selectedLactating, 'question_id': 9},
-        {'answer': _dobController.text, 'question_id': 10},
+        {'answer': _selectedDate.toIso8601String().split('T').first, 'question_id': 10},
         {'answer': buffaloOrCalf, 'question_id': 11},
         {'answer': _purchasePriceController.text, 'question_id': 12},
         {'answer': _weightController.text, 'question_id': 13},
         {'answer': selectedBreed, 'question_id': 49},
       ],
     });
-
+    if (!mounted) return;
     if (response.success) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Animal data submitted successfully')));
-      Navigator.pop(context);
+      widget.showToast(context, 'Animal data submitted successfully');
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${response.message}')));
+      widget.showToast(context, 'Failed to submit animal data: ${response.message}');
     }
-  }
-}
-
-class _RadioOptions extends StatelessWidget {
-  const _RadioOptions({
-    required this.question,
-    required this.type1,
-    required this.type2,
-    required this.groupValue,
-    required this.onChanged,
-  });
-
-  final String type1;
-  final String type2;
-  final String question;
-  final String groupValue;
-  final ValueChanged<String?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(question, style: const TextStyle(fontSize: 16)),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Radio<String>(
-              value: type1,
-              groupValue: groupValue,
-              visualDensity: VisualDensity.compact,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onChanged: onChanged,
-            ),
-            Text(type1, style: const TextStyle(fontSize: 16)),
-            Radio<String>(
-              value: type2,
-              groupValue: groupValue,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onChanged: onChanged,
-            ),
-            Text(type2, style: const TextStyle(fontSize: 16)),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _TextFieldOption extends StatelessWidget {
-  const _TextFieldOption({
-    required this.question,
-    this.controller,
-    this.icon,
-    this.onIconTap,
-    this.decoration,
-  });
-
-  final String question;
-  final Icon? icon;
-  final VoidCallback? onIconTap;
-  final TextEditingController? controller;
-  final InputDecoration? decoration;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(question, style: const TextStyle(fontSize: 16)),
-        SizedBox(
-          height: 35,
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(fontSize: 16),
-            decoration:
-                decoration ??
-                InputDecoration(
-                  isDense: true,
-                  suffixIcon: icon != null ? IconButton(onPressed: onIconTap, icon: icon!) : null,
-                  suffixIconColor: Colors.green,
-                  focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(width: 0.5)),
-                  enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(width: 0.5)),
-                ),
-          ),
-        ),
-      ],
-    );
   }
 }

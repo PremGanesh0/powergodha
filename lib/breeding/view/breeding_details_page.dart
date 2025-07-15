@@ -58,9 +58,7 @@ class _BreedingDetailsPageState extends State<BreedingDetailsPage> {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: BreedingAppBar(
-        title: localizations?.appTitle ?? 'PowerGotha',
-      ),
+      appBar: BreedingAppBar(title: localizations?.appTitle ?? 'PowerGotha'),
       body: Column(
         children: [
           // Header section with green background
@@ -120,7 +118,9 @@ class _BreedingDetailsPageState extends State<BreedingDetailsPage> {
                             _loadAnimalNumbers(newValue);
                           }
                         },
-                        items: _availableAnimals.map<DropdownMenuItem<AnimalType>>((AnimalType value) {
+                        items: _availableAnimals.map<DropdownMenuItem<AnimalType>>((
+                          AnimalType value,
+                        ) {
                           return DropdownMenuItem<AnimalType>(
                             value: value,
                             child: Text(value.displayName),
@@ -320,7 +320,9 @@ class _BreedingDetailsPageState extends State<BreedingDetailsPage> {
         // Show a snackbar for other actions (not yet implemented)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$action selected for ${_selectedAnimal!.displayName} #$_selectedAnimalNumber'),
+            content: Text(
+              '$action selected for ${_selectedAnimal!.displayName} #$_selectedAnimalNumber',
+            ),
             backgroundColor: Colors.green[400],
           ),
         );
@@ -391,19 +393,25 @@ class _BreedingDetailsPageState extends State<BreedingDetailsPage> {
         }
       } else {
         setState(() {
-          _availableAnimals = <AnimalType>[AnimalType.buffalo, AnimalType.cow, AnimalType.goat]; // Fallback to default animals
+          _availableAnimals = <AnimalType>[
+            AnimalType.buffalo,
+            AnimalType.cow,
+            AnimalType.goat,
+          ]; // Fallback to default animals
           _selectedAnimal = AnimalType.buffalo;
         });
         await _loadAnimalNumbers(AnimalType.buffalo);
       }
     } catch (e) {
       setState(() {
-        _availableAnimals = <AnimalType>[AnimalType.buffalo, AnimalType.cow, AnimalType.goat]; // Fallback to default animals
+        _availableAnimals = <AnimalType>[
+          AnimalType.buffalo,
+          AnimalType.cow,
+          AnimalType.goat,
+        ]; // Fallback to default animals
         _selectedAnimal = AnimalType.buffalo;
       });
       await _loadAnimalNumbers(AnimalType.buffalo);
     }
   }
-
-
 }

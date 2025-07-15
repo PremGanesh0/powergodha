@@ -1,6 +1,7 @@
 // ignore_for_file: inference_failure_on_untyped_parameter
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 
 part 'animal_count_response.g.dart';
 
@@ -12,22 +13,14 @@ part 'animal_count_response.g.dart';
 @JsonSerializable()
 class AnimalCountData {
   /// Creates an animal count data instance.
-  const AnimalCountData({
-    required this.animalId,
-    this.cow,
-    this.buffalo,
-    this.goat,
-    this.hen,
-  });
+  const AnimalCountData({required this.animalId, this.cow, this.buffalo, this.goat, this.hen});
 
   /// Creates an [AnimalCountData] from JSON data.
   factory AnimalCountData.fromJson(Map<String, dynamic> json) {
     try {
       return _$AnimalCountDataFromJson(json);
-
-
     } catch (e) {
-      print('Error parsing AnimalCountData: $e');
+      AppLogger.error('Error parsing AnimalCountData: $e');
       return const AnimalCountData(animalId: 0);
     }
   }
@@ -66,10 +59,6 @@ class AnimalCountData {
 
   /// Converts this data to JSON.
   Map<String, dynamic> toJson() => _$AnimalCountDataToJson(this);
-
-
-
-
 }
 
 /// {@template animal_count_response}
@@ -81,23 +70,19 @@ class AnimalCountData {
 @JsonSerializable()
 class AnimalCountResponse {
   /// Creates an animal count response instance.
-  const AnimalCountResponse({
-    required this.data,
-    required this.message,
-    required this.status,
-  });
+  const AnimalCountResponse({required this.data, required this.message, required this.status});
 
   /// Creates an [AnimalCountResponse] from JSON data.
   factory AnimalCountResponse.fromJson(Map<String, dynamic> json) {
     try {
       return _$AnimalCountResponseFromJson(json);
     } catch (e) {
-      print('Error parsing AnimalCountResponse: $e');
+      AppLogger.error('Error parsing AnimalCountResponse: $e');
       return AnimalCountResponse(
         data: [],
         message: json['message']?.toString() ?? '',
         status: json['status'] is int ? (json['status'] as int) : 500,
-       );
+      );
     }
   }
 
@@ -112,6 +97,4 @@ class AnimalCountResponse {
 
   /// Converts this response to JSON.
   Map<String, dynamic> toJson() => _$AnimalCountResponseToJson(this);
-
-
 }

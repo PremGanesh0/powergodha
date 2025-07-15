@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/shared/enums.dart';
 
 part 'animal_info_response.g.dart';
@@ -28,7 +29,7 @@ class AnimalInfoData {
     try {
       return _$AnimalInfoDataFromJson(json);
     } catch (e) {
-      print('Error parsing AnimalInfoData: $e');
+      AppLogger.error('Error parsing AnimalInfoData: $e');
       return const AnimalInfoData();
     }
   }
@@ -63,8 +64,6 @@ class AnimalInfoData {
 
   /// Number of calves.
   final int? calf;
-
-
 
   /// Gets the AnimalType for this data entry if it represents a specific animal type.
   AnimalType? get animalType {
@@ -112,7 +111,7 @@ class AnimalInfoResponse {
     try {
       return _$AnimalInfoResponseFromJson(json);
     } catch (e) {
-      print('Error parsing AnimalInfoResponse: $e');
+      AppLogger.error('Error parsing AnimalInfoResponse: $e');
       return AnimalInfoResponse(
         data: [],
         message: json['message']?.toString() ?? '',
@@ -132,6 +131,4 @@ class AnimalInfoResponse {
 
   /// Converts this response to JSON.
   Map<String, dynamic> toJson() => _$AnimalInfoResponseToJson(this);
-
-
 }

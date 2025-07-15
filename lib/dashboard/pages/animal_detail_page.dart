@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:powergodha/animal/models/animal_info_response.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
-import 'package:powergodha/dashboard/add_animals.dart';
+import 'package:powergodha/dashboard/pages/add_animals.dart';
 import 'package:powergodha/dashboard/pages/animal_list_page.dart';
-import 'package:powergodha/dashboard/update_animal.dart';
+import 'package:powergodha/dashboard/pages/update_animal.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
 
 List<Color> animalColors = [
@@ -73,17 +73,7 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
-      // appBar: AppBar(
-      //   title: Text('${widget.animalName} Details'),
-      //   backgroundColor: widget.animalColor.withOpacity(0.1),
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.refresh),
-      //       onPressed: _loadAnimalInfo,
-      //       tooltip: 'Refresh Animal Info',
-      //     ),
-      //   ],
-      // ),
+
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
     );
@@ -151,7 +141,6 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DashboardHeader(title: widget.animalName),
-
           // Animal info grid
           GridView.builder(
             shrinkWrap: true,
@@ -199,7 +188,7 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
                   icon: Icons.refresh,
                   // onTap: _showUpdateAnimalDialog,
                   onTap: () {
-                    Navigator.of(context).push(UpdateAnimal.route(selectedAnimalOrNull: widget.animalName));
+                    Navigator.of(context).push(UpdateAnimal.route(animalOrNull: widget.animalName));
                   },
                 ),
               ),
@@ -338,33 +327,5 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
         ),
       );
     }
-  }
-
-  /// Shows dialog to add a new animal
-  void _showAddAnimalDialog() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Add ${widget.animalName}'),
-        content: const Text('Add animal functionality will be implemented here.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
-        ],
-      ),
-    );
-  }
-
-  /// Shows dialog to update animal information
-  void _showUpdateAnimalDialog() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Update ${widget.animalName}'),
-        content: const Text('Update animal functionality will be implemented here.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
-        ],
-      ),
-    );
   }
 }

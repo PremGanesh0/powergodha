@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:powergodha/shared/enums.dart';
 
 /// Utility class for working with AnimalType enum
@@ -126,7 +128,24 @@ class AnimalTypeUtils {
         return 'Hen';
     }
   }
+
+  // Gets the color associated with the animal type
+  static Color getColor(AnimalType animalType) {
+    switch (animalType) {
+      case AnimalType.cow:
+        return const Color(0xFFB2DFDB); // Light green for cows
+      case AnimalType.buffalo:
+        return const Color(0xFF80CBC4); // Teal for buffalo
+      case AnimalType.goat:
+        return const Color(0xFFFFF9C4); // Light yellow for goats
+      case AnimalType.hen:
+        return const Color(0xFFFFCDD2); // Light red for hens
+    }
+  }
 }
+
+
+
 
 /// Extension methods for AnimalType enum
 extension AnimalTypeExtension on AnimalType {

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/animal/models/animal_count_response.dart';
+import 'package:powergodha/animal/models/animal_models.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
-import 'package:powergodha/dashboard/add_animals.dart';
 import 'package:powergodha/dashboard/mixins/dashboard_dialog_mixin.dart';
-import 'package:powergodha/dashboard/models/dashboard_models.dart';
+import 'package:powergodha/dashboard/pages/add_animals.dart';
 import 'package:powergodha/dashboard/pages/animal_detail_page.dart';
-import 'package:powergodha/dashboard/update_animal.dart';
+import 'package:powergodha/dashboard/pages/update_animal.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
-import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/shared/enums.dart';
 
 /// Dashboard page for dairy farm management with animal cards
@@ -129,7 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return [
       ...animalCards.map(
         (data) => AnimalCard(
-          title: data.title,
+          title: data.title.displayName,
           icon: data.icon,
           color: data.color,
           count: data.count,
@@ -157,7 +157,7 @@ class _DashboardPageState extends State<DashboardPage> {
         title: 'Update Animal',
         icon: Icons.edit,
         // onTap: () => widget.showUpdateAnimalDialog(context),
-         onTap: () {
+        onTap: () {
           Navigator.of(context).push(UpdateAnimal.route());
         },
       ),
@@ -179,7 +179,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     return [
       AnimalCardData(
-        title: AnimalType.cow.displayName,
+        title: AnimalType.cow,
         icon: AnimalType.cow.iconPath,
         color: DashboardConstants.cowColor,
         count: (animalCounts['Cow'] ?? 0).toString(),
@@ -191,7 +191,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
       AnimalCardData(
-        title: AnimalType.buffalo.displayName,
+        title: AnimalType.buffalo,
         icon: AnimalType.buffalo.iconPath,
         color: DashboardConstants.buffaloColor,
         count: (animalCounts['Buffalo'] ?? 0).toString(),
@@ -203,28 +203,21 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
       AnimalCardData(
-        title: AnimalType.goat.displayName,
+        title: AnimalType.goat,
         icon: AnimalType.goat.iconPath,
         color: DashboardConstants.goatColor,
         count: (animalCounts['Goat'] ?? 0).toString(),
-        onTap: () => _navigateToAnimalDetail(
-          context,
-          animalId: AnimalType.goat.apiId,
-          animalName: AnimalType.goat.displayName,
-          animalColor: DashboardConstants.goatColor,
-        ),
+        // show toast message for goat not implemented
+        onTap: () {
+          widget.showComingSoonToast(context, AnimalType.goat.displayName);
+        },
       ),
       AnimalCardData(
-        title: AnimalType.hen.displayName,
+        title: AnimalType.hen,
         icon: AnimalType.hen.iconPath,
         color: DashboardConstants.henColor,
         count: (animalCounts['Hen'] ?? 0).toString(),
-        onTap: () => _navigateToAnimalDetail(
-          context,
-          animalId: AnimalType.hen.apiId,
-          animalName: AnimalType.hen.displayName,
-          animalColor: DashboardConstants.henColor,
-        ),
+        onTap: () => widget.showComingSoonToast(context, AnimalType.hen.displayName),
       ),
     ];
   }

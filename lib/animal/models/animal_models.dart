@@ -1,4 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:powergodha/shared/enums.dart';
+
+/// Data model for action card information
+class ActionCardData {
+  /// Creates an action card data model
+  const ActionCardData({required this.title, required this.icon, required this.onTap});
+
+  /// The title of the action
+  final String title;
+
+  /// The icon for the action
+  final IconData icon;
+
+  /// Callback when the card is tapped
+  final VoidCallback onTap;
+}
 
 /// Data model for animal card information
 class AnimalCardData {
@@ -12,7 +28,7 @@ class AnimalCardData {
   });
 
   /// The title of the animal type
-  final String title;
+  final AnimalType title;
 
   /// The icon asset path for the animal
   final String icon;
@@ -22,25 +38,6 @@ class AnimalCardData {
 
   /// The count to display
   final String count;
-
-  /// Callback when the card is tapped
-  final VoidCallback onTap;
-}
-
-/// Data model for action card information
-class ActionCardData {
-  /// Creates an action card data model
-  const ActionCardData({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
-
-  /// The title of the action
-  final String title;
-
-  /// The icon for the action
-  final IconData icon;
 
   /// Callback when the card is tapped
   final VoidCallback onTap;

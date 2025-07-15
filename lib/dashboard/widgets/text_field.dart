@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class TextFieldOption extends StatelessWidget {
   const TextFieldOption({
     required this.question,
+    this.keyboardType = TextInputType.text,
     this.controller,
     this.icon,
     this.onIconTap,
@@ -16,6 +17,7 @@ class TextFieldOption extends StatelessWidget {
   final VoidCallback? onIconTap;
   final TextEditingController? controller;
   final InputDecoration? decoration;
+  final TextInputType keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class TextFieldOption extends StatelessWidget {
           child: TextField(
             controller: controller,
             style: const TextStyle(fontSize: 16),
+            keyboardType:  keyboardType,
             decoration:
                 decoration ??
                 InputDecoration(

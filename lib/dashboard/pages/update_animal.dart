@@ -1,22 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
-import 'package:powergodha/dashboard/next_in_update.dart';
-import 'package:powergodha/animal/animal_type_utils.dart';
+import 'package:powergodha/dashboard/pages/next_in_update.dart';
 import 'package:powergodha/shared/enums.dart';
 
 class UpdateAnimal extends StatefulWidget {
-  const UpdateAnimal({this.selectedAnimalOrNull, super.key});
-  final String? selectedAnimalOrNull;
+  const UpdateAnimal({
+    this.animalOrNull,
+    this.breed,
+    this.sex,
+    this.buffaloOrCalf,
+    this.pregnant,
+    this.lactating,
+    this.ownDairy,
+    this.date,
+    this.animalNumber,
+    this.purchasePrice,
+    this.weight,
+    this.dob,
+    super.key,
+  });
+
+  final String? animalOrNull;
+  final String? breed;
+  final String? sex;
+  final String? buffaloOrCalf;
+  final String? pregnant;
+  final String? lactating;
+  final String? ownDairy;
+  final DateTime? date;
+  final String? animalNumber;
+  final String? purchasePrice;
+  final String? weight;
+  final String? dob;
+
+
 
   @override
   State<UpdateAnimal> createState() => _UpdateAnimalState();
 
-  static Route<void> route({String? selectedAnimalOrNull}) {
+  static Route<void> route({String? animalOrNull}) {
     return MaterialPageRoute(
-      builder: (_) => UpdateAnimal(selectedAnimalOrNull: selectedAnimalOrNull),
+      builder: (_) => UpdateAnimal(animalOrNull: animalOrNull),
     );
   }
 }
@@ -24,11 +52,12 @@ class UpdateAnimal extends StatefulWidget {
 class _UpdateAnimalState extends State<UpdateAnimal> {
   late final AnimalRepository _animalRepository;
 
+  AnimalType _selectedAnimal = AnimalType.cow;
+
   // Data
   List<AnimalType> _availableAnimals = [];
   List<IndividualAnimalData> _animalNumbers = [];
-  AnimalType? _selectedAnimal;
-  String? _selectedAnimalNumber;
+   String? _selectedAnimalNumber;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +79,9 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
     _loadAvailableAnimals();
 
     // If a specific animal was passed, try to convert it and load its numbers
-    if (widget.selectedAnimalOrNull != null) {
+    if (widget.animalOrNull != null) {
       final selectedAnimalType = AnimalTypeUtils.getAnimalTypeFromString(
-        widget.selectedAnimalOrNull!,
+        widget.animalOrNull!,
       );
       if (selectedAnimalType != null) {
         _selectedAnimal = selectedAnimalType;
@@ -75,9 +104,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
             ),
           ),
           child: Text(
-            widget.selectedAnimalOrNull != null
-                ? 'Update Animal - ${widget.selectedAnimalOrNull}'
-                : 'Update Animal',
+            'Update Animal - ${widget.animalOrNull}',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.green[700]),
           ),
@@ -90,7 +117,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
               const SizedBox(height: 20),
 
               // Animal Type Selection (if not already selected)
-              if (widget.selectedAnimalOrNull == null) ...[
+              if (widget.animalOrNull == null) ...[
                 const Text(
                   'Select Animal',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -175,9 +202,9 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
               ElevatedButton(
                 onPressed: _canProceed()
                     ? () {
-                        final selectedType = widget.selectedAnimalOrNull != null
-                            ? widget.selectedAnimalOrNull!
-                            : _selectedAnimal!.displayName;
+                        final selectedType = widget.animalOrNull != null
+                            ? widget.animalOrNull!
+                            : _selectedAnimal.displayName;
                         Navigator.of(context).push(
                           NextInUpdate.route(
                             animalNumber: _selectedAnimalNumber ?? '',
@@ -202,8 +229,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
   }
 
   bool _canProceed() {
-    final selectedAnimalType = widget.selectedAnimalOrNull ?? _selectedAnimal;
-    return selectedAnimalType != null && _selectedAnimalNumber != null;
+    return _selectedAnimalNumber != null;
   }
 
   /// Loads animal numbers for the selected animal type
@@ -240,7 +266,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
   /// Loads available animal types from the repository
   Future<void> _loadAvailableAnimals() async {
     // If a specific animal is already selected, don't load all available animals
-    if (widget.selectedAnimalOrNull != null) {
+    if (widget.animalOrNull != null) {
       return;
     }
 
@@ -268,14 +294,12 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
 
         setState(() {
           _availableAnimals = availableAnimals;
-          _selectedAnimal = availableAnimals.isNotEmpty ? availableAnimals.first : null;
+          _selectedAnimal = availableAnimals.isNotEmpty ? availableAnimals.first : AnimalType.cow;
         });
 
         // Load animal numbers for the first available animal
-        if (_selectedAnimal != null) {
-          await _loadAnimalNumbers(_selectedAnimal!);
-        }
-      } else {
+        await _loadAnimalNumbers(_selectedAnimal);
+            } else {
         setState(() {
           _availableAnimals = <AnimalType>[
             AnimalType.buffalo,
@@ -298,6 +322,4 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
       await _loadAnimalNumbers(AnimalType.buffalo);
     }
   }
-
-
 }

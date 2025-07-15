@@ -1,10 +1,12 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dio/dio.dart';
+import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/animal/models/animal_count_response.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/models/animal_info_response.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/shared/api/api_models.dart';
+import 'package:powergodha/shared/enums.dart';
 import 'package:powergodha/shared/retrofit_client.dart';
 
 /// Repository for managing animal-related data operations.
@@ -336,15 +338,47 @@ class AnimalRepository {
       if (accessToken == null) {
         throw const AnimalRepositoryException('No access token available');
       }
-      return await _apiClient.submitAnimalQuestionAnswers(questionAnswerData);
+
+      // Convert any AnimalType enums to their API representation
+      final sanitizedData = Map<String, dynamic>.from(questionAnswerData);
+
+
+
+  
+
+      // Log the sanitized request payload for debugging
+      AppLogger.info('Submitting animal question answers with data: $sanitizedData');
+
+      final response = await _apiClient.submitAnimalQuestionAnswers(sanitizedData);
+
+      // Log the response for debugging
+      AppLogger.info('Animal question answers response: ${response.data}');
+
+      if (!response.success) {
+        throw AnimalRepositoryException('Server returned error: ${response.message}');
+      }
+
+      return response;
     } on DioException catch (e) {
+      AppLogger.error(
+        'Failed to submit animal answers - DioError: ${e.message}\n'
+        'Status code: ${e.response?.statusCode}\n'
+        'Response data: ${e.response?.data}',
+      );
+
       if (e.response?.statusCode == 401) {
         throw const AnimalRepositoryException('Authentication failed - token expired');
       }
-      throw AnimalRepositoryException(
-        'Failed to submit animal question answers: ${e.message ?? "Unknown error"}',
-      );
+
+      var errorMessage = 'Network error';
+      if (e.response?.data != null && e.response?.data is Map) {
+        errorMessage =
+            (e.response?.data as Map)['message']?.toString() ?? e.message ?? 'Unknown error';
+      }
+
+      throw AnimalRepositoryException('Failed to submit animal question answers: $errorMessage');
     } catch (e) {
+      AppLogger.error('Unexpected error in submitAnimalQuestionAnswers: $e');
       throw AnimalRepositoryException('Failed to submit animal question answers: $e');
     }
   }

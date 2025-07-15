@@ -27,7 +27,7 @@ linter:
     avoid_bool_literals_in_conditional_expressions: true
     avoid_escaping_inner_quotes: true
     avoid_positional_boolean_parameters: true
-    avoid_print: true
+    avoid_print: false
     avoid_redundant_argument_values: true
     avoid_relative_lib_imports: true
     avoid_setters_without_getters: true

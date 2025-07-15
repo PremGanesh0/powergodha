@@ -47,6 +47,7 @@ mixin DashboardDialogMixin {
     );
   }
 
+
   /// Shows a coming soon toast message for animal types
   void showComingSoonToast(BuildContext context, String animalType) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -58,6 +59,18 @@ mixin DashboardDialogMixin {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
+      ),
+    );
+  }
+  /// Shows a coming soon toast message for animal types
+  void showToast(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.orange,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

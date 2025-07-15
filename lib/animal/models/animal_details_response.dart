@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:powergodha/app/app_logger_config.dart';
 
 part 'animal_details_response.g.dart';
 
@@ -18,20 +19,16 @@ class AnimalDetailsData {
     this.nonLactating,
     this.animalData,
   }) {
-    print('AnimalDetailsData constructor called with:');
-    print('animalName: $animalName');
-    print('pregnantAnimal: $pregnantAnimal');
-    print('nonPregnantAnimal: $nonPregnantAnimal');
-    print('lactating: $lactating');
-    print('nonLactating: $nonLactating');
-    print('animalData: ${animalData?.length} items');
+    AppLogger.info(
+      'AnimalDetailsData created: $animalName\n with ${animalData?.length ?? 0}\nindividual animal data items\n(Pregnant: $pregnantAnimal,\nNon-Pregnant: $nonPregnantAnimal,\nLactating: $lactating,\nNon-Lactating: $nonLactating)',
+    );
+
   }
 
   /// Creates an [AnimalDetailsData] from JSON data.
   factory AnimalDetailsData.fromJson(Map<String, dynamic> json) {
     try {
       final animalData = <IndividualAnimalData>[];
-
       final rawAnimalData = json['animal_data'];
       if (rawAnimalData is List) {
         for (final item in rawAnimalData) {
@@ -40,21 +37,17 @@ class AnimalDetailsData {
               animalData.add(IndividualAnimalData.fromJson(Map<String, dynamic>.from(item)));
             }
           } catch (e) {
-            print('Error parsing IndividualAnimalData item: $e');
+            AppLogger.error('Error parsing IndividualAnimalData item: $e');
           }
         }
       }
 
       return _$AnimalDetailsDataFromJson(
         json,
-      ).copyWith(animalData: animalData.isNotEmpty ? animalData : null,
-      );
+      ).copyWith(animalData: animalData.isNotEmpty ? animalData : null);
     } catch (e) {
-      print('Error parsing AnimalDetailsData: $e');
-      return AnimalDetailsData(
-        animalName: json['animal_name']?.toString(),
-        animalData: [],
-      );
+       AppLogger.error('Error parsing AnimalDetailsData: $e');
+      return AnimalDetailsData(animalName: json['animal_name']?.toString(), animalData: []);
     }
   }
 
@@ -120,7 +113,7 @@ class AnimalDetailsResponse {
     try {
       return _$AnimalDetailsResponseFromJson(json);
     } catch (e) {
-      print('Error parsing AnimalDetailsResponse: $e');
+       AppLogger.error('Error parsing AnimalDetailsResponse: $e');
       return AnimalDetailsResponse(
         message: json['message']?.toString(),
         status: json['status'] is int ? (json['status'] as int) : 500,
@@ -161,17 +154,9 @@ class IndividualAnimalData {
     this.lactationStatus,
     this.healthStatus,
   }) {
-    print('IndividualAnimalData constructor called with:');
-    print('id: $id (${id.runtimeType})');
-    print('animalNumber: $animalNumber (${animalNumber.runtimeType})');
-    print('dateOfBirth: $dateOfBirth (${dateOfBirth?.runtimeType})');
-    print('weight: $weight (${weight?.runtimeType})');
-    print('breed: $breed (${breed?.runtimeType})');
-    print('gender: $gender (${gender?.runtimeType})');
-    print('status: $status (${status?.runtimeType})');
-    print('pregnancyStatus: $pregnancyStatus (${pregnancyStatus?.runtimeType})');
-    print('lactationStatus: $lactationStatus (${lactationStatus?.runtimeType})');
-    print('healthStatus: $healthStatus (${healthStatus?.runtimeType})');
+    AppLogger.info(
+      'IndividualAnimalData created: $animalNumber\nID: $id,\nDOB: $dateOfBirth,\nWeight: $weight,\nBreed: $breed,\nGender: $gender,\nStatus: $status,\nPregnancy: $pregnancyStatus,\nLactation: $lactationStatus,\nHealth: $healthStatus',
+    );
   }
 
   /// Creates an [IndividualAnimalData] from JSON data.
@@ -179,7 +164,7 @@ class IndividualAnimalData {
     try {
       return _$IndividualAnimalDataFromJson(json);
     } catch (e) {
-      print('Error parsing IndividualAnimalData: $e');
+      AppLogger.error('Error parsing IndividualAnimalData: $e');
       return IndividualAnimalData();
     }
   }
