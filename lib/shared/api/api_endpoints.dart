@@ -87,8 +87,11 @@ class ApiEndpoints {
 
   // Animal question answer endpoint
   static const String animalQuestionAnswer = '/animal_question_answer';
+
   //Bottom Navigation Buttons endpoints
-  static const String profitableDiaryFarming = '/profitable_farming_article/1/2';
+  static const String bottomNavigation = '/profitable_farming_article/{page}/2';
+  static String bottomNavigationPath(int page) =>
+  bottomNavigation.replaceAll('{page}', page.toString());
 
   // Utility methods for dynamic endpoints
 

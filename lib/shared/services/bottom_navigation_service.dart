@@ -1,16 +1,16 @@
 import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 
-class ProfitableDairyFarmingService{
-  ProfitableDairyFarmingService({
+class BottomNavigationService{
+  BottomNavigationService({
     RetrofitClient? client,
   }) : _client = client ?? RetrofitClient();
 
   final RetrofitClient _client;
 
-  Future<List<ProfitableDairyFarmingData>> getData() async{
+  Future<List<ProfitableDairyFarmingData>> getDataBottomNavigation(int page) async{
     try{
-      final response = await _client.getProfitableDairyFarmingData();
+      final response = await _client.getBottomNavigationData(page);
 
       if(response.success && response.data != null){
 

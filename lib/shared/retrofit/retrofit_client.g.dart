@@ -293,6 +293,36 @@ class _RetrofitClient implements RetrofitClient {
   }
 
   @override
+<<<<<<< HEAD
+=======
+  Future<ApiResponse> getBottomNavigationData(int page) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ApiResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/profitable_farming_article/${page}/2',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiResponse _value;
+    try {
+      _value = ApiResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+>>>>>>> 571d630 (added bottom navigation buttons)
   Future<ApiResponse> getAnimalById(String animalId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
