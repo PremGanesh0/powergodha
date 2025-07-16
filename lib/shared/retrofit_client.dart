@@ -84,6 +84,11 @@ abstract class RetrofitClient {
     @Path('type') String type,
   );
 
+  //get bottom navigation data
+  @GET(ApiEndpoints.bottomNavigation)
+  Future<ApiResponse> getBottomNavigationData(@Path('page') int page);
+
+
   /// Get a specific animal by ID.
   @GET(ApiEndpoints.getAnimal)
   Future<ApiResponse> getAnimalById(@Path('id') String animalId,
@@ -138,9 +143,6 @@ abstract class RetrofitClient {
   /// Get user profile information.
   @GET(ApiEndpoints.profile)
   Future<ApiResponse> getProfile();
-
-  @GET(ApiEndpoints.profitableDiaryFarming)
-  Future<ApiResponse> getProfitableDairyFarmingData();
 
   /// Get a specific record by ID.
   @GET(ApiEndpoints.getRecord)
