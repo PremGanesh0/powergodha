@@ -31,11 +31,11 @@ abstract class RetrofitClient {
   factory RetrofitClient({Dio? dio}) {
     return _RetrofitClient(dio ?? ApiClient.instance);
   }
-
   /// Change user password.
   @POST(ApiEndpoints.changePassword)
   Future<ApiResponse> changePassword(@Body() Map<String, String> passwordData,
   );
+
 
   /// Create a new animal.
   @POST(ApiEndpoints.createAnimal)
@@ -71,11 +71,11 @@ abstract class RetrofitClient {
   Future<ApiResponse> deleteRecord(@Path('id') String recordId,
   );
 
-  // User profile endpoints
-
   /// Request password reset.
   @POST(ApiEndpoints.forgotPassword)
   Future<ApiResponse> forgotPassword(@Body() Map<String, String> emailData);
+
+  // User profile endpoints
 
   /// Get about app data by language ID and type.
   @GET(ApiEndpoints.aboutAppData)
@@ -89,15 +89,19 @@ abstract class RetrofitClient {
   Future<ApiResponse> getAnimalById(@Path('id') String animalId,
   );
 
-
   /// Get detailed animal data based on animal type.
   @POST(ApiEndpoints.animalDetailsByType)
   Future<ApiResponse> getAnimalDetailsByType(@Body() Map<String, dynamic> requestData);
+
 
   /// Get detailed information about a specific animal type.
   @GET(ApiEndpoints.animalInfo)
   Future<ApiResponse> getAnimalInfo(@Path('animalId') int animalId,
   );
+
+  //get bottom navigation data
+  @GET(ApiEndpoints.bottomNavigation)
+  Future<ApiResponse> getBottomNavigationData(@Path('page') int page);
 
   /// Get dashboard data.
   @GET(ApiEndpoints.dashboard)

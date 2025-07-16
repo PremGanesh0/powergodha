@@ -293,8 +293,6 @@ class _RetrofitClient implements RetrofitClient {
   }
 
   @override
-<<<<<<< HEAD
-=======
   Future<ApiResponse> getBottomNavigationData(int page) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -322,7 +320,6 @@ class _RetrofitClient implements RetrofitClient {
   }
 
   @override
->>>>>>> 571d630 (added bottom navigation buttons)
   Future<ApiResponse> getAnimalById(String animalId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

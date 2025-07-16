@@ -121,4 +121,11 @@ class ApiEndpoints {
   /// Builds a slider articles endpoint with the language ID.
   static String getSliderArticlesEndpoint(String languageId) =>
       sliderArticles.replaceAll('{language_id}', languageId);
+
+
+
+        //Bottom Navigation Buttons endpoints
+  static const String profitableDiaryFarming = '/profitable_farming_article/1/2';
+
+
 }
