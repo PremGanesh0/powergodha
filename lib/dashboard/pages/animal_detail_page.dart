@@ -188,7 +188,7 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
                   icon: Icons.refresh,
                   // onTap: _showUpdateAnimalDialog,
                   onTap: () {
-                    Navigator.of(context).push(UpdateAnimal.route(animalOrNull: widget.animalName));
+                    Navigator.of(context).push(UpdateAnimal.route(animal: widget.animalName));
                   },
                 ),
               ),

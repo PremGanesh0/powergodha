@@ -9,7 +9,8 @@ import 'package:powergodha/shared/enums.dart';
 
 class UpdateAnimal extends StatefulWidget {
   const UpdateAnimal({
-    this.animalOrNull,
+    required this.animal,
+    required this.animalNumber,
     this.breed,
     this.sex,
     this.buffaloOrCalf,
@@ -17,14 +18,13 @@ class UpdateAnimal extends StatefulWidget {
     this.lactating,
     this.ownDairy,
     this.date,
-    this.animalNumber,
     this.purchasePrice,
     this.weight,
     this.dob,
     super.key,
   });
 
-  final String? animalOrNull;
+  final String? animal;
   final String? breed;
   final String? sex;
   final String? buffaloOrCalf;
@@ -42,9 +42,9 @@ class UpdateAnimal extends StatefulWidget {
   @override
   State<UpdateAnimal> createState() => _UpdateAnimalState();
 
-  static Route<void> route({String? animalOrNull}) {
+  static Route<void> route({String? animal , String? animalNumber}) {
     return MaterialPageRoute(
-      builder: (_) => UpdateAnimal(animalOrNull: animalOrNull),
+      builder: (_) => UpdateAnimal(animal: animal, animalNumber: animalNumber),
     );
   }
 }
@@ -79,9 +79,9 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
     _loadAvailableAnimals();
 
     // If a specific animal was passed, try to convert it and load its numbers
-    if (widget.animalOrNull != null) {
+    if (widget.animal != null) {
       final selectedAnimalType = AnimalTypeUtils.getAnimalTypeFromString(
-        widget.animalOrNull!,
+        widget.animal!,
       );
       if (selectedAnimalType != null) {
         _selectedAnimal = selectedAnimalType;
@@ -104,7 +104,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
             ),
           ),
           child: Text(
-            'Update Animal - ${widget.animalOrNull}',
+            'Update Animal - ${widget.animal}',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.green[700]),
           ),
@@ -117,7 +117,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
               const SizedBox(height: 20),
 
               // Animal Type Selection (if not already selected)
-              if (widget.animalOrNull == null) ...[
+              if (widget.animal == null) ...[
                 const Text(
                   'Select Animal',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -160,6 +160,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
               ],
 
               // Animal Number Selection
+              
               const Text(
                 'Animal Number',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -202,8 +203,8 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
               ElevatedButton(
                 onPressed: _canProceed()
                     ? () {
-                        final selectedType = widget.animalOrNull != null
-                            ? widget.animalOrNull!
+                        final selectedType = widget.animal != null
+                            ? widget.animal!
                             : _selectedAnimal.displayName;
                         Navigator.of(context).push(
                           NextInUpdate.route(
@@ -266,7 +267,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
   /// Loads available animal types from the repository
   Future<void> _loadAvailableAnimals() async {
     // If a specific animal is already selected, don't load all available animals
-    if (widget.animalOrNull != null) {
+    if (widget.animal != null) {
       return;
     }
 

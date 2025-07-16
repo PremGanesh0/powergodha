@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:powergodha/dashboard/widgets/radio_buttons.dart';
+import 'package:powergodha/dashboard/widgets/text_field.dart';
+import 'package:powergodha/shared/widgets/elevated_outlined_button.dart';
 
 class NextInUpdate extends StatefulWidget {
   const NextInUpdate({
@@ -9,6 +12,9 @@ class NextInUpdate extends StatefulWidget {
 
   final String selectedAnimal;
   final Object animalNumber;
+
+  @override
+  State<NextInUpdate> createState() => _AddAnimalState();
 
   static Route<void> route({
     required String selectedAnimal,
@@ -21,9 +27,6 @@ class NextInUpdate extends StatefulWidget {
       ),
     );
   }
-
-  @override
-  State<NextInUpdate> createState() => _AddAnimalState();
 }
 
 class _AddAnimalState extends State<NextInUpdate> {
@@ -119,12 +122,12 @@ class _AddAnimalState extends State<NextInUpdate> {
                     style: TextStyle(color: Colors.grey[500]),
                   ),
                   const SizedBox(height: 20),
-                  _TextFieldOption(
+                  TextFieldOption(
                     controller: _animalNumberController,
                     question: 'Animal Number',
                   ),
                   const SizedBox(height: 20),
-                  _RadioOptions(
+                  RadioOptions(
                     question: 'Animal Sex',
                     type1: 'Male',
                     type2: 'Female',
@@ -138,7 +141,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                   const SizedBox(height: 20),
 
                   if (widget.selectedAnimal == 'Buffalo')
-                    _RadioOptions(
+                    RadioOptions(
                       question: 'Is it a Buffalo or calf?',
                       type1: 'Buffalo',
                       type2: 'Calf',
@@ -150,7 +153,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                       },
                     ),
                   if (widget.selectedAnimal == 'Cow')
-                    _RadioOptions(
+                    RadioOptions(
                       question: 'Is it a Cow or calf?',
                       type1: 'Cow',
                       type2: 'Calf',
@@ -162,7 +165,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                       },
                     ),
                   const SizedBox(height: 20),
-                  _RadioOptions(
+                  RadioOptions(
                     question: 'Is animal Pregnant?',
                     type1: 'Yes',
                     type2: 'No',
@@ -174,7 +177,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _RadioOptions(
+                  RadioOptions(
                     question: 'Is animal Lactating',
                     type1: 'Yes',
                     type2: 'No',
@@ -186,14 +189,14 @@ class _AddAnimalState extends State<NextInUpdate> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _TextFieldOption(
+                  TextFieldOption(
                     question: 'Date of birth of the Animal',
                     controller: _dobController,
                     icon: const Icon(Icons.calendar_month, size: 24),
                     onIconTap: _selectDate,
                   ),
                   const SizedBox(height: 20),
-                  _RadioOptions(
+                  RadioOptions(
                     question: 'Whether borne in own dairy farm',
                     type1: 'Yes',
                     type2: 'No',
@@ -205,12 +208,12 @@ class _AddAnimalState extends State<NextInUpdate> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _TextFieldOption(
+                  TextFieldOption(
                     question: 'Purchase price of the Animal',
                     controller: _purchasePriceController,
                   ),
                   const SizedBox(height: 20),
-                  _TextFieldOption(
+                  TextFieldOption(
                     controller: _weightController,
                     question: 'Weight of the Animal',
                   ),
@@ -242,7 +245,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 20),
-                  _elevatedButton(
+                  elevatedButton(
                       'Animal Profile',
                       (){
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -251,7 +254,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                       }
                   ),
                   const SizedBox(height: 20),
-                  _elevatedButton(
+                  elevatedButton(
                       'Birth Details',
                           (){
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -260,7 +263,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                       }
                   ),
                   const SizedBox(height: 20),
-                  _elevatedButton(
+                  elevatedButton(
                       'Breeding Details',
                           (){
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -269,7 +272,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                       }
                   ),
                   const SizedBox(height: 20),
-                  _elevatedButton(
+                  elevatedButton(
                       'Milk Details',
                           (){
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -278,7 +281,7 @@ class _AddAnimalState extends State<NextInUpdate> {
                       }
                   ),
                   const SizedBox(height: 20),
-                  _elevatedButton(
+                  elevatedButton(
                       'Delete Animal',
                           (){
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -307,26 +310,6 @@ class _AddAnimalState extends State<NextInUpdate> {
     );
   }
 
-  ElevatedButton _elevatedButton(String text, VoidCallback onTap){
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.green,
-        minimumSize: const Size(double.infinity, 20),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        side: const BorderSide(
-          color: Colors.grey,
-          width: 2,
-        ),
-        shape: const RoundedRectangleBorder(
-
-        ),
-      ),
-      child: Text(text),
-    );
-  }
 
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
@@ -344,95 +327,5 @@ class _AddAnimalState extends State<NextInUpdate> {
             '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}';
       });
     }
-  }
-}
-
-class _TextFieldOption extends StatelessWidget {
-  const _TextFieldOption({
-    required this.question,
-    this.controller,
-    this.icon,
-    this.onIconTap,
-  });
-
-  final String question;
-  final Icon? icon;
-  final VoidCallback? onIconTap;
-  final TextEditingController? controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(question, style: const TextStyle(fontSize: 16)),
-        SizedBox(
-          height: 35,
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(fontSize: 16),
-            decoration: InputDecoration(
-              isDense: true,
-              suffixIcon: icon != null
-                  ? IconButton(onPressed: onIconTap, icon: icon!)
-                  : null,
-              suffixIconColor: Colors.green,
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(width: 0.5),
-              ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(width: 0.5),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _RadioOptions extends StatelessWidget {
-  const _RadioOptions({
-    required this.question,
-    required this.type1,
-    required this.type2,
-    required this.groupValue,
-    required this.onChanged,
-  });
-
-  final String type1;
-  final String type2;
-  final String question;
-  final String groupValue;
-  final ValueChanged<String?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(question, style: const TextStyle(fontSize: 16)),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Radio<String>(
-              value: type1,
-              groupValue: groupValue,
-              visualDensity: VisualDensity.compact,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onChanged: onChanged,
-            ),
-            Text(type1, style: const TextStyle(fontSize: 16)),
-            Radio<String>(
-              value: type2,
-              groupValue: groupValue,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              onChanged: onChanged,
-            ),
-            Text(type2, style: const TextStyle(fontSize: 16)),
-          ],
-        ),
-      ],
-    );
   }
 }

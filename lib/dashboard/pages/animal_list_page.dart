@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
+import 'package:powergodha/dashboard/pages/next_in_update.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
 
 /// Page that shows detailed list of animals of a specific type
@@ -146,7 +147,14 @@ class _AnimalListPageState extends State<AnimalListPage> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => _showAnimalDetails(animal),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        NextInUpdate.route(
+                          animalNumber: animal.animalNumber.toString(),
+                          selectedAnimal: widget.animalType,
+                        ),
+                      );
+                    },
                     icon: const Icon(Icons.info_outline),
                     label: const Text('Details'),
                     style: OutlinedButton.styleFrom(
