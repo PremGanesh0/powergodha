@@ -1,139 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Reusable header section widget for dashboard pages
-class DashboardHeader extends StatelessWidget {
-  /// Creates a dashboard header
-  const DashboardHeader({required this.title, super.key});
-
-  /// The title to display in the header
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.green[100],
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        ),
-      ),
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Colors.green[700],
-        ),
-      ),
-    );
-  }
-}
-
-/// Reusable animal card widget for displaying animal counts
-class AnimalCard extends StatelessWidget {
-  /// Creates an animal card
-  const AnimalCard({
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.count,
-    required this.onTap,
-    super.key,
-  });
-
-  /// The title of the animal type
-  final String title;
-
-  /// The icon asset path for the animal
-  final String icon;
-
-  /// The background color of the card
-  final Color color;
-
-  /// The count to display
-  final String count;
-
-  /// Callback when the card is tapped
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Stack(
-            children: [
-              // Background animal silhouette
-              Positioned(
-                bottom: -10,
-                left: -10,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: Image.asset(
-                    icon,
-                    width: 100,
-                    height: 100,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              // Content
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        count,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Reusable action card widget for add/update actions
 class ActionCard extends StatelessWidget {
   /// Creates an action card
-  const ActionCard({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-    super.key,
-  });
+  const ActionCard({required this.title, required this.icon, required this.onTap, super.key});
 
   /// The title of the action
   final String title;
@@ -182,6 +52,97 @@ class ActionCard extends StatelessWidget {
   }
 }
 
+/// Reusable animal card widget for displaying animal counts
+class AnimalCard extends StatelessWidget {
+  /// Creates an animal card
+  const AnimalCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.count,
+    required this.onTap,
+    super.key,
+  });
+
+  /// The title of the animal type
+  final String title;
+
+  /// The icon asset path for the animal
+  final String? icon;
+
+  /// The background color of the card
+  final Color color;
+
+  /// The count to display
+  final String count;
+
+  /// Callback when the card is tapped
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Stack(
+            children: [
+              // Background animal silhouette
+              if (icon != null)
+                Positioned(
+                  bottom: -10,
+                  left: -10,
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Image.asset(
+                          icon!, width: 100, height: 100, color: Colors.white),
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
+              // Content
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        count,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Reusable custom app bar widget
 class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Creates a dashboard app bar
@@ -189,6 +150,9 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// The title to display in the app bar
   final String title;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +164,6 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: Colors.black,
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 /// Custom grid view widget for dashboard items
@@ -225,6 +186,35 @@ class DashboardGrid extends StatelessWidget {
           childAspectRatio: 1.1,
           children: children,
         ),
+      ),
+    );
+  }
+}
+
+/// Reusable header section widget for dashboard pages
+class DashboardHeader extends StatelessWidget {
+  /// Creates a dashboard header
+  const DashboardHeader({required this.title, super.key});
+
+  /// The title to display in the header
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green[100],
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.green[700]),
       ),
     );
   }

@@ -205,7 +205,7 @@ class _AddAnimalState extends State<NextInUpdate> {
 
       final response = await animalRepository.getUserAnimalBasicDetailsQuestionAnswer(
         animalId: animalId,
-        animalTypeId: animalTypeId,
+        languageId: 2,
         animalNumber: animalNumber,
       );
       setState(() {

@@ -157,7 +157,13 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
               return AnimalCard(
                 color: animalColors[index % animalColors.length],
                 title: animalData.category,
-                icon: 'assets/icons/cows.png',
+                icon: animalData.category == 'Male'
+                    ? 'assets/icons/bull.png'
+                    : animalData.category == 'Female'
+                    ? 'assets/icons/cows.png'
+                    : animalData.category == 'Heifer'
+                    ? 'assets/icons/goats.png'
+                    : null,
                 count: animalData.count.toString(),
                 onTap: () => _navigateToAnimalList(animalData),
               );

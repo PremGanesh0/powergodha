@@ -24,7 +24,7 @@ Widget buildQuestionField({
         question: question.languageQuestion ?? '',
         editable: isEditable,
         controller: TextEditingController(text: question.answer ?? ''),
-       
+
       );
 
     case 'RadioGridGroup':
@@ -47,11 +47,15 @@ Widget buildQuestionField({
 
     case 'Spinner':
       final items = (question.formTypeValue ?? '').split(',');
+      final currentValue = question.answer;
+      // Only set value if it exists in the items list
+      final validValue = items.contains(currentValue) ? currentValue : null;
+
       return DropdownButtonFormField<String>(
-        decoration: InputDecoration(labelText: question.languageQuestion),
-        value: question.answer,
+        decoration: InputDecoration(labelText: question.languageQuestion, enabled: isEditable),
+        value: validValue,
         items: items.map((value) => DropdownMenuItem(value: value, child: Text(value))).toList(),
-        onChanged: (value) {},
+        onChanged: isEditable ? (value) {} : null,
       );
 
     default:

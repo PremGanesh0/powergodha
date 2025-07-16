@@ -159,7 +159,7 @@ abstract class RetrofitClient {
   @GET(ApiEndpoints.userAnimalBasicDetailsQuestionAnswer)
   Future<ApiResponse> getUserAnimalBasicDetailsQuestionAnswer(
     @Path('animal_id') int animalId,
-    @Path('animal_type_id') int animalTypeId,
+    @Path('language_id') int languageId,
     @Path('animal_number') String animalNumber,
   );
 

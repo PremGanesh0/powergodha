@@ -262,7 +262,7 @@ class AnimalRepository {
   /// [animalNumber] - The animal number
   Future<AnimalBasicDetailsData> getUserAnimalBasicDetailsQuestionAnswer({
     required int animalId,
-    required int animalTypeId,
+    required int languageId,
     required String animalNumber,
   }) async {
     try {
@@ -270,16 +270,28 @@ class AnimalRepository {
       if (accessToken == null) {
         throw const AnimalRepositoryException('No access token available');
       }
-      AppLogger.info(
-        'Fetching animal basic details Q&A for animalId=$animalId, animalTypeId=$animalTypeId, animalNumber=$animalNumber',
-      );
+
       final response = await _apiClient.getUserAnimalBasicDetailsQuestionAnswer(
         animalId,
-        animalTypeId,
+        languageId,
         animalNumber,
       );
       AppLogger.info('Animal basic details Q&A response: ${response.data}');
-      return AnimalBasicDetailsData.fromJson(response.data['Basic Details'] as Map<String, dynamic>);
+      try {
+        final sectionKey = response.data.keys.first;
+print('Section key: $sectionKey');
+        return AnimalBasicDetailsData.fromJson(response.data[sectionKey] as Map<String, dynamic>);
+      } catch (e) {
+        try {
+          return AnimalBasicDetailsData.fromJson(
+            response.data['मूल विवरण'] as Map<String, dynamic>,
+          );
+        } catch (e) {
+          AppLogger.error('Failed to parse animal basic details Q&A: $e');
+          throw AnimalRepositoryException('Failed to parse animal basic details Q&A: $e');
+        }
+      }
+
     } on DioException catch (e) {
       AppLogger.error('Failed to fetch animal basic details Q&A: ${e.message}');
       throw AnimalRepositoryException(
