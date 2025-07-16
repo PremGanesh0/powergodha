@@ -8,6 +8,7 @@ class TextFieldOption extends StatelessWidget {
     this.icon,
     this.onIconTap,
     this.decoration,
+    this.editable = true,
     super.key,
 
   });
@@ -18,17 +19,19 @@ class TextFieldOption extends StatelessWidget {
   final TextEditingController? controller;
   final InputDecoration? decoration;
   final TextInputType keyboardType;
+  final bool editable;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(question, style: const TextStyle(fontSize: 16)),
+        Text(question, style: const TextStyle(fontSize: 16 , fontWeight: FontWeight.bold)),
         SizedBox(
           height: 35,
           child: TextField(
             controller: controller,
+            enabled: editable,
             style: const TextStyle(fontSize: 16),
             keyboardType:  keyboardType,
             decoration:

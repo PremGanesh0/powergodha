@@ -152,6 +152,7 @@ class _AnimalListPageState extends State<AnimalListPage> {
                         NextInUpdate.route(
                           animalNumber: animal.animalNumber.toString(),
                           selectedAnimal: widget.animalType,
+                          editable:  true,
                         ),
                       );
                     },
@@ -569,40 +570,6 @@ class _AnimalListPageState extends State<AnimalListPage> {
     }
   }
 
-  void _showAnimalDetails(IndividualAnimalData animal) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Animal #${animal.animalNumber ?? "Unknown"}'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDialogDetailItem('Animal Number', animal.animalNumber?.toString() ?? 'Unknown'),
-              _buildDialogDetailItem('Date of Birth', animal.dateOfBirth ?? 'Unknown'),
-              _buildDialogDetailItem(
-                'Weight',
-                animal.weight != null ? '${animal.weight} kg' : 'Unknown',
-              ),
-              if (animal.breed != null) _buildDialogDetailItem('Breed', animal.breed!),
-              if (animal.gender != null) _buildDialogDetailItem('Gender', animal.gender!),
-              if (animal.status != null) _buildDialogDetailItem('Status', animal.status!),
-              if (animal.pregnancyStatus != null && animal.pregnancyStatus!.isNotEmpty)
-                _buildDialogDetailItem('Pregnancy Status', animal.pregnancyStatus!),
-              if (animal.lactationStatus != null && animal.lactationStatus!.isNotEmpty)
-                _buildDialogDetailItem('Lactation Status', animal.lactationStatus!),
-              if (animal.healthStatus != null && animal.healthStatus!.isNotEmpty)
-                _buildDialogDetailItem('Health Status', animal.healthStatus!),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
-        ],
-      ),
-    );
-  }
 
   void _showHealthInfo(IndividualAnimalData animal) {
     showDialog<void>(

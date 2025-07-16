@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/localization_service.dart';
-import 'package:powergodha/shared/retrofit_client.dart';
+import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 import 'package:powergodha/shared/services/notification_count_service.dart';
 import 'package:powergodha/shared/services/slider_articles_service.dart';
 

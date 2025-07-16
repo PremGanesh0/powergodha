@@ -1,13 +1,12 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dio/dio.dart';
-import 'package:powergodha/animal/animal_type_utils.dart';
+import 'package:powergodha/animal/models/animal_basic_details_data.dart';
 import 'package:powergodha/animal/models/animal_count_response.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/models/animal_info_response.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/shared/api/api_models.dart';
-import 'package:powergodha/shared/enums.dart';
-import 'package:powergodha/shared/retrofit_client.dart';
+import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 
 /// Repository for managing animal-related data operations.
 ///
@@ -256,6 +255,42 @@ class AnimalRepository {
     }
   }
 
+  /// Gets animal basic details question answer for a user/animal.
+  ///
+  /// [animalId] - The animal's ID
+  /// [animalTypeId] - The animal type ID
+  /// [animalNumber] - The animal number
+  Future<AnimalBasicDetailsData> getUserAnimalBasicDetailsQuestionAnswer({
+    required int animalId,
+    required int animalTypeId,
+    required String animalNumber,
+  }) async {
+    try {
+      final accessToken = _authenticationRepository.currentAccessToken;
+      if (accessToken == null) {
+        throw const AnimalRepositoryException('No access token available');
+      }
+      AppLogger.info(
+        'Fetching animal basic details Q&A for animalId=$animalId, animalTypeId=$animalTypeId, animalNumber=$animalNumber',
+      );
+      final response = await _apiClient.getUserAnimalBasicDetailsQuestionAnswer(
+        animalId,
+        animalTypeId,
+        animalNumber,
+      );
+      AppLogger.info('Animal basic details Q&A response: ${response.data}');
+      return AnimalBasicDetailsData.fromJson(response.data['Basic Details'] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      AppLogger.error('Failed to fetch animal basic details Q&A: ${e.message}');
+      throw AnimalRepositoryException(
+        'Failed to fetch animal basic details Q&A: ${e.message ?? "Unknown error"}',
+      );
+    } catch (e) {
+      AppLogger.error('Unexpected error in getUserAnimalBasicDetailsQuestionAnswer: $e');
+      throw AnimalRepositoryException('Failed to fetch animal basic details Q&A: $e');
+    }
+  }
+
   /// Gets the current user's animal count information.
   ///
   /// This method fetches the count of different animals owned by the user
@@ -344,7 +379,7 @@ class AnimalRepository {
 
 
 
-  
+
 
       // Log the sanitized request payload for debugging
       AppLogger.info('Submitting animal question answers with data: $sanitizedData');

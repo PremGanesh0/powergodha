@@ -160,7 +160,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
               ],
 
               // Animal Number Selection
-              
+
               const Text(
                 'Animal Number',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -210,6 +210,7 @@ class _UpdateAnimalState extends State<UpdateAnimal> {
                           NextInUpdate.route(
                             animalNumber: _selectedAnimalNumber ?? '',
                             selectedAnimal: selectedType,
+                            editable: true,
                           ),
                         );
                       }

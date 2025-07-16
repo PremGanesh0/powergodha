@@ -6,7 +6,7 @@ library;
 
 import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/localization_service.dart';
-import 'package:powergodha/shared/retrofit_client.dart';
+import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 
 /// {@template about_app_data_service}
 /// Simple service for fetching about app data content.

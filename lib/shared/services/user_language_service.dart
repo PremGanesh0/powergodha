@@ -5,7 +5,7 @@
 library;
 
 import 'package:powergodha/shared/api/api_models.dart';
-import 'package:powergodha/shared/retrofit_client.dart';
+import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 
 /// {@template user_language_service}
 /// Service for managing user language preferences with the server.

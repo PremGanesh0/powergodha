@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/localization_service.dart';
-import 'package:powergodha/shared/retrofit_client.dart';
+import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 
 part 'language_event.dart';
 part 'language_state.dart';

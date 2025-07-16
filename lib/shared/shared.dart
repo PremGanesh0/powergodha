@@ -25,7 +25,7 @@ export 'api/api_models.dart';
 export 'app_strings.dart';
 export 'auth_interceptor.dart';
 export 'localization_service.dart';
-export 'retrofit_client.dart';
+export 'retrofit/retrofit_client.dart';
 export 'services/about_app_data_service.dart';
 export 'services/notification_count_service.dart';
 export 'services/slider_articles_service.dart';

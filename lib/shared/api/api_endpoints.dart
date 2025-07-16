@@ -27,6 +27,9 @@ library;
 class ApiEndpoints {
   /// Private constructor to prevent instantiation.
   const ApiEndpoints._();
+  /// Gets animal basic details question answer for a user/animal
+  static const String userAnimalBasicDetailsQuestionAnswer =
+      '/user_animal_basic_details_question_answer/{animal_id}/{animal_type_id}/{animal_number}';
 
   // Authentication endpoints
   static const String login = '/auth/login';

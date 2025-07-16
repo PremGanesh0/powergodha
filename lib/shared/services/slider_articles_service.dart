@@ -4,7 +4,7 @@
 library;
 
 import 'package:powergodha/shared/api/api_models.dart';
-import 'package:powergodha/shared/retrofit_client.dart';
+import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 
 /// {@template slider_articles_service}
 /// Service for managing slider articles from the API.
