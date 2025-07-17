@@ -497,7 +497,7 @@ class _VaccinationDetailsPageState extends State<VaccinationDetailsPage> {
                             value: tempSelected.contains(animal),
                             onChanged: (bool? value) {
                               dialogSetState(() {
-                                if (value == true) {
+                                if (value!) {
                                   tempSelected.add(animal);
                                 } else {
                                   tempSelected.remove(animal);

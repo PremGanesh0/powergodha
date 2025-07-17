@@ -5,7 +5,6 @@
 ///
 /// **Exported Components:**
 /// * [AppRoutes] - Route constants and configuration
-/// * [NavigationHelper] - Navigation utility methods
 ///
 /// **Usage:**
 /// ```dart

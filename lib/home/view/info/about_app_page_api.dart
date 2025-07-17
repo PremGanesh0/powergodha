@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/services/about_app_data_service.dart';
 import 'package:powergodha/shared/theme.dart';
 
@@ -14,13 +13,6 @@ import 'package:powergodha/shared/theme.dart';
 class AboutAppPage extends StatelessWidget {
   /// {@macro about_app_page}
   const AboutAppPage({super.key});
-
-  /// Route method for navigation
-  static Route<void> route() {
-    return MaterialPageRoute<void>(
-      builder: (_) => const AboutAppPage(),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +38,77 @@ class AboutAppPage extends StatelessWidget {
 
           return const Center(child: Text('No content available'));
         },
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, AboutAppData aboutAppData) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.r),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTypography.radiusMedium.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.r),
+          child: Html(
+            data: aboutAppData.content,
+            style: {
+              'body': Style(
+                fontSize: FontSize(14.sp),
+                lineHeight: LineHeight.number(1.6),
+                color: Theme.of(context).colorScheme.onSurface,
+                fontFamily: 'Ubuntu',
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+              ),
+              'p': Style(
+                margin: Margins.only(bottom: 12.h),
+                fontSize: FontSize(14.sp),
+                lineHeight: LineHeight.number(1.6),
+                textAlign: TextAlign.justify,
+              ),
+              'h1, h2, h3': Style(
+                fontSize: FontSize(18.sp),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+                margin: Margins.only(bottom: 12.h, top: 12.h),
+              ),
+              'strong, b': Style(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              'ul': Style(
+                margin: Margins.only(bottom: 12.h),
+                padding: HtmlPaddings.only(left: 20.w),
+              ),
+              'li': Style(
+                margin: Margins.only(bottom: 6.h),
+                fontSize: FontSize(14.sp),
+                lineHeight: LineHeight.number(1.6),
+              ),
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContentView(BuildContext context, AboutAppData aboutAppData) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        (context as Element).markNeedsBuild();
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            _buildHeader(context),
+            _buildContent(context, aboutAppData),
+          ],
+        ),
       ),
     );
   }
@@ -81,23 +144,6 @@ class AboutAppPage extends StatelessWidget {
               },
               child: const Text('Try Again'),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContentView(BuildContext context, AboutAppData aboutAppData) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        (context as Element).markNeedsBuild();
-      },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            _buildHeader(context),
-            _buildContent(context, aboutAppData),
           ],
         ),
       ),
@@ -163,57 +209,10 @@ class AboutAppPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, AboutAppData aboutAppData) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.r),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTypography.radiusMedium.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(16.r),
-          child: Html(
-            data: aboutAppData.content,
-            style: {
-              'body': Style(
-                fontSize: FontSize(14.sp),
-                lineHeight: LineHeight.number(1.6),
-                color: Theme.of(context).colorScheme.onSurface,
-                fontFamily: 'Ubuntu',
-                margin: Margins.zero,
-                padding: HtmlPaddings.zero,
-              ),
-              'p': Style(
-                margin: Margins.only(bottom: 12.h),
-                fontSize: FontSize(14.sp),
-                lineHeight: LineHeight.number(1.6),
-                textAlign: TextAlign.justify,
-              ),
-              'h1, h2, h3': Style(
-                fontSize: FontSize(18.sp),
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-                margin: Margins.only(bottom: 12.h, top: 12.h),
-              ),
-              'strong, b': Style(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              'ul': Style(
-                margin: Margins.only(bottom: 12.h),
-                padding: HtmlPaddings.only(left: 20.w),
-              ),
-              'li': Style(
-                margin: Margins.only(bottom: 6.h),
-                fontSize: FontSize(14.sp),
-                lineHeight: LineHeight.number(1.6),
-              ),
-            },
-          ),
-        ),
-      ),
+  /// Route method for navigation
+  static Route<void> route() {
+    return MaterialPageRoute<void>(
+      builder: (_) => const AboutAppPage(),
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:powergodha/dashboard/widgets/radio_buttons.dart';
 import 'package:powergodha/dashboard/widgets/text_field.dart';
 import 'package:powergodha/shared/enums.dart';
 
-class AddAnimal extends StatefulWidget with DashboardDialogMixin {
+class AddAnimal extends StatefulWidget with DialogMixin {
   const AddAnimal({super.key});
 
   @override

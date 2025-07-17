@@ -4,15 +4,15 @@ import 'package:formz/formz.dart';
 /// Form input for a phone number input.
 /// {@endtemplate}
 class PhoneNumber extends FormzInput<String, PhoneNumberValidationError> {
+  static final _phoneRegExp = RegExp(
+    r'^[6-9]\d{9}$', // Indian phone number format: starts with 6-9, followed by 9 digits
+  );
+
   /// {@macro phone_number}
   const PhoneNumber.dirty([super.value = '']) : super.dirty();
 
   /// {@macro phone_number}
   const PhoneNumber.pure() : super.pure('');
-
-  static final _phoneRegExp = RegExp(
-    r'^[6-9]\d{9}$', // Indian phone number format: starts with 6-9, followed by 9 digits
-  );
 
   @override
   PhoneNumberValidationError? validator(String? value) {

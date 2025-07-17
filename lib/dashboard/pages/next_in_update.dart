@@ -40,10 +40,8 @@ class _AddAnimalState extends State<NextInUpdate> {
   String? selectedPregnant;
   String? selectedLactating;
   String? selectedOwnDairy;
-  final DateTime _selectedDate = DateTime.now();
 
   final _animalNumberController = TextEditingController();
-  final _purchasePriceController = TextEditingController();
   final _weightController = TextEditingController();
   final _dobController = TextEditingController();
 
@@ -197,7 +195,6 @@ class _AddAnimalState extends State<NextInUpdate> {
     try {
       final animalType = AnimalTypeUtils.getAnimalTypeFromString(widget.selectedAnimal);
       final animalId = animalType?.apiId ?? 0;
-      final animalTypeId = animalId;
       final animalNumber = widget.animalNumber.toString();
       late final AnimalRepository animalRepository;
 

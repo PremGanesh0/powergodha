@@ -15,7 +15,7 @@ class LoggingInterceptor extends Interceptor {
       'method': err.requestOptions.method,
       'url': err.requestOptions.uri.toString(),
       'headers': _sanitizeHeaders(err.requestOptions.headers),
-      'response_data': _truncateData(err.response?.data),
+      'response_data': err.response?.data,
       'error_type': err.type.name,
       'error_message': err.message,
     };
@@ -38,7 +38,7 @@ class LoggingInterceptor extends Interceptor {
       'method': options.method,
       'url': options.uri.toString(),
       'headers': _sanitizeHeaders(options.headers),
-      'data': _truncateData(options.data),
+      'data': options.data,
       'query_parameters': options.queryParameters,
     };
 
@@ -58,7 +58,7 @@ class LoggingInterceptor extends Interceptor {
       'method': response.requestOptions.method,
       'url': response.requestOptions.uri.toString(),
       // 'headers': _sanitizeHeaders(response.headers.map),
-      'data': _truncateData(response.data),
+      'data': response.data,
       'response_time': responseTime,
     };
 
@@ -91,17 +91,5 @@ class LoggingInterceptor extends Interceptor {
     return sanitized;
   }
 
-  /// Truncate large data to prevent log overflow
-  dynamic _truncateData(data) {
-    if (data == null) return null;
 
-    final dataString = data.toString();
-    const maxLength = 1000; // Maximum characters to log
-
-    if (dataString.length <= maxLength) {
-      return data;
-    }
-
-    return '${dataString.substring(0, maxLength)}... [TRUNCATED - ${dataString.length} chars total]';
-  }
 }

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:powergodha/shared/widgets/appbar.dart';
 
 /// Data model for cattle feed items
 class CattleFeedItem {
+  late final TextEditingController nameController;
+
+  late final TextEditingController quantityController;
+  late final TextEditingController rateController;
   CattleFeedItem() {
     nameController = TextEditingController();
     quantityController = TextEditingController();
     rateController = TextEditingController();
   }
-
-  late final TextEditingController nameController;
-  late final TextEditingController quantityController;
-  late final TextEditingController rateController;
 
   void dispose() {
     nameController.dispose();
@@ -37,14 +38,14 @@ class DailyRecordsPage extends StatefulWidget {
 
 /// Data model for dry feed items
 class DryFeedItem {
+  late final TextEditingController quantityController;
+
+  late final TextEditingController rateController;
+  String selectedFeedType = 'Jawar Kadba';
   DryFeedItem() {
     quantityController = TextEditingController();
     rateController = TextEditingController();
   }
-
-  late final TextEditingController quantityController;
-  late final TextEditingController rateController;
-  String selectedFeedType = 'Jawar Kadba';
 
   void dispose() {
     quantityController.dispose();
@@ -54,14 +55,14 @@ class DryFeedItem {
 
 /// Data model for green feed items
 class GreenFeedItem {
+  late final TextEditingController quantityController;
+
+  late final TextEditingController rateController;
+  String selectedFeedType = 'Maize';
   GreenFeedItem() {
     quantityController = TextEditingController();
     rateController = TextEditingController();
   }
-
-  late final TextEditingController quantityController;
-  late final TextEditingController rateController;
-  String selectedFeedType = 'Maize';
 
   void dispose() {
     quantityController.dispose();
@@ -71,15 +72,15 @@ class GreenFeedItem {
 
 /// Data model for supplement items
 class SupplementItem {
+  late final TextEditingController nameController;
+
+  late final TextEditingController quantityController;
+  late final TextEditingController costController;
   SupplementItem() {
     nameController = TextEditingController();
     quantityController = TextEditingController();
     costController = TextEditingController();
   }
-
-  late final TextEditingController nameController;
-  late final TextEditingController quantityController;
-  late final TextEditingController costController;
 
   void dispose() {
     nameController.dispose();
@@ -177,7 +178,7 @@ class _DailyRecordsPageState extends State<DailyRecordsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Daily Records'), elevation: 0),
+      appBar:PowerGodhaAppBar(),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -1613,7 +1614,7 @@ class _DailyRecordsPageState extends State<DailyRecordsPage> {
       );
 
       // Simulate saving
-      Future.delayed(const Duration(seconds: 2), () {
+      // Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pop(); // Close loading dialog
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1626,7 +1627,7 @@ class _DailyRecordsPageState extends State<DailyRecordsPage> {
 
         // Optionally navigate back or clear form
         Navigator.of(context).pop();
-      });
+      // });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

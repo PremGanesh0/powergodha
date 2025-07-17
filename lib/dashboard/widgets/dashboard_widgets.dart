@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 /// Reusable action card widget for add/update actions
 class ActionCard extends StatelessWidget {
-  /// Creates an action card
-  const ActionCard({required this.title, required this.icon, required this.onTap, super.key});
-
   /// The title of the action
   final String title;
 
@@ -13,6 +10,9 @@ class ActionCard extends StatelessWidget {
 
   /// Callback when the card is tapped
   final VoidCallback onTap;
+
+  /// Creates an action card
+  const ActionCard({required this.title, required this.icon, required this.onTap, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,16 +54,6 @@ class ActionCard extends StatelessWidget {
 
 /// Reusable animal card widget for displaying animal counts
 class AnimalCard extends StatelessWidget {
-  /// Creates an animal card
-  const AnimalCard({
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.count,
-    required this.onTap,
-    super.key,
-  });
-
   /// The title of the animal type
   final String title;
 
@@ -78,6 +68,16 @@ class AnimalCard extends StatelessWidget {
 
   /// Callback when the card is tapped
   final VoidCallback onTap;
+
+  /// Creates an animal card
+  const AnimalCard({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.count,
+    required this.onTap,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -145,11 +145,11 @@ class AnimalCard extends StatelessWidget {
 
 /// Reusable custom app bar widget
 class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
-  /// Creates a dashboard app bar
-  const DashboardAppBar({required this.title, super.key});
-
   /// The title to display in the app bar
   final String title;
+
+  /// Creates a dashboard app bar
+  const DashboardAppBar({required this.title, super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -168,11 +168,11 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 /// Custom grid view widget for dashboard items
 class DashboardGrid extends StatelessWidget {
-  /// Creates a dashboard grid
-  const DashboardGrid({required this.children, super.key});
-
   /// The child widgets to display in the grid
   final List<Widget> children;
+
+  /// Creates a dashboard grid
+  const DashboardGrid({required this.children, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -193,11 +193,11 @@ class DashboardGrid extends StatelessWidget {
 
 /// Reusable header section widget for dashboard pages
 class DashboardHeader extends StatelessWidget {
-  /// Creates a dashboard header
-  const DashboardHeader({required this.title, super.key});
-
   /// The title to display in the header
   final String title;
+
+  /// Creates a dashboard header
+  const DashboardHeader({required this.title, super.key});
 
   @override
   Widget build(BuildContext context) {

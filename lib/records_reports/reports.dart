@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:powergodha/shared/widgets/appbar.dart';
 
 /// Data model for report items
 class ReportItem {
-  /// Creates a report item
-  const ReportItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-  });
-
   /// Report title
   final String title;
 
@@ -21,6 +14,14 @@ class ReportItem {
 
   /// Report theme color
   final Color color;
+
+  /// Creates a report item
+  const ReportItem({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+  });
 }
 
 /// Reports page for viewing various farm and livestock reports
@@ -40,13 +41,7 @@ class ReportsPage extends StatefulWidget {
 class _ReportsPageState extends State<ReportsPage> {
   String _selectedTimePeriod = 'Today';
 
-  final List<String> _timePeriods = [
-    'Today',
-    'Yesterday',
-    'Last Week',
-    'Last Month',
-    'Custom',
-  ];
+  final List<String> _timePeriods = ['Today', 'Yesterday', 'Last Week', 'Last Month', 'Custom'];
 
   final List<ReportItem> _reportItems = [
     const ReportItem(
@@ -132,10 +127,7 @@ class _ReportsPageState extends State<ReportsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reports'),
-        elevation: 0,
-      ),
+      appBar: PowerGodhaAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -167,14 +159,9 @@ class _ReportsPageState extends State<ReportsPage> {
   Widget _buildReportListTile(ReportItem report) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
           width: 48,
           height: 48,
@@ -182,29 +169,17 @@ class _ReportsPageState extends State<ReportsPage> {
             color: report.color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            report.icon,
-            color: report.color,
-            size: 24,
-          ),
+          child: Icon(report.icon, color: report.color, size: 24),
         ),
         title: Text(
           report.title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           report.subtitle,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Colors.grey[600],
-          ),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
         ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.grey[400],
-        ),
+        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
         onTap: () => _navigateToReport(report),
       ),
     );
@@ -217,18 +192,14 @@ class _ReportsPageState extends State<ReportsPage> {
       children: [
         Text(
           'Select Time Period',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: Theme.of(context).colorScheme.outline,
-            ),
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
             borderRadius: BorderRadius.circular(8),
           ),
           child: DropdownButtonHideUnderline(
@@ -349,12 +320,12 @@ class _ReportsPageState extends State<ReportsPage> {
     );
 
     // Simulate report generation
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pop(); // Close loading dialog
+    // Future.delayed(const Duration(seconds: 2), () {
+    Navigator.of(context).pop(); // Close loading dialog
 
-      // Show report preview
-      _showReportPreview(report);
-    });
+    // Show report preview
+    _showReportPreview(report);
+    // });
   }
 
   /// Shows custom date picker for custom time period
@@ -425,11 +396,7 @@ class _ReportsPageState extends State<ReportsPage> {
                         color: report.color.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(
-                        report.icon,
-                        color: report.color,
-                        size: 24,
-                      ),
+                      child: Icon(report.icon, color: report.color, size: 24),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -438,15 +405,15 @@ class _ReportsPageState extends State<ReportsPage> {
                         children: [
                           Text(
                             report.title,
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           Text(
                             'Period: $_selectedTimePeriod',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                           ),
                         ],
                       ),
@@ -470,26 +437,22 @@ class _ReportsPageState extends State<ReportsPage> {
                         ),
                         child: Column(
                           children: [
-                            Icon(
-                              Icons.analytics,
-                              size: 64,
-                              color: Colors.grey[400],
-                            ),
+                            Icon(Icons.analytics, size: 64, color: Colors.grey[400]),
                             const SizedBox(height: 16),
                             Text(
                               'Report Preview',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'This is a preview of the ${report.title} for the selected period. '
                               'The actual report will contain detailed data and analytics.',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                             ),
                           ],
                         ),

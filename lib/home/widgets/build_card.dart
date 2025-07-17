@@ -1,14 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:powergodha/home/view/bottomNavigation/on_tap_details_page.dart';
 import 'package:powergodha/shared/api/api_models.dart';
 
 class BuildCard extends StatefulWidget{
+  final ProfitableDairyFarmingData item;
   const BuildCard({
     required this.item ,super.key
   });
-  final ProfitableDairyFarmingData item;
 
   @override
   State<BuildCard> createState() => _BuildCardState();
@@ -27,7 +26,7 @@ class _BuildCardState extends State<BuildCard> {
        },
        child: Card(
          shape: const RoundedRectangleBorder(
-           borderRadius: BorderRadius.zero,
+           
          ),
          elevation: 2,
          child: Padding(

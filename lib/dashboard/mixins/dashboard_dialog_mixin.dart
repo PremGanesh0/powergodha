@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Mixin for common dialog and toast functionality
-mixin DashboardDialogMixin {
+mixin DialogMixin {
   /// Shows add animal dialog
   void showAddAnimalDialog(BuildContext context) {
     showDialog<void>(

@@ -43,9 +43,6 @@ import 'package:powergodha/shared/auth_interceptor.dart';
 /// * Additional interceptors can be added as needed
 /// {@endtemplate}
 class ApiClient {
-  /// Private constructor to prevent instantiation.
-  const ApiClient._();
-
   /// Shared [Dio] instance for all API communications.
   ///
   /// This static instance ensures optimal performance by:
@@ -110,14 +107,9 @@ class ApiClient {
 
       // Simple check for adapter validity without relying on specific properties
       try {
-        final adapter = _instance.httpClientAdapter;
-        if (adapter == null) {
-          // This shouldn't happen, but just in case
-          throw Exception('Adapter is null');
-        }
 
         // Basic connectivity check - can we initialize a request?
-        final requestOptions = RequestOptions(path: '');
+        final requestOptions = RequestOptions();
         requestOptions.baseUrl = _instance.options.baseUrl;
         _instance.transformer.transformRequest(requestOptions);
 
@@ -137,6 +129,9 @@ class ApiClient {
       return _createDioInstance();
     }
   }
+
+  /// Private constructor to prevent instantiation.
+  const ApiClient._();
 
   /// Creates a new [Dio] instance with custom configuration.
   ///

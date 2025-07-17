@@ -283,14 +283,14 @@ class AuthenticationBloc
           }
         }
       },
-      onError: (error, stackTrace) {
+      onError: (Object error, StackTrace stackTrace) {
         if (!emit.isDone) {
           AppLogger.error(
             'AuthenticationBloc: Error in authentication status stream',
             error: error,
-            stackTrace: stackTrace as StackTrace?,
+            stackTrace: stackTrace,
           );
-          addError(error as Object, stackTrace as StackTrace);
+          addError(error, stackTrace);
         }
       },
     );

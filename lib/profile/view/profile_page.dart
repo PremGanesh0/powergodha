@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:powergodha/app/app_routes.dart';
 import 'package:powergodha/app/app_logger_config.dart';
+import 'package:powergodha/app/app_routes.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
 import 'package:powergodha/shared/theme.dart';
 import 'package:user_repository/user_repository.dart';
@@ -43,64 +43,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final _countryController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    // Use addPostFrameCallback to access context after widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeRepositories();
-      _loadUserData();
-    });
-  }
-
-  void _initializeRepositories() {
-    // Get the existing UserRepository from the widget context
-    _userRepository = context.read<UserRepository>();
-  }
-
-  Future<void> _loadUserData() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // Get user data from repository
-      final user = await _userRepository.getUser();
-
-      // Also get the full user response for address fields
-      final userResponse = await _userRepository.getUserResponse();
-
-      _populateControllers(user, userResponse);
-    } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
-      AppLogger.error('Failed to load user data: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _populateControllers(User user, UserResponse userResponse) {
-    // Populate personal information
-    _nameController.text = userResponse.name;
-    _phoneController.text = userResponse.phoneNumber;
-    _emailController.text = userResponse.email;
-    _formNameController.text = userResponse.farmName;
-
-    // Populate address information
-    _doorNumberController.text = userResponse.address;
-    _pincodeController.text = userResponse.pincode;
-    _villageController.text = userResponse.village;
-    _talukaController.text = userResponse.taluka;
-    _districtController.text = userResponse.district;
-    _stateController.text = userResponse.state;
-    _countryController.text = userResponse.country;
-  }
-
-  @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
@@ -121,6 +63,38 @@ class _ProfilePageState extends State<ProfilePage> {
               ? _buildErrorView()
               : _buildProfileForm(),
     );
+  }
+
+  @override
+  void dispose() {
+    // Dispose personal details controllers
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _formNameController.dispose();
+
+    // Dispose address controllers
+    _doorNumberController.dispose();
+    _pincodeController.dispose();
+    _villageController.dispose();
+    _talukaController.dispose();
+    _districtController.dispose();
+    _stateController.dispose();
+    _countryController.dispose();
+
+    // Note: We don't dispose the user repository as it's managed by the App widget
+
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Use addPostFrameCallback to access context after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeRepositories();
+      _loadUserData();
+    });
   }
 
   Widget _buildErrorView() {
@@ -325,28 +299,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  @override
-  void dispose() {
-    // Dispose personal details controllers
-    _nameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _formNameController.dispose();
-
-    // Dispose address controllers
-    _doorNumberController.dispose();
-    _pincodeController.dispose();
-    _villageController.dispose();
-    _talukaController.dispose();
-    _districtController.dispose();
-    _stateController.dispose();
-    _countryController.dispose();
-
-    // Note: We don't dispose the user repository as it's managed by the App widget
-
-    super.dispose();
-  }
-
   // Helper method to build section headers
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Container(
@@ -383,10 +335,58 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void _initializeRepositories() {
+    // Get the existing UserRepository from the widget context
+    _userRepository = context.read<UserRepository>();
+  }
+
   // Helper method to validate email
   bool _isValidEmail(String email) {
     final emailRegex = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$');
     return emailRegex.hasMatch(email);
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Get user data from repository
+      final user = await _userRepository.getUser();
+
+      // Also get the full user response for address fields
+      final userResponse = await _userRepository.getUserResponse();
+
+      _populateControllers(user, userResponse);
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+      AppLogger.error('Failed to load user data: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _populateControllers(User user, UserResponse userResponse) {
+    // Populate personal information
+    _nameController.text = userResponse.name;
+    _phoneController.text = userResponse.phoneNumber;
+    _emailController.text = userResponse.email;
+    _formNameController.text = userResponse.farmName;
+
+    // Populate address information
+    _doorNumberController.text = userResponse.address;
+    _pincodeController.text = userResponse.pincode;
+    _villageController.text = userResponse.village;
+    _talukaController.text = userResponse.taluka;
+    _districtController.text = userResponse.district;
+    _stateController.text = userResponse.state;
+    _countryController.text = userResponse.country;
   }
 
   Future<void> _saveProfile() async {

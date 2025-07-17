@@ -11,9 +11,10 @@ import 'package:powergodha/dashboard/pages/animal_detail_page.dart';
 import 'package:powergodha/dashboard/pages/update_animal.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
 import 'package:powergodha/shared/enums.dart';
+import 'package:powergodha/shared/widgets/appbar.dart';
 
 /// Dashboard page for dairy farm management with animal cards
-class DashboardPage extends StatefulWidget with DashboardDialogMixin {
+class DashboardPage extends StatefulWidget with DialogMixin {
   /// Creates a dashboard page
   const DashboardPage({super.key});
 
@@ -91,9 +92,8 @@ class _DashboardPageState extends State<DashboardPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Animal Information'),
-        actions: [
+      appBar: PowerGodhaAppBar(
+        extraActions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadAnimalCounts,
@@ -101,6 +101,17 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
+
+      // appBar: AppBar(
+      //   title: const Text('Animal Information'),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.refresh),
+      //       onPressed: _loadAnimalCounts,
+      //       tooltip: 'Refresh Animal Counts',
+      //     ),
+      //   ],
+      // ),
       backgroundColor: Colors.grey[50],
       body: Column(
         children: [

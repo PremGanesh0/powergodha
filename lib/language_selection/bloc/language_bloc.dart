@@ -32,63 +32,24 @@ part 'language_state.dart';
 /// ```
 /// {@endtemplate}
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
-  /// {@macro language_bloc}
-  LanguageBloc({
-    RetrofitClient? apiClient,
-  }) : _apiClient = apiClient ?? RetrofitClient(),
-       super(const LanguageState()) {
-    on<LanguageStarted>(_onLanguageStarted);
-    on<LanguageChangedLocally>(_onLanguageChangedLocally);
-    on<LanguageUpdatedOnServer>(_onLanguageUpdatedOnServer);
-    on<LanguageSyncRequested>(_onLanguageSyncRequested);
-  }
-
   /// Supported languages with their API IDs
   static const List<SupportedLanguage> _supportedLanguages = [
-    SupportedLanguage(
-      code: 'en',
-      id: '1',
-      name: 'English',
-      nativeName: 'English',
-    ),
-    SupportedLanguage(
-      code: 'hi',
-      id: '2',
-      name: 'Hindi',
-      nativeName: 'हिंदी',
-    ),
-    SupportedLanguage(
-      code: 'te',
-      id: '3',
-      name: 'Telugu',
-      nativeName: 'తెలుగు',
-    ),
-    SupportedLanguage(
-      code: 'mr',
-      id: '4',
-      name: 'Marathi',
-      nativeName: 'मराठी',
-    ),
+    SupportedLanguage(code: 'en', id: '1', name: 'English', nativeName: 'English'),
+    SupportedLanguage(code: 'hi', id: '2', name: 'Hindi', nativeName: 'हिंदी'),
+    SupportedLanguage(code: 'te', id: '3', name: 'Telugu', nativeName: 'తెలుగు'),
+    SupportedLanguage(code: 'mr', id: '4', name: 'Marathi', nativeName: 'मराठी'),
   ];
 
   final RetrofitClient _apiClient;
 
-  /// Gets the supported language by code
-  SupportedLanguage? getLanguageByCode(String code) {
-    try {
-      return _supportedLanguages.firstWhere((lang) => lang.code == code);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Gets the supported language by ID
-  SupportedLanguage? getLanguageById(String id) {
-    try {
-      return _supportedLanguages.firstWhere((lang) => lang.id == id);
-    } catch (e) {
-      return null;
-    }
+  /// {@macro language_bloc}
+  LanguageBloc({RetrofitClient? apiClient})
+    : _apiClient = apiClient ?? RetrofitClient(),
+      super(const LanguageState()) {
+    on<LanguageStarted>(_onLanguageStarted);
+    on<LanguageChangedLocally>(_onLanguageChangedLocally);
+    on<LanguageUpdatedOnServer>(_onLanguageUpdatedOnServer);
+    on<LanguageSyncRequested>(_onLanguageSyncRequested);
   }
 
   /// Handles the [LanguageChangedLocally] event
@@ -121,10 +82,7 @@ class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
   }
 
   /// Handles the [LanguageStarted] event
-  Future<void> _onLanguageStarted(
-    LanguageStarted event,
-    Emitter<LanguageState> emit,
-  ) async {
+  Future<void> _onLanguageStarted(LanguageStarted event, Emitter<LanguageState> emit) async {
     emit(state.copyWith(status: LanguageStatus.loading));
 
     try {
@@ -135,17 +93,21 @@ class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
         orElse: () => _supportedLanguages.first,
       );
 
-      emit(state.copyWith(
-        status: LanguageStatus.success,
-        selectedLanguageCode: currentLanguage.code,
-        selectedLanguageId: currentLanguage.id,
-        availableLanguages: _supportedLanguages,
-      ));
+      emit(
+        state.copyWith(
+          status: LanguageStatus.success,
+          selectedLanguageCode: currentLanguage.code,
+          selectedLanguageId: currentLanguage.id,
+          availableLanguages: _supportedLanguages,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: LanguageStatus.error,
+      emit(
+        state.copyWith(
+          status: LanguageStatus.error,
           errorMessage: 'Failed to load language preferences: $e',
-      ));
+        ),
+      );
     }
   }
 
@@ -174,23 +136,24 @@ class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
 
       if (response.success) {
         print('✅ Language updated on server successfully'); // Debug log
-        emit(state.copyWith(
-          status: LanguageStatus.success,
-          selectedLanguageId: event.languageId,
-        ));
+        emit(state.copyWith(status: LanguageStatus.success, selectedLanguageId: event.languageId));
       } else {
         print('❌ Language update failed: ${response.message}'); // Debug log
-        emit(state.copyWith(
-          status: LanguageStatus.error,
-          errorMessage: 'Failed to update language on server: ${response.message}',
-        ));
+        emit(
+          state.copyWith(
+            status: LanguageStatus.error,
+            errorMessage: 'Failed to update language on server: ${response.message}',
+          ),
+        );
       }
     } catch (e) {
       print('❌ Language update exception: $e'); // Debug log
-      emit(state.copyWith(
-        status: LanguageStatus.error,
+      emit(
+        state.copyWith(
+          status: LanguageStatus.error,
           errorMessage: 'Failed to update language on server: $e',
-      ));
+        ),
+      );
     }
   }
 }

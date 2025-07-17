@@ -332,7 +332,6 @@ class BreedingMessageHelper {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red[400],
-        duration: const Duration(seconds: 4),
       ),
     );
   }

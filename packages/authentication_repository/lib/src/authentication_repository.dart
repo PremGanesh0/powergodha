@@ -297,7 +297,8 @@ class AuthenticationRepository {
       await _apiClient.requestPasswordReset(email);
     } on DioException catch (e) {
       throw AuthenticationException(
-        e.response?.data?['message']?.toString() ?? 'Failed to send password reset email',
+        (e.response?.data is Map<String, dynamic> ? (e.response?.data as Map<String, dynamic>)['message']?.toString() : null)
+            ?? 'Failed to send password reset email',
       );
     } catch (e) {
       throw const AuthenticationException('An unexpected error occurred');
@@ -347,7 +348,8 @@ class AuthenticationRepository {
     } on DioException catch (e) {
       _logger.e('Registration failed', error: e);
       throw AuthenticationException(
-        e.response?.data?['message']?.toString() ?? 'Failed to sign up',
+        (e.response?.data is Map<String, dynamic> ? (e.response?.data as Map<String, dynamic>)['message']?.toString() : null)
+        ?? 'Failed to sign up',
       );
     } catch (e) {
       _logger.e('Unexpected registration error', error: e);

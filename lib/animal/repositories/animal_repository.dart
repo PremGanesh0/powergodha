@@ -13,6 +13,9 @@ import 'package:powergodha/shared/retrofit/retrofit_client.dart';
 /// This repository handles animal count data and other animal-related
 /// operations by integrating with the animal API endpoints.
 class AnimalRepository {
+  final AuthenticationRepository _authenticationRepository;
+
+  final RetrofitClient _apiClient;
   /// Creates an [AnimalRepository] instance.
   ///
   /// **Parameters:**
@@ -21,9 +24,6 @@ class AnimalRepository {
   AnimalRepository({required AuthenticationRepository authenticationRepository, required Dio dio})
     : _authenticationRepository = authenticationRepository,
       _apiClient = RetrofitClient(dio: dio);
-
-  final AuthenticationRepository _authenticationRepository;
-  final RetrofitClient _apiClient;
 
   /// Gets detailed animal data based on animal type.
   ///
@@ -258,8 +258,6 @@ class AnimalRepository {
   /// Gets animal basic details question answer for a user/animal.
   ///
   /// [animalId] - The animal's ID
-  /// [animalTypeId] - The animal type ID
-  /// [animalNumber] - The animal number
   Future<AnimalBasicDetailsData> getUserAnimalBasicDetailsQuestionAnswer({
     required int animalId,
     required int languageId,
@@ -271,25 +269,34 @@ class AnimalRepository {
         throw const AnimalRepositoryException('No access token available');
       }
 
-      final response = await _apiClient.getUserAnimalBasicDetailsQuestionAnswer(
+      final ApiResponse response = await _apiClient.getUserAnimalBasicDetailsQuestionAnswer(
         animalId,
         languageId,
         animalNumber,
       );
       AppLogger.info('Animal basic details Q&A response: ${response.data}');
       try {
-        final sectionKey = response.data.keys.first;
-print('Section key: $sectionKey');
-        return AnimalBasicDetailsData.fromJson(response.data[sectionKey] as Map<String, dynamic>);
-      } catch (e) {
-        try {
-          return AnimalBasicDetailsData.fromJson(
-            response.data['मूल विवरण'] as Map<String, dynamic>,
-          );
-        } catch (e) {
-          AppLogger.error('Failed to parse animal basic details Q&A: $e');
-          throw AnimalRepositoryException('Failed to parse animal basic details Q&A: $e');
+        if (response.data is Map<String, dynamic>) {
+          final dataMap = response.data as Map<String, dynamic>;
+          if (dataMap.isNotEmpty) {
+            final firstKey = dataMap.keys.first;
+            final data = dataMap[firstKey];
+            if (data is Map<String, dynamic>) {
+              return AnimalBasicDetailsData.fromJson(data);
+            } else {
+              throw const AnimalRepositoryException(
+                'Unexpected data format for animal basic details',
+              );
+            }
+          } else {
+            throw const AnimalRepositoryException('No data found in animal basic details response');
+          }
+        } else {
+          throw const AnimalRepositoryException('No data found in animal basic details response');
         }
+      } catch (e) {
+        AppLogger.error('Failed to parse animal basic details Q&A: $e');
+        throw AnimalRepositoryException('Failed to parse animal basic details Q&A: $e');
       }
 
     } on DioException catch (e) {
@@ -433,11 +440,11 @@ print('Section key: $sectionKey');
 
 /// Exception thrown when animal repository operations fail.
 class AnimalRepositoryException implements Exception {
-  /// Creates a new animal repository exception with the specified message.
-  const AnimalRepositoryException(this.message);
-
   /// The error message describing what went wrong.
   final String message;
+
+  /// Creates a new animal repository exception with the specified message.
+  const AnimalRepositoryException(this.message);
 
   @override
   String toString() => 'AnimalRepositoryException: $message';

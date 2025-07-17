@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'package:flutter/material.dart';
 
 /// Pedigree Report page for viewing animal lineage and genetic information

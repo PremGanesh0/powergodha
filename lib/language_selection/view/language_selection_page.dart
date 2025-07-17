@@ -356,13 +356,14 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage>
 
         // Instead of creating a new widget tree, restart at the root level
         // This ensures complete cleanup of the previous widget tree
-        final navigator = Navigator.of(context, rootNavigator: true);
-        navigator.pushAndRemoveUntil(
-          MaterialPageRoute<void>(
-            builder: (context) => App(initialLocale: newLocale, initialRoute: initialRoute),
-          ),
-          (route) => false, // Remove ALL routes including the root
-        );
+        if (mounted) {
+          Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+            MaterialPageRoute<void>(
+              builder: (context) => App(initialLocale: newLocale, initialRoute: initialRoute),
+            ),
+            (route) => false, // Remove ALL routes including the root
+          );
+        }
       }
     } catch (e) {
       // Handle error

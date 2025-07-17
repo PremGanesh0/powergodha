@@ -21,8 +21,8 @@ linter:
     # Style rules
     always_declare_return_types: true
     always_put_required_named_parameters_first: true
-    always_specify_types: false # Conflicts with strict-inference
-    always_use_package_imports: false # Allow relative imports within package
+    always_specify_types: false
+    always_use_package_imports: false
     avoid_annotating_with_dynamic: true
     avoid_bool_literals_in_conditional_expressions: true
     avoid_escaping_inner_quotes: true
@@ -89,3 +89,16 @@ linter:
     # Performance
     avoid_function_literals_in_foreach_calls: true
     avoid_slow_async_io: true
+    avoid_single_cascade_in_expression:
+      severity: warning
+    avoid_unnecessary_containers: true
+    avoid_unnecessary_type_check: true
+    avoid_unnecessary_type_casts: true
+    avoid_using_legacy_weak_references: true
+    prefer_collection_literals: true
+    prefer_generic_function_type_aliases: true
+    prefer_is_empty: true
+    prefer_is_not_empty: true
+    prefer_null_aware_operators: true
+    prefer_spread_collections: avoid_types_on_closure_parameters
+    prefer_typing_uninitialized_variables: true

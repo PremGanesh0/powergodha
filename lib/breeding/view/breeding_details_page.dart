@@ -7,6 +7,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/animal/models/animal_details_response.dart';
 import 'package:powergodha/animal/repositories/animal_repository.dart';
 import 'package:powergodha/breeding/view/record_ai_page.dart';
@@ -16,7 +17,6 @@ import 'package:powergodha/breeding/view/record_heat_page.dart';
 import 'package:powergodha/breeding/view/record_pregnancy_page.dart';
 import 'package:powergodha/breeding/widgets/breeding_shared_widgets.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
-import 'package:powergodha/animal/animal_type_utils.dart';
 import 'package:powergodha/shared/enums.dart';
 
 /// {@template breeding_details_page}

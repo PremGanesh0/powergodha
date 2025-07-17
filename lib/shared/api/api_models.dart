@@ -9,6 +9,15 @@ library;
 /// API error response structure.
 /// {@endtemplate}
 class ApiError {
+  /// Error message.
+  final String message;
+
+  /// HTTP status code.
+  final int status;
+
+  /// Additional error details.
+  final String? details;
+
   /// Creates an [ApiError] instance.
   const ApiError({required this.message, required this.status, this.details});
 
@@ -20,15 +29,6 @@ class ApiError {
       details: json['details'] as String?,
     );
   }
-
-  /// Error message.
-  final String message;
-
-  /// HTTP status code.
-  final int status;
-
-  /// Additional error details.
-  final String? details;
 
   /// Converts the instance to JSON.
   Map<String, dynamic> toJson() {
@@ -50,6 +50,15 @@ class ApiError {
 /// - `status`: HTTP status code
 /// {@endtemplate}
 class ApiResponse {
+  /// The response data payload.
+  final dynamic data;
+
+  /// Response message from the API.
+  final String message;
+
+  /// HTTP status code.
+  final int status;
+
   /// Creates an [ApiResponse] instance.
   const ApiResponse({
     required this.data,
@@ -65,15 +74,6 @@ class ApiResponse {
       status: json['status'] as int? ?? 500,
     );
   }
-
-  /// The response data payload.
-  final dynamic data;
-
-  /// Response message from the API.
-  final String message;
-
-  /// HTTP status code.
-  final int status;
 
   /// Whether the API request failed.
   bool get failed => !success;
@@ -112,10 +112,27 @@ class ApiResponse {
   }
 }
 
+class ImagesList {
+  final String name;
+
+  final String img;
+
+  ImagesList({required this.name, required this.img});
+  factory ImagesList.fromJson(Map<String, dynamic> json){
+    return ImagesList(
+    name: json['name'] as String ,
+    img: json['img'] as String
+   );
+  }
+}
+
 /// {@template notification_count}
 /// Model for notification count data from the API.
 /// {@endtemplate}
 class NotificationCount {
+  /// The number of unread notifications.
+  final int count;
+
   /// Creates a [NotificationCount] instance.
   const NotificationCount({required this.count});
 
@@ -123,9 +140,6 @@ class NotificationCount {
   factory NotificationCount.fromJson(Map<String, dynamic> json) {
     return NotificationCount(count: json['count'] as int? ?? 0);
   }
-
-  /// The number of unread notifications.
-  final int count;
 
   @override
   int get hashCode => count.hashCode;
@@ -154,6 +168,24 @@ class NotificationCount {
 /// Pagination metadata for paginated API responses.
 /// {@endtemplate}
 class PaginationMeta {
+  /// Current page number (1-based).
+  final int currentPage;
+
+  /// Total number of pages.
+  final int totalPages;
+
+  /// Total number of items across all pages.
+  final int totalItems;
+
+  /// Number of items per page.
+  final int itemsPerPage;
+
+  /// Whether there is a next page available.
+  final bool hasNextPage;
+
+  /// Whether there is a previous page available.
+  final bool hasPreviousPage;
+
   /// Creates a [PaginationMeta] instance.
   const PaginationMeta({
     required this.currentPage,
@@ -176,24 +208,6 @@ class PaginationMeta {
     );
   }
 
-  /// Current page number (1-based).
-  final int currentPage;
-
-  /// Total number of pages.
-  final int totalPages;
-
-  /// Total number of items across all pages.
-  final int totalItems;
-
-  /// Number of items per page.
-  final int itemsPerPage;
-
-  /// Whether there is a next page available.
-  final bool hasNextPage;
-
-  /// Whether there is a previous page available.
-  final bool hasPreviousPage;
-
   /// Converts the instance to JSON.
   Map<String, dynamic> toJson() {
     return {
@@ -212,10 +226,52 @@ class PaginationMeta {
   }
 }
 
+class ProfitableDairyFarmingData{
+  final int id;
+
+  final String coverImg;
+
+  final String header;
+  final String summary;
+  final List<ImagesList> images;
+  final String content;
+  ProfitableDairyFarmingData({
+    required this.id,
+    required this.coverImg,
+    required this.header,
+    required this.summary,
+    required this.images,
+    required this.content
+  });
+  factory ProfitableDairyFarmingData.fromJson(Map<String, dynamic> json){
+    return ProfitableDairyFarmingData(
+        id: json['article_id'] is int
+            ? json['article_id'] as int
+            : int.tryParse(json['article_id'].toString()) ?? 0,
+        coverImg: json['article_thumb'] as String ,
+        header: json['article_header'] as String ,
+        summary: json['article_summary'] as String ,
+        images: (json['article_images'] as List<dynamic>? ?? [])
+            .map((e) => ImagesList.fromJson(e as Map<String,dynamic>))
+            .toList(),
+        content: json['article_body'] as String ,
+    );
+  }
+}
+
 /// {@template profit_loss_data}
 /// Profit/Loss report data structure.
 /// {@endtemplate}
 class ProfitLossData {
+  /// The date of the profit/loss report.
+  final String date;
+
+  /// The profit/loss amount as a string.
+  final String profitLoss;
+
+  /// The type of report: 'profit' or 'loss'.
+  final String key;
+
   /// Creates a [ProfitLossData] instance.
   const ProfitLossData({
     required this.date,
@@ -231,15 +287,6 @@ class ProfitLossData {
       key: json['key'] as String? ?? 'unknown',
     );
   }
-
-  /// The date of the profit/loss report.
-  final String date;
-
-  /// The profit/loss amount as a string.
-  final String profitLoss;
-
-  /// The type of report: 'profit' or 'loss'.
-  final String key;
 
   /// The absolute amount (without negative sign).
   double get absoluteAmount => profitLossAmount.abs();
@@ -278,6 +325,30 @@ class ProfitLossData {
 /// Model for slider article data from the API.
 /// {@endtemplate}
 class SliderArticle {
+  /// The unique identifier for the slider article.
+  final int sliderArticleId;
+
+  /// The language ID for the article.
+  final int languageId;
+
+  /// The name/title of the article.
+  final String name;
+
+  /// The main image URL for the article.
+  final String image;
+
+  /// The web URL or action for the article.
+  final String webUrl;
+
+  /// The subtitle/description of the article.
+  final String subtitle;
+
+  /// The thumbnail image URL for the article.
+  final String thumbnail;
+
+  /// The creation date of the article.
+  final String createdAt;
+
   /// Creates a [SliderArticle] instance.
   const SliderArticle({
     required this.sliderArticleId,
@@ -303,30 +374,6 @@ class SliderArticle {
       createdAt: json['created_at'] as String? ?? '',
     );
   }
-
-  /// The unique identifier for the slider article.
-  final int sliderArticleId;
-
-  /// The language ID for the article.
-  final int languageId;
-
-  /// The name/title of the article.
-  final String name;
-
-  /// The main image URL for the article.
-  final String image;
-
-  /// The web URL or action for the article.
-  final String webUrl;
-
-  /// The subtitle/description of the article.
-  final String subtitle;
-
-  /// The thumbnail image URL for the article.
-  final String thumbnail;
-
-  /// The creation date of the article.
-  final String createdAt;
 
   @override
   int get hashCode {
@@ -378,6 +425,9 @@ class SliderArticle {
 /// Request model for updating user language preference.
 /// {@endtemplate}
 class UserLanguageUpdateRequest {
+  /// The language ID to set for the user.
+  final String languageId;
+
   /// Creates a [UserLanguageUpdateRequest] instance.
   const UserLanguageUpdateRequest({
     required this.languageId,
@@ -387,9 +437,6 @@ class UserLanguageUpdateRequest {
   factory UserLanguageUpdateRequest.fromLanguageId(String languageId) {
     return UserLanguageUpdateRequest(languageId: languageId);
   }
-
-  /// The language ID to set for the user.
-  final String languageId;
 
   @override
   int get hashCode => languageId.hashCode;
@@ -411,51 +458,4 @@ class UserLanguageUpdateRequest {
   String toString() {
     return 'UserLanguageUpdateRequest(languageId: $languageId)';
   }
-}
-
-class ProfitableDairyFarmingData{
-  ProfitableDairyFarmingData({
-    required this.id,
-    required this.coverImg,
-    required this.header,
-    required this.summary,
-    required this.images,
-    required this.content
-  });
-
-  factory ProfitableDairyFarmingData.fromJson(Map<String, dynamic> json){
-    return ProfitableDairyFarmingData(
-        id: json['article_id'] is int
-            ? json['article_id'] as int
-            : int.tryParse(json['article_id'].toString()) ?? 0,
-        coverImg: json['article_thumb'] as String ?? '',
-        header: json['article_header'] as String ?? '',
-        summary: json['article_summary'] as String ?? '',
-        images: (json['article_images'] as List<dynamic>? ?? [])
-            .map((e) => ImagesList.fromJson(e as Map<String,dynamic>))
-            .toList(),
-        content: json['article_body'] as String ?? '',
-    );
-  }
-
-  final int id;
-  final String coverImg;
-  final String header;
-  final String summary;
-  final List<ImagesList> images;
-  final String content;
-}
-
-class ImagesList {
-  ImagesList({required this.name, required this.img});
-
-  factory ImagesList.fromJson(Map<String, dynamic> json){
-    return ImagesList(
-    name: json['name'] as String ?? '',
-    img: json['img'] as String  ?? ''
-   );
-  }
-
-  final String name;
-  final String img;
 }

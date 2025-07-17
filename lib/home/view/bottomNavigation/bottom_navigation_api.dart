@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:powergodha/home/widgets/build_card.dart';
+
 import '../../../shared/api/api_models.dart';
 import '../../../shared/services/bottom_navigation_service.dart';
 
 class BottomNavigationPage extends StatefulWidget{
+  final int page;
+
   const BottomNavigationPage({required this.page ,super.key});
 
-  final int page;
+  @override
+  State<BottomNavigationPage> createState() => _BottomNavigationPageState();
 
   static Route<void> route(int page){
     return MaterialPageRoute
       (builder: (_) => BottomNavigationPage(page: page)
     );
   }
-
-  @override
-  State<BottomNavigationPage> createState() => _BottomNavigationPageState();
 }
 
 class _BottomNavigationPageState extends State<BottomNavigationPage> {
@@ -25,7 +26,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cards'),
+        title: const Text('Cards'),
       ),
       //API call
       body: FutureBuilder<List<ProfitableDairyFarmingData>>(

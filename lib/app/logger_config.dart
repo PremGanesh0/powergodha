@@ -56,9 +56,6 @@ import 'package:path_provider/path_provider.dart';
 /// * [fatal] - Fatal errors that may crash the app
 /// {@endtemplate}
 class AppLogger {
-  /// Private constructor to prevent instantiation
-  AppLogger._();
-
   /// The main logger instance used throughout the app
   static Logger? _logger;
 
@@ -86,21 +83,10 @@ class AppLogger {
     return _logger!;
   }
 
-  /// Clear log files (useful for maintenance)
-  static Future<void> clearLogs() async {
-    try {
-      if (!kIsWeb) {
-        final directory = await getApplicationDocumentsDirectory();
-        final logFile = File('${directory.path}/app_logs.txt');
-        if (await logFile.exists()) {
-          await logFile.delete();
-          info('Log files cleared successfully');
-        }
-      }
-    } catch (e) {
-      error('Failed to clear log files', error: e);
-    }
-  }
+  /// Private constructor to prevent instantiation
+  AppLogger._();
+
+
 
   /// Log a debug message
   ///
@@ -170,22 +156,7 @@ class AppLogger {
     );
   }
 
-  /// Get log file path (for sharing or debugging)
-  static Future<String?> getLogFilePath() async {
-    try {
-      if (!kIsWeb) {
-        final directory = await getApplicationDocumentsDirectory();
-        final logFile = File('${directory.path}/app_logs.txt');
-        if (await logFile.exists()) {
-          return logFile.path;
-        }
-      }
-      return null;
-    } catch (e) {
-      error('Failed to get log file path', error: e);
-      return null;
-    }
-  }
+
 
   /// Log an info message
   ///

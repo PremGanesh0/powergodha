@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:powergodha/dashboard/mixins/dashboard_dialog_mixin.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
 import 'package:powergodha/login/models/password.dart';
 import 'package:powergodha/shared/theme.dart';
@@ -9,69 +10,48 @@ import 'package:powergodha/signup/bloc/signup_bloc.dart';
 import 'package:powergodha/signup/models/name.dart';
 import 'package:powergodha/signup/models/phone_number.dart';
 
-class SignupForm extends StatelessWidget {
+class SignupForm extends StatelessWidget with DialogMixin {
   const SignupForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
-
     return BlocListener<SignupBloc, SignupState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status.isFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(state.error.isNotEmpty
-                    ? state.error
-                      : localizations?.authenticationFailure ?? 'Authentication Failure',
-                ),
-              ),
-            );
+          showToast(context, 'Signup failed. Please try again.');
+        } else if (state.status.isInProgress) {
+          showToast(context, 'Signing up...');
         } else if (state.status.isSuccess) {
-          // Show success message and navigate to OTP verification
           if (state.registrationResponse != null) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Success. Please verify the OTP sent to your registered phone number',
-                  ),
-                  backgroundColor: Colors.green,
-                ),
-              );
+            showToast(context, 'Registration successful! Please verify your phone number.');
 
-            // Navigate to OTP verification screen
-            Navigator.of(context)
-                .pushNamed(
-                  '/otp-verification',
-                  arguments: {
-                    'phoneNumber': state.phoneNumber.value,
-                    'userId': state.registrationResponse!.userId,
-                    'otp': state.registrationResponse!.otp,
-                  },
-                )
-                .then((success) {
-                  if (success == true) {
-                    // OTP verification successful, show success message and navigate to login
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Registration completed successfully! Please log in with your credentials.',
-                          ),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    // Navigate to login screen
-                    Navigator.of(context).pushReplacementNamed('/login');
-                  }
-                });
+            // Use a local variable to hold the navigator
+            final navigator = Navigator.of(context);
+
+            // Push OTP verification and handle result after async gap
+            final success = await navigator.pushNamed(
+              '/otp-verification',
+              arguments: {
+                'phoneNumber': state.phoneNumber.value,
+                'userId': state.registrationResponse!.userId,
+                'otp': state.registrationResponse!.otp,
+              },
+            );
+
+            // Check if the context is still mounted before using it
+            if (context.mounted) {
+              if (success == true) {
+                showToast(
+                  context,
+                  'Registration successful! Please log in with your credentials.',
+                );
+                navigator.pushReplacementNamed('/login');
+              }
+            }
           } else {
-            Navigator.of(context).pop(); // Return to previous screen after success
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
           }
         }
       },
@@ -106,8 +86,7 @@ class _NameInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('signupForm_nameInput_textField'),
-          onChanged: (name) =>
-              context.read<SignupBloc>().add(SignupNameChanged(name)),
+          onChanged: (name) => context.read<SignupBloc>().add(SignupNameChanged(name)),
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
             labelText: localizations?.fullName ?? 'Full Name',
@@ -142,8 +121,7 @@ class _PasswordInputState extends State<_PasswordInput> {
       builder: (context, state) {
         return TextField(
           key: const Key('signupForm_passwordInput_textField'),
-          onChanged: (password) =>
-              context.read<SignupBloc>().add(SignupPasswordChanged(password)),
+          onChanged: (password) => context.read<SignupBloc>().add(SignupPasswordChanged(password)),
           obscureText: _obscurePassword,
           decoration: InputDecoration(
             labelText: localizations?.password ?? 'Password',
@@ -151,13 +129,11 @@ class _PasswordInputState extends State<_PasswordInput> {
             prefixIcon: const Icon(Icons.lock),
             errorText: state.password.displayError != null
                 ? state.password.error == PasswordValidationError.empty
-                    ? 'Password cannot be empty'
-                    : 'Password must be at least 8 characters'
+                      ? 'Password cannot be empty'
+                      : 'Password must be at least 8 characters'
                 : null,
             suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_off : Icons.visibility,
-              ),
+              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
               onPressed: () {
                 setState(() {
                   _obscurePassword = !_obscurePassword;
@@ -234,8 +210,7 @@ class _SignupButton extends StatelessWidget {
                   ),
                 ),
                 onPressed: state.isValid
-                    ? () =>
-                        context.read<SignupBloc>().add(const SignupSubmitted())
+                    ? () => context.read<SignupBloc>().add(const SignupSubmitted())
                     : null,
                 child: Text(localizations?.signup ?? 'Sign Up'),
               );

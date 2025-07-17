@@ -45,6 +45,7 @@ import 'package:powergodha/home/widgets/featured_carousel.dart';
 import 'package:powergodha/home/widgets/profit_loss.dart';
 import 'package:powergodha/l10n/app_localizations.dart';
 import 'package:powergodha/shared/shared.dart';
+import 'package:powergodha/shared/widgets/appbar.dart';
 
 /// {@template home_page}
 /// The main home screen for authenticated users.
@@ -113,10 +114,10 @@ class HomePage extends StatelessWidget {
 }
 
 class QuickAction {
-  const QuickAction({required this.icon, required this.label, required this.onPressed});
   final String icon;
   final String label;
   final VoidCallback onPressed;
+  const QuickAction({required this.icon, required this.label, required this.onPressed});
 }
 
 /// Welcome section widget that greets the user
@@ -190,24 +191,25 @@ class _HomePage extends StatelessWidget {
         top: false,
         child: Scaffold(
           drawer: const AppDrawer(),
-          appBar: AppBar(
-            title: Text(localizations?.appTitle ?? 'PowerGodha'),
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.search),
-                tooltip: 'Search',
-                onPressed: () {
-                  //
-                },
-              ),
-              AppNotificationButton(
-                onPressed: () {
-                  //
-                },
-              ),
-            ],
-          ),
+          appBar: PowerGodhaAppBar(),
+          // appBar: AppBar(
+          //   title: Text(localizations?.appTitle ?? 'PowerGodha'),
+          //   elevation: 0,
+          //   actions: [
+          //     IconButton(
+          //       icon: const Icon(Icons.search),
+          //       tooltip: 'Search',
+          //       onPressed: () {
+          //         //
+          //       },
+          //     ),
+          //     AppNotificationButton(
+          //       onPressed: () {
+          //         //
+          //       },
+          //     ),
+          //   ],
+          // ),
           body: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
               if (state.status == HomeStatus.loading) {
@@ -379,8 +381,8 @@ class _HomePage extends StatelessWidget {
 /// A custom notification button widget that displays a badge with the notification count.
 /// {@endtemplate}
 class _QuickActions extends StatelessWidget {
-  const _QuickActions({required this.actions});
   final List<QuickAction> actions;
+  const _QuickActions({required this.actions});
 
   @override
   Widget build(BuildContext context) {

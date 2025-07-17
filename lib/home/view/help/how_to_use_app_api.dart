@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/services/about_app_data_service.dart';
 import 'package:powergodha/shared/theme.dart';
 
@@ -14,13 +13,6 @@ import 'package:powergodha/shared/theme.dart';
 class HowToUseAppPage extends StatelessWidget {
   /// {@macro how_to_use_app_page}
   const HowToUseAppPage({super.key});
-
-  /// Route method for navigation
-  static Route<void> route() {
-    return MaterialPageRoute<void>(
-      builder: (_) => const HowToUseAppPage(),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,102 +38,6 @@ class HowToUseAppPage extends StatelessWidget {
 
           return const Center(child: Text('No content available'));
         },
-      ),
-    );
-  }
-
-  Widget _buildErrorView(BuildContext context, String errorMessage) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(16.r),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64.r,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              'Error loading content',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              errorMessage,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16.h),
-            ElevatedButton(
-              onPressed: () {
-                (context as Element).markNeedsBuild();
-              },
-              child: const Text('Try Again'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContentView(BuildContext context, AboutAppData howToUseData) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        (context as Element).markNeedsBuild();
-      },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            _buildHeader(context),
-            _buildContent(context, howToUseData),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(24.r),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Theme.of(context).colorScheme.primaryContainer,
-            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7),
-          ],
-        ),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            Icons.help_outline,
-            size: 60.r,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'How to Use PowerGodha',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Step-by-step guide to maximize your farming potential',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
-                ),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }
@@ -224,6 +120,109 @@ class HowToUseAppPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContentView(BuildContext context, AboutAppData howToUseData) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        (context as Element).markNeedsBuild();
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            _buildHeader(context),
+            _buildContent(context, howToUseData),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorView(BuildContext context, String errorMessage) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(16.r),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64.r,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Error loading content',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              errorMessage,
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.h),
+            ElevatedButton(
+              onPressed: () {
+                (context as Element).markNeedsBuild();
+              },
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24.r),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer,
+            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7),
+          ],
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.help_outline,
+            size: 60.r,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'How to Use PowerGodha',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Step-by-step guide to maximize your farming potential',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Route method for navigation
+  static Route<void> route() {
+    return MaterialPageRoute<void>(
+      builder: (_) => const HowToUseAppPage(),
     );
   }
 }

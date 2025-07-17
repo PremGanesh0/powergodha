@@ -7,6 +7,7 @@ import 'package:powergodha/dashboard/pages/add_animals.dart';
 import 'package:powergodha/dashboard/pages/animal_list_page.dart';
 import 'package:powergodha/dashboard/pages/update_animal.dart';
 import 'package:powergodha/dashboard/widgets/dashboard_widgets.dart';
+import 'package:powergodha/shared/widgets/appbar.dart';
 
 List<Color> animalColors = [
   const Color(0xFFE91E63), // Pink
@@ -19,14 +20,6 @@ List<Color> animalColors = [
 
 /// Animal detail page that shows detailed information about a specific animal type
 class AnimalDetailPage extends StatefulWidget {
-  /// Creates an animal detail page
-  const AnimalDetailPage({
-    required this.animalId,
-    required this.animalName,
-    required this.animalColor,
-    super.key,
-  });
-
   /// The ID of the animal type (1=Cow, 2=Buffalo, 3=Goat, 4=Hen)
   final int animalId;
 
@@ -35,6 +28,14 @@ class AnimalDetailPage extends StatefulWidget {
 
   /// The color theme for the animal
   final Color animalColor;
+
+  /// Creates an animal detail page
+  const AnimalDetailPage({
+    required this.animalId,
+    required this.animalName,
+    required this.animalColor,
+    super.key,
+  });
 
   @override
   State<AnimalDetailPage> createState() => _AnimalDetailPageState();
@@ -66,14 +67,15 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.animalName} Details'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-      ),
+      appBar: PowerGodhaAppBar(),
 
+      // appBar: AppBar(
+      //   title: Text('${widget.animalName} Details'),
+      //   centerTitle: true,
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   foregroundColor: Colors.black,
+      // ),
       backgroundColor: Colors.grey[50],
       body: _buildBody(),
     );
@@ -165,7 +167,18 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
                     ? 'assets/icons/goats.png'
                     : null,
                 count: animalData.count.toString(),
-                onTap: () => _navigateToAnimalList(animalData),
+                onTap: index == 0
+                    ? () {}
+                    : () => _navigateToAnimalList(
+                        animalData,
+                        animalData.category == 'Male'
+                            ? 'bull'
+                            : animalData.category == 'Female'
+                            ? 'cow'
+                            : animalData.category == 'Heifer'
+                            ? 'heifer'
+                            : '',
+                      ),
               );
             },
           ),
@@ -313,7 +326,7 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
   }
 
   /// Navigate to animal list page
-  void _navigateToAnimalList(AnimalInfoData animalData) {
+  void _navigateToAnimalList(AnimalInfoData animalData, String animalType) {
     // Only navigate if there are animals to show
     if (animalData.count > 0) {
       Navigator.of(context).push(
@@ -322,6 +335,7 @@ class _AnimalDetailPageState extends State<AnimalDetailPage> {
           animalName: widget.animalName,
           animalType: widget.animalName.toLowerCase(),
           animalColor: widget.animalColor,
+          subCategory: animalType,
         ),
       );
     } else {

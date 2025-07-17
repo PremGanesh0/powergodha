@@ -20,17 +20,17 @@ import 'package:powergodha/breeding/widgets/breeding_shared_widgets.dart';
 /// {@endtemplate}
 class RecordAiPage extends StatefulWidget {
 
+  /// The type of animal (e.g., 'Cow', 'Buffalo', 'Goat')
+  final String animalType;
+  /// The animal identification number
+  final String animalNumber;
+
   /// {@macro record_ai_page}
   const RecordAiPage({
     required this.animalType,
     required this.animalNumber,
     super.key,
   });
-  /// The type of animal (e.g., 'Cow', 'Buffalo', 'Goat')
-  final String animalType;
-
-  /// The animal identification number
-  final String animalNumber;
 
   @override
   State<RecordAiPage> createState() => _RecordAiPageState();
