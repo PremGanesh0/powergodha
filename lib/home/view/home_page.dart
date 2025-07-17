@@ -40,6 +40,7 @@ import 'package:powergodha/app/app_view.dart' show AppView;
 import 'package:powergodha/authentication/bloc/authentication_bloc.dart';
 import 'package:powergodha/home/bloc/bloc.dart';
 import 'package:powergodha/home/view/bottomNavigation/bottom_navigation_api.dart';
+import 'package:powergodha/home/view/premium/premium_screen.dart';
 import 'package:powergodha/home/widgets/app_drawer.dart';
 import 'package:powergodha/home/widgets/featured_carousel.dart';
 import 'package:powergodha/home/widgets/profit_loss.dart';
@@ -286,9 +287,9 @@ class _HomePage extends StatelessWidget {
                             icon: 'assets/icons/record_milk.png',
                             label: 'Premium',
                             onPressed: () {
-                              // Navigator.of(
-                              //   context,
-                              // ).pushNamed(AppRoutes.profile);
+                              Navigator.of(
+                                context,
+                              ).push(PremiumScreen.route());
                             },
                           ),
                           QuickAction(

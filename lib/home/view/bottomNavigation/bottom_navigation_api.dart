@@ -29,7 +29,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         title: const Text('Cards'),
       ),
       //API call
-      body: FutureBuilder<List<ProfitableDairyFarmingData>>(
+      body: FutureBuilder<List<BottomNavigationData>>(
           future: BottomNavigationService().getDataBottomNavigation(widget.page),
           builder: (context, snapshot){
             if(snapshot.connectionState == ConnectionState.waiting){
@@ -50,7 +50,7 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
     );
   }
 
-  Widget _buildScreen(List<ProfitableDairyFarmingData> items){
+  Widget _buildScreen(List<BottomNavigationData> items){
     return Column(
       children: [
         Container(

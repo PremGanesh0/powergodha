@@ -33,6 +33,7 @@ import 'package:powergodha/home/view/home_page.dart';
 import 'package:powergodha/home/view/info/about_app_page_api.dart';
 import 'package:powergodha/home/view/info/about_us_page_api.dart';
 import 'package:powergodha/home/view/info/contact_us_page_api.dart';
+import 'package:powergodha/home/view/premium/on_tap_buy_premium.dart';
 import 'package:powergodha/language_selection/language_selection.dart';
 import 'package:powergodha/login/view/login_page.dart';
 import 'package:powergodha/otp_verification/view/otp_verification_page.dart';
@@ -97,6 +98,7 @@ abstract final class AppRoutes {
   static const String recordAi = '/record-ai';
   static const String recordDrying = '/record-drying';
   static const String recordPregnancy = '/record-pregnancy';
+  static const String  buyPremium= '/buy-premium';
 
   /// Generates routes based on [RouteSettings].
   ///
@@ -181,6 +183,8 @@ abstract final class AppRoutes {
         return DashboardPage.route();
       case breedingDetails:
         return BreedingDetailsPage.route();
+      case buyPremium:
+        return OnTapBuyPremium.route();
       case recordHeat:
         // Extract arguments for record heat page
         final args = settings.arguments as Map<String, dynamic>?;

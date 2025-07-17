@@ -112,20 +112,6 @@ class ApiResponse {
   }
 }
 
-class ImagesList {
-  final String name;
-
-  final String img;
-
-  ImagesList({required this.name, required this.img});
-  factory ImagesList.fromJson(Map<String, dynamic> json){
-    return ImagesList(
-    name: json['name'] as String ,
-    img: json['img'] as String
-   );
-  }
-}
-
 /// {@template notification_count}
 /// Model for notification count data from the API.
 /// {@endtemplate}
@@ -226,38 +212,6 @@ class PaginationMeta {
   }
 }
 
-class ProfitableDairyFarmingData{
-  final int id;
-
-  final String coverImg;
-
-  final String header;
-  final String summary;
-  final List<ImagesList> images;
-  final String content;
-  ProfitableDairyFarmingData({
-    required this.id,
-    required this.coverImg,
-    required this.header,
-    required this.summary,
-    required this.images,
-    required this.content
-  });
-  factory ProfitableDairyFarmingData.fromJson(Map<String, dynamic> json){
-    return ProfitableDairyFarmingData(
-        id: json['article_id'] is int
-            ? json['article_id'] as int
-            : int.tryParse(json['article_id'].toString()) ?? 0,
-        coverImg: json['article_thumb'] as String ,
-        header: json['article_header'] as String ,
-        summary: json['article_summary'] as String ,
-        images: (json['article_images'] as List<dynamic>? ?? [])
-            .map((e) => ImagesList.fromJson(e as Map<String,dynamic>))
-            .toList(),
-        content: json['article_body'] as String ,
-    );
-  }
-}
 
 /// {@template profit_loss_data}
 /// Profit/Loss report data structure.
@@ -458,4 +412,51 @@ class UserLanguageUpdateRequest {
   String toString() {
     return 'UserLanguageUpdateRequest(languageId: $languageId)';
   }
+}
+
+class BottomNavigationData{
+  BottomNavigationData({
+    required this.id,
+    required this.coverImg,
+    required this.header,
+    required this.summary,
+    required this.images,
+    required this.content
+  });
+
+  factory BottomNavigationData.fromJson(Map<String, dynamic> json){
+    return BottomNavigationData(
+        id: json['article_id'] is int
+            ? json['article_id'] as int
+            : int.tryParse(json['article_id'].toString()) ?? 0,
+        coverImg: json['article_thumb'] as String ?? '',
+        header: json['article_header'] as String ?? '',
+        summary: json['article_summary'] as String ?? '',
+        images: (json['article_images'] as List<dynamic>? ?? [])
+            .map((e) => ImagesList.fromJson(e as Map<String,dynamic>))
+            .toList(),
+        content: json['article_body'] as String ?? '',
+    );
+  }
+
+  final int id;
+  final String coverImg;
+  final String header;
+  final String summary;
+  final List<ImagesList> images;
+  final String content;
+}
+
+class ImagesList {
+  ImagesList({required this.name, required this.img});
+
+  factory ImagesList.fromJson(Map<String, dynamic> json){
+    return ImagesList(
+    name: json['name'] as String ?? '',
+    img: json['img'] as String  ?? ''
+   );
+  }
+
+  final String name;
+  final String img;
 }

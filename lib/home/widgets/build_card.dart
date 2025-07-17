@@ -4,10 +4,11 @@ import 'package:powergodha/home/view/bottomNavigation/on_tap_details_page.dart';
 import 'package:powergodha/shared/api/api_models.dart';
 
 class BuildCard extends StatefulWidget{
-  final ProfitableDairyFarmingData item;
   const BuildCard({
     required this.item ,super.key
   });
+
+  final BottomNavigationData item;
 
   @override
   State<BuildCard> createState() => _BuildCardState();

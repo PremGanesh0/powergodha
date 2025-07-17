@@ -55,11 +55,7 @@ IndividualAnimalData _$IndividualAnimalDataFromJson(
   id: (json['id'] as num?)?.toInt(),
   animalNumber: json['animal_number'] as String?,
   dateOfBirth: json['date_of_birth'] as String?,
-  weight: json['weight'] == null
-      ? null
-      : (json['weight'] is num
-          ? (json['weight'] as num).toDouble()
-          : double.tryParse(json['weight'].toString())),
+  weight: (json['weight'] as num?)?.toDouble(),
   breed: json['breed'] as String?,
   gender: json['gender'] as String?,
   status: json['status'] as String?,
