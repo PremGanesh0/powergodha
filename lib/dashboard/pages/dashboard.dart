@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:powergodha/animal/animal_type_utils.dart';
-import 'package:powergodha/animal/models/animal_count_response.dart';
-import 'package:powergodha/animal/models/animal_models.dart';
-import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/animal_repo/animal_type_utils.dart';
+import 'package:powergodha/animal_repo/models/animal_count_response.dart';
+import 'package:powergodha/animal_repo/models/animal_models.dart';
+import 'package:powergodha/animal_repo/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/dashboard/mixins/dashboard_dialog_mixin.dart';
 import 'package:powergodha/dashboard/pages/add_animals.dart';

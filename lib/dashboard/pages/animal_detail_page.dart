@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:powergodha/animal/models/animal_info_response.dart';
-import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/animal_repo/models/animal_info_response.dart';
+import 'package:powergodha/animal_repo/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/dashboard/pages/add_animals.dart';
 import 'package:powergodha/dashboard/pages/animal_list_page.dart';

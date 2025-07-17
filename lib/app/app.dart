@@ -35,7 +35,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:powergodha/animal/repositories/animal_repository.dart';
+import 'package:powergodha/animal_repo/repositories/animal_repository.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/app/app_view.dart';
 import 'package:powergodha/authentication/bloc/authentication_bloc.dart';

@@ -1,9 +1,9 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dio/dio.dart';
-import 'package:powergodha/animal/models/animal_basic_details_data.dart';
-import 'package:powergodha/animal/models/animal_count_response.dart';
-import 'package:powergodha/animal/models/animal_details_response.dart';
-import 'package:powergodha/animal/models/animal_info_response.dart';
+import 'package:powergodha/animal_repo/models/animal_basic_details_data.dart';
+import 'package:powergodha/animal_repo/models/animal_count_response.dart';
+import 'package:powergodha/animal_repo/models/animal_details_response.dart';
+import 'package:powergodha/animal_repo/models/animal_info_response.dart';
 import 'package:powergodha/app/app_logger_config.dart';
 import 'package:powergodha/shared/api/api_models.dart';
 import 'package:powergodha/shared/retrofit/retrofit_client.dart';

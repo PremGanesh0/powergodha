@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:powergodha/animal/models/animal_question_answer.dart';
+import 'package:powergodha/animal_repo/models/animal_question_answer.dart';
 import 'package:powergodha/dashboard/widgets/radio_buttons.dart';
 import 'package:powergodha/dashboard/widgets/text_field.dart';
 

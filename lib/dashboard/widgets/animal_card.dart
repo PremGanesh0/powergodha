@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:powergodha/animal/models/animal_details_response.dart';
+import 'package:powergodha/animal_repo/models/animal_details_response.dart';
 import 'package:powergodha/dashboard/pages/next_in_update.dart';
 
 
@@ -93,7 +93,25 @@ class AnimalCardDetails extends StatelessWidget {
   );
 
   }
-    Widget _buildDetailItem(String label, String value) {
+
+  Widget _buildAnimalDetails(IndividualAnimalData animal) {
+    return Row(
+      children: [
+        Expanded(child: _buildDetailItem('DOB', animal.dateOfBirth ?? 'Unknown')),
+        Expanded(
+          child: _buildDetailItem(
+            'Weight',
+            animal.weight != null ? '${animal.weight} kg' : 'Unknown',
+          ),
+        ),
+        if (animal.pregnancyStatus != null)
+          Expanded(child: _buildDetailItem('Pregnancy', animal.pregnancyStatus!)),
+        if (animal.lactationStatus != null)
+          Expanded(child: _buildDetailItem('Lactation', animal.lactationStatus!)),
+      ],
+    );
+  }
+  Widget _buildDetailItem(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,6 +124,8 @@ class AnimalCardDetails extends StatelessWidget {
       ],
     );
   }
+
+
   void _showHealthInfo(IndividualAnimalData animal , BuildContext context) {
     showDialog<void>(
       context: context,
@@ -130,52 +150,6 @@ class AnimalCardDetails extends StatelessWidget {
           TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatusChip(String status) {
-    Color statusColor;
-    switch (status.toLowerCase()) {
-      case 'healthy':
-        statusColor = Colors.green;
-      case 'pregnant':
-        statusColor = Colors.pink;
-      case 'lactating':
-        statusColor = Colors.blue;
-      case 'sick':
-        statusColor = Colors.red;
-      default:
-        statusColor = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        status,
-        style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.w500),
-      ),
-    );
-  }
-
-  Widget _buildAnimalDetails(IndividualAnimalData animal) {
-    return Row(
-      children: [
-        Expanded(child: _buildDetailItem('DOB', animal.dateOfBirth ?? 'Unknown')),
-        Expanded(
-          child: _buildDetailItem(
-            'Weight',
-            animal.weight != null ? '${animal.weight} kg' : 'Unknown',
-          ),
-        ),
-        if (animal.pregnancyStatus != null)
-          Expanded(child: _buildDetailItem('Pregnancy', animal.pregnancyStatus!)),
-        if (animal.lactationStatus != null)
-          Expanded(child: _buildDetailItem('Lactation', animal.lactationStatus!)),
-      ],
     );
   }
 

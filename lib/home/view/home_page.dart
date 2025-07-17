@@ -43,7 +43,6 @@ import 'package:powergodha/home/view/bottomNavigation/bottom_navigation_api.dart
 import 'package:powergodha/home/widgets/app_drawer.dart';
 import 'package:powergodha/home/widgets/featured_carousel.dart';
 import 'package:powergodha/home/widgets/profit_loss.dart';
-import 'package:powergodha/l10n/app_localizations.dart';
 import 'package:powergodha/shared/shared.dart';
 import 'package:powergodha/shared/widgets/appbar.dart';
 
@@ -158,8 +157,6 @@ class _HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
-
     return FloatingDraggableWidget(
       floatingWidget: GestureDetector(
         onTap: () {
