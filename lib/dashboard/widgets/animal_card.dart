@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:powergodha/animal_repo/models/animal_details_response.dart';
+import 'package:powergodha/dashboard/pages/health.dart';
 import 'package:powergodha/dashboard/pages/next_in_update.dart';
 
 
@@ -76,7 +77,16 @@ class AnimalCardDetails extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => _showHealthInfo(animal, context),
+                    //TODO: Health info button
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        UpdateHealthInfoPage.route(
+                          animalId: animal.id ?? 0,
+                          animalName: animal.animalNumber.toString(),
+                          animalColor: animalColor,
+                        ),
+                      );
+                    },
                   icon: const Icon(Icons.health_and_safety_outlined),
                   label: const Text('Health'),
                   style: OutlinedButton.styleFrom(

@@ -26,6 +26,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:powergodha/breeding/breeding.dart';
 import 'package:powergodha/dashboard/pages/dashboard.dart';
+import 'package:powergodha/dashboard/pages/health.dart';
 import 'package:powergodha/farm/farm.dart';
 import 'package:powergodha/forgot_password/view/forgot_password_page.dart';
 import 'package:powergodha/home/view/help/how_to_use_app_api.dart';
@@ -97,6 +98,7 @@ abstract final class AppRoutes {
   static const String recordAi = '/record-ai';
   static const String recordDrying = '/record-drying';
   static const String recordPregnancy = '/record-pregnancy';
+  static const String updateHealthInfo = '/animal-health';
 
   /// Generates routes based on [RouteSettings].
   ///
@@ -211,6 +213,17 @@ abstract final class AppRoutes {
         final animalType = args?['animalType'] as String? ?? 'Cow';
         final animalNumber = args?['animalNumber'] as String? ?? '0';
         return RecordPregnancyPage.route(animalType: animalType, animalNumber: animalNumber);
+      case updateHealthInfo:
+        // Extract arguments for animal health page
+        final args = settings.arguments as Map<String, dynamic>?;
+        final animalId = args?['animalId'] as int? ?? 0;
+        final animalName = args?['animalName'] as String? ?? '';
+        final animalColor = args?['animalColor'] as Color? ?? Colors.blue;
+        return UpdateHealthInfoPage.route(
+          animalId: animalId,
+          animalName: animalName,
+          animalColor: animalColor,
+        );
       default:
         // Fallback to splash page for unknown routes
         return MaterialPageRoute<dynamic>(
