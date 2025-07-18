@@ -8,7 +8,7 @@ class BottomNavigationService{
 
   final RetrofitClient _client;
 
-  Future<List<ProfitableDairyFarmingData>> getDataBottomNavigation(int page) async{
+  Future<List<BottomNavigationData>> getDataBottomNavigation(int page) async{
     try{
       final response = await _client.getBottomNavigationData(page);
 
@@ -16,7 +16,7 @@ class BottomNavigationService{
 
         final dataList = response.data as List<dynamic>;
         if(dataList.isNotEmpty){
-          final data = dataList.map((e) => ProfitableDairyFarmingData.fromJson(e as Map<String, dynamic>)).toList();
+          final data = dataList.map((e) => BottomNavigationData.fromJson(e as Map<String, dynamic>)).toList();
           return data;
         }else{
           throw Exception('Not data is Found');

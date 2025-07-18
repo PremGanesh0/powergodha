@@ -7,9 +7,9 @@ import 'package:powergodha/shared/api/api_models.dart';
 class OnTapDetailsPage extends StatefulWidget {
   const OnTapDetailsPage({required this.item, super.key});
 
-  final ProfitableDairyFarmingData item;
+  final BottomNavigationData item;
 
-  static Route<void> route(ProfitableDairyFarmingData item) {
+  static Route<void> route(BottomNavigationData item) {
     return MaterialPageRoute(builder: (_) => OnTapDetailsPage(item: item));
   }
 
